@@ -1,0 +1,84 @@
+generator client {
+provider = "prisma-client-js"
+}
+
+datasource db {
+provider = "mongodb"
+url      = env("DATABASE_URL")
+}
+
+model Destination {
+  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                     String
+  about                    String
+  location                 String
+  weather                  Weather
+  language                 String
+  currency                 String
+  area                     String
+  population               String
+  timeZone                 String       @map("time_zone")
+  timeToTravel             String       @map("time_to_travel")
+  images                   String[]
+}
+
+type Weather {
+  Jan_Fev                  String
+  Mar_Apr                  String
+  May_Jun                  String
+  Jul_Ago                  String
+  Sep_Oct                  String
+  Nov_Dec                  String
+}
+
+model Experience {
+  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                     String
+  city                     String
+  isActivity               Boolean
+  image                    String
+  duration                 String
+  price                    Price  
+  destinationId            String        @map("destination_id")
+}
+
+type Price {
+  jan                      Int[]
+  fev                      Int[]
+  mar                      Int[]
+  apr                      Int[]
+  may                      Int[]
+  jun                      Int[]
+  jul                      Int[]
+  aug                      Int[]
+  sep                      Int[]
+  oct                      Int[]
+  nov                      Int[]
+  dec                      Int[]
+}
+
+model Review {
+  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                     String
+  email                    String
+  comment                  String
+  image                    String
+  score                    Score  
+  createdAt                DateTime     @default(now())
+  experienceId             String       @map("experiense_id")
+}
+
+type Score {
+  services                 Int
+  location                 Int
+  amenities                Int
+  prices                   Int
+  food                     Int
+  roomComfortAndQuality    Int          @map("room_comfort_and_quality")  
+}
+
+model Favorite {
+  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
+  favorites                String[]
+  userId                   String       @map("user_id")
+}
