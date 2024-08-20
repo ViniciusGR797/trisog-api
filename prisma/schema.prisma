@@ -23,12 +23,12 @@ model Destination {
 }
 
 type Weather {
-  Jan_Fev                  String
-  Mar_Apr                  String
-  May_Jun                  String
-  Jul_Ago                  String
-  Sep_Oct                  String
-  Nov_Dec                  String
+  janFev                  String       @map("jan_fev")
+  marApr                  String       @map("mar_apr")
+  mayJun                  String       @map("may_jun")
+  julAgo                  String       @map("jul_ago")
+  sepOct                  String       @map("sep_oct")
+  novDec                  String       @map("nov_dec")
 }
 
 model Experience {
