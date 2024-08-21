@@ -59,7 +59,7 @@ To access the API Trisog in production or homologation environments:
 | Ambiente       | URL                                   |
 | -------------- | ------------------------------------- |
 | `Production`   | https://trisog-api.vercel.app     |
-| `Homologation` | https://trisog-hom-api.vercel.app |
+| `Homologation` | https://trisog-api-hom.vercel.app |
 
 </div>
 
