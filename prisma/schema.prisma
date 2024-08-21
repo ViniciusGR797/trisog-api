@@ -82,3 +82,17 @@ model Favorite {
   favorites                String[]
   userId                   String       @map("user_id")
 }
+
+model Booking {
+  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
+  date                     String
+  time                     String
+  ticket                   Ticket
+  userId                   String       @map("user_id")
+}
+
+type Ticket {
+  adults    Int
+  kids      Int
+  children  Int
+}
