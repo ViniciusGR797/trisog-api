@@ -1,6 +1,7 @@
 {
   "name": "trisog-api",
   "version": "1.0.0",
+  "description": "Trisog API is a RESTful API that powers the backend for a travel and tourism platform, providing endpoints for managing destinations, experiences, user reviews, bookings, and more. Built with Node.js, Express.js, TypeScript, MongoDB, and Prisma, the API ensures robust and scalable data handling, secure user authentication, and efficient media storage.",
   "main": "index.js",
   "repository": "https://github.com/ViniciusGR797/trisog-api.git",
   "author": "ViniciusGR797 <loritoamarelo@outlook.com>",
