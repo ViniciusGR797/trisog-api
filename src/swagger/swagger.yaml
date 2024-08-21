@@ -19,7 +19,7 @@ info:
 
 
     **Firebase Storage** is utilized for managing and storing user-uploaded
-    images associated with experiences. **Docker and Docker Compose** are
+    images associated with experiences. **Docker** and **Docker Compose** are
     employed to ensure consistent and scalable deployment across different
     environments. **Jest** is used for unit and integration testing, ensuring
     the reliability and quality of the API.

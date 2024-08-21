@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-// import { swaggerSpec, swaggerSpecJson, swaggerStyle } from './swagger/swaggerConfig';
+import { swaggerSpec, swaggerSpecJson, swaggerStyle } from './swagger/swaggerConfig';
 // import bookingRoutes from './routes/bookingRoute';
 // import destinationRoutes from './routes/destinationRoute';
 // import experienceRoutes from './routes/experienceRoute';
@@ -22,7 +22,7 @@ app.use(cors({
 // app.use('/favorites', favoriteRoutes);
 // app.use('/reviews', reviewRoutes);
 
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerStyle));
-// app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpecJson, swaggerStyle));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerStyle));
+app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpecJson, swaggerStyle));
 
 export default app;

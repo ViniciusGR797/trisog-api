@@ -16,7 +16,7 @@ const swaggerOptions = {
       "and activities. Additionally, it will support booking management and user reviews for these experiences. Security and data privacy are key " + 
       "priorities, with robust authentication and authorization mechanisms implemented using **Firebase Authentication**.\n\n" +
 
-      "**Firebase Storage** is utilized for managing and storing user-uploaded images associated with experiences. **Docker and Docker Compose** are " + 
+      "**Firebase Storage** is utilized for managing and storing user-uploaded images associated with experiences. **Docker** and **Docker Compose** are " + 
       "employed to ensure consistent and scalable deployment across different environments. **Jest** is used for unit and integration testing, ensuring " + 
       "the reliability and quality of the API.\n\n" +
 
