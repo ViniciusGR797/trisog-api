@@ -1,0 +1,22 @@
+# Build
+build
+dist
+
+# Dependency directories
+node_modules
+
+# Logs
+*.log
+
+# Ignore .vscode directory
+.vscode
+
+# Git
+.git
+.gitignore
+LICENSE
+README.md
+
+# Swagger
+.swagger/swagger.yaml
+.swagger/generateSwaggerJson.ts
