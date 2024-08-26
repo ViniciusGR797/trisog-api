@@ -7,6 +7,7 @@ import categoryRoutes from './routes/categoryRoute';
 import destinationRoutes from './routes/destinationRoute';
 // import experienceRoutes from './routes/experienceRoute';
 // import favoriteRoutes from './routes/favoriteRoute';
+import planRoutes from './routes/planRoute';
 // import reviewRoutes from './routes/reviewRoute';
 
 const app = express();
@@ -22,6 +23,7 @@ app.use('/categories', categoryRoutes);
 app.use('/destinations', destinationRoutes);
 // app.use('/experiences', experienceRoutes);
 // app.use('/favorites', favoriteRoutes);
+app.use('/plans', planRoutes);
 // app.use('/reviews', reviewRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerStyle));
