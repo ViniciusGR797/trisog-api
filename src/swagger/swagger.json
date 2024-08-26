@@ -17,8 +17,1120 @@
         "name": "Authorization",
         "description": "To authenticate, pass the JWT token in the format **Bearer _token_**."
       }
+    },
+    "schemas": {
+      "DestinationList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Destination"
+        }
+      },
+      "Weather": {
+        "type": "object",
+        "properties": {
+          "jan_fev": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number",
+                "description": "Minimum temperature for January-February in degrees Celsius",
+                "example": 10
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum temperature for January-February in degrees Celsius",
+                "example": 16
+              }
+            }
+          },
+          "mar_apr": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number",
+                "description": "Minimum temperature for March-April in degrees Celsius",
+                "example": 12
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum temperature for March-April in degrees Celsius",
+                "example": 18
+              }
+            }
+          },
+          "may_jun": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number",
+                "description": "Minimum temperature for May-June in degrees Celsius",
+                "example": 15
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum temperature for May-June in degrees Celsius",
+                "example": 22
+              }
+            }
+          },
+          "jul_ago": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number",
+                "description": "Minimum temperature for July-August in degrees Celsius",
+                "example": 18
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum temperature for July-August in degrees Celsius",
+                "example": 25
+              }
+            }
+          },
+          "sep_oct": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number",
+                "description": "Minimum temperature for September-October in degrees Celsius",
+                "example": 14
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum temperature for September-October in degrees Celsius",
+                "example": 20
+              }
+            }
+          },
+          "nov_dec": {
+            "type": "object",
+            "properties": {
+              "min": {
+                "type": "number",
+                "description": "Minimum temperature for November-December in degrees Celsius",
+                "example": 10
+              },
+              "max": {
+                "type": "number",
+                "description": "Maximum temperature for November-December in degrees Celsius",
+                "example": 16
+              }
+            }
+          }
+        }
+      },
+      "Destination": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "about",
+          "country",
+          "continent",
+          "map_link",
+          "weather",
+          "language",
+          "currency",
+          "area",
+          "population",
+          "time_zone",
+          "time_to_travel",
+          "images"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the destination",
+            "example": "63f47adf2d7e6b04e4f978c7"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the destination",
+            "example": "Paris"
+          },
+          "about": {
+            "type": "string",
+            "description": "Description of the destination",
+            "example": "Capital city of France, known for its art, fashion, and culture."
+          },
+          "continent": {
+            "type": "string",
+            "description": "Continent where the destination is located",
+            "example": "Europe"
+          },
+          "map_link": {
+            "type": "string",
+            "description": "Google Maps URL for the destination",
+            "example": "https://www.google.com/maps/place/Paris"
+          },
+          "weather": {
+            "type": "object",
+            "$ref": "#/components/schemas/Weather"
+          },
+          "language": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of languages spoken at the destination",
+            "example": [
+              "French"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency used in the destination",
+            "example": "Euro"
+          },
+          "area": {
+            "type": "integer",
+            "description": "Area of the destination in square miles",
+            "example": 248573
+          },
+          "population": {
+            "type": "integer",
+            "description": "Population of the destination in number of inhabitants",
+            "example": 67000000
+          },
+          "time_zone": {
+            "type": "string",
+            "description": "Time zone of the destination",
+            "example": "UTC+1"
+          },
+          "time_to_travel": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Best months to travel to the destination",
+            "example": [
+              "May",
+              "June",
+              "July",
+              "August"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of image URLs related to the destination",
+            "example": [
+              "https://example.com/image1.jpg",
+              "https://example.com/image2.jpg"
+            ]
+          },
+          "travel_count": {
+            "type": "integer",
+            "description": "The number of travels, tours, or activities available at the destination",
+            "example": 5
+          }
+        }
+      },
+      "DestinationUpsert": {
+        "type": "object",
+        "required": [
+          "name",
+          "about",
+          "country",
+          "continent",
+          "map_link",
+          "weather",
+          "language",
+          "currency",
+          "area",
+          "population",
+          "time_zone",
+          "time_to_travel",
+          "images"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the destination",
+            "example": "Paris"
+          },
+          "about": {
+            "type": "string",
+            "description": "Description of the destination",
+            "example": "Capital city of France, known for its art, fashion, and culture."
+          },
+          "continent": {
+            "type": "string",
+            "description": "Continent where the destination is located",
+            "example": "Europe"
+          },
+          "map_link": {
+            "type": "string",
+            "description": "Google Maps URL for the destination",
+            "example": "https://www.google.com/maps/place/Paris"
+          },
+          "weather": {
+            "type": "object",
+            "$ref": "#/components/schemas/Weather"
+          },
+          "language": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of languages spoken at the destination",
+            "example": [
+              "French"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency used in the destination",
+            "example": "Euro"
+          },
+          "area": {
+            "type": "integer",
+            "description": "Area of the destination in square miles",
+            "example": 248573
+          },
+          "population": {
+            "type": "integer",
+            "description": "Population of the destination in number of inhabitants",
+            "example": 67000000
+          },
+          "time_zone": {
+            "type": "string",
+            "description": "Time zone of the destination",
+            "example": "UTC+1"
+          },
+          "time_to_travel": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Best months to travel to the destination",
+            "example": [
+              "May",
+              "June",
+              "July",
+              "August"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of image URLs related to the destination",
+            "example": [
+              "https://example.com/image1.jpg",
+              "https://example.com/image2.jpg"
+            ]
+          }
+        }
+      },
+      "DestinationExtended": {
+        "type": "object",
+        "required": [
+          "name",
+          "about",
+          "country",
+          "continent",
+          "map_link",
+          "weather",
+          "language",
+          "currency",
+          "area",
+          "population",
+          "time_zone",
+          "time_to_travel",
+          "images",
+          "travel_count"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the destination",
+            "example": "Paris"
+          },
+          "about": {
+            "type": "string",
+            "description": "Description of the destination",
+            "example": "Capital city of France, known for its art, fashion, and culture."
+          },
+          "continent": {
+            "type": "string",
+            "description": "Continent where the destination is located",
+            "example": "Europe"
+          },
+          "map_link": {
+            "type": "string",
+            "description": "Google Maps URL for the destination",
+            "example": "https://www.google.com/maps/place/Paris"
+          },
+          "weather": {
+            "type": "object",
+            "$ref": "#/components/schemas/Weather"
+          },
+          "language": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of languages spoken at the destination",
+            "example": [
+              "French"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency used in the destination",
+            "example": "Euro"
+          },
+          "area": {
+            "type": "integer",
+            "description": "Area of the destination in square miles",
+            "example": 248573
+          },
+          "population": {
+            "type": "integer",
+            "description": "Population of the destination in number of inhabitants",
+            "example": 67000000
+          },
+          "time_zone": {
+            "type": "string",
+            "description": "Time zone of the destination",
+            "example": "UTC+1"
+          },
+          "time_to_travel": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Best months to travel to the destination",
+            "example": [
+              "May",
+              "June",
+              "July",
+              "August"
+            ]
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Array of image URLs related to the destination",
+            "example": [
+              "https://example.com/image1.jpg",
+              "https://example.com/image2.jpg"
+            ]
+          },
+          "travel_count": {
+            "type": "integer",
+            "description": "The number of travels, tours, or activities available at the destination",
+            "example": 5
+          }
+        }
+      },
+      "Price": {
+        "type": "object",
+        "properties": {
+          "jan": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in January",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "feb": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in February",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "mar": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in March",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "apr": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in April",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "may": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in May",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "jun": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in June",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "jul": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in July",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "aug": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in August",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "sep": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in September",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "oct": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in October",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "nov": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in November",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          },
+          "dec": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            },
+            "description": "Array of prices for each day in December",
+            "example": [
+              100,
+              150,
+              200,
+              "..."
+            ]
+          }
+        }
+      },
+      "Experience": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the experience",
+            "example": "63f47adf2d7e6b04e4f978c7"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the experience",
+            "example": "City Tour"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the experience takes place",
+            "example": "New York"
+          },
+          "isActivity": {
+            "type": "boolean",
+            "description": "Indicates if the experience is an activity",
+            "example": true
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to an image representing the experience",
+            "example": "https://example.com/image.jpg"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Duration of the experience",
+            "example": "Full Day"
+          },
+          "price": {
+            "type": "object",
+            "$ref": "#/components/schemas/Price"
+          },
+          "destinationId": {
+            "type": "string",
+            "description": "ID of the destination associated with the experience",
+            "example": "63f47adf2d7e6b04e4f978c7"
+          }
+        }
+      },
+      "ExperienceInsert": {
+        "type": "object",
+        "required": [
+          "name",
+          "city",
+          "isActivity",
+          "image",
+          "duration",
+          "price",
+          "destinationId"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the experience",
+            "example": "City Tour"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the experience takes place",
+            "example": "New York"
+          },
+          "isActivity": {
+            "type": "boolean",
+            "description": "Indicates if the experience is an activity",
+            "example": true
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to an image representing the experience",
+            "example": "https://example.com/image.jpg"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Duration of the experience",
+            "example": "Full Day"
+          },
+          "price": {
+            "type": "object",
+            "$ref": "#/components/schemas/Price"
+          },
+          "destinationId": {
+            "type": "string",
+            "description": "ID of the destination associated with the experience",
+            "example": "63f47adf2d7e6b04e4f978c7"
+          }
+        }
+      },
+      "ExperienceUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the experience",
+            "example": "City Tour"
+          },
+          "city": {
+            "type": "string",
+            "description": "City where the experience takes place",
+            "example": "New York"
+          },
+          "isActivity": {
+            "type": "boolean",
+            "description": "Indicates if the experience is an activity",
+            "example": true
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to an image representing the experience",
+            "example": "https://example.com/image.jpg"
+          },
+          "duration": {
+            "type": "string",
+            "description": "Duration of the experience",
+            "example": "Full Day"
+          },
+          "price": {
+            "type": "object",
+            "$ref": "#/components/schemas/Price"
+          },
+          "destinationId": {
+            "type": "string",
+            "description": "ID of the destination associated with the experience",
+            "example": "63f47adf2d7e6b04e4f978c7"
+          }
+        }
+      },
+      "DeleteSuccess": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "Delete success message",
+            "example": "Successfully deleted"
+          }
+        }
+      },
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "Invalid request. Some parameters may be missing or invalid.",
+            "example": "Some parameters may be missing or invalid"
+          }
+        }
+      },
+      "Unauthorized": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "Unauthorized. The JWT token was not provided or is invalid.",
+            "example": "JWT token not provided or invalid"
+          }
+        }
+      },
+      "Forbidden": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "Forbidden. The user does not have permission to access the requested resource.",
+            "example": "You do not have permission to access the requested resource"
+          }
+        }
+      },
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "No data found. The requested resource does not exist",
+            "example": "No data found"
+          }
+        }
+      },
+      "InternalServerError": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "Internal error when handling data in the service",
+            "example": "Internal Server Error"
+          }
+        }
+      }
     }
   },
-  "paths": {},
-  "tags": []
+  "paths": {
+    "/destinations": {
+      "get": {
+        "summary": "View all destinations",
+        "description": "Returns information about all destinations",
+        "tags": [
+          "Destination"
+        ],
+        "operationId": "get_all_destinations",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DestinationList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new destination",
+        "description": "Creates a new destination based on the data provided in the request body.",
+        "tags": [
+          "Destination"
+        ],
+        "operationId": "create_destination",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DestinationInsert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Destination"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/destinations/{destination_id}": {
+      "parameters": [
+        {
+          "name": "destination_id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the destination to be deleted",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "View destination by id",
+        "description": "Returns destination information by id",
+        "tags": [
+          "Destination"
+        ],
+        "operationId": "get_destination_by_id",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Destination"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update destination",
+        "description": "Updates the information of the desired destination",
+        "tags": [
+          "Destination"
+        ],
+        "operationId": "update_destination",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DestinationUpdate"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Destination"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove destination",
+        "description": "Deletes a destination based on the ID provided",
+        "tags": [
+          "Destination"
+        ],
+        "operationId": "delete_destination",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Destination",
+      "description": "Routes for destination manipulation"
+    }
+  ]
 }

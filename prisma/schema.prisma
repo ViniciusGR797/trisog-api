@@ -8,91 +8,77 @@ url      = env("DATABASE_URL")
 }
 
 model Destination {
-  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
-  name                     String
-  about                    String
-  location                 String
-  weather                  Weather
-  language                 String
-  currency                 String
-  area                     String
-  population               String
-  timeZone                 String       @map("time_zone")
-  timeToTravel             String       @map("time_to_travel")
-  images                   String[]
-}
-
-type Weather {
-  janFev                  String       @map("jan_fev")
-  marApr                  String       @map("mar_apr")
-  mayJun                  String       @map("may_jun")
-  julAgo                  String       @map("jul_ago")
-  sepOct                  String       @map("sep_oct")
-  novDec                  String       @map("nov_dec")
+  id                         String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                       String
+  about                      String
+  continent                  String
+  map_link                   String    
+  weather                    Json 
+  language                   String[]
+  currency                   String
+  area                       Int
+  population                 Int
+  time_zone                  String     
+  time_to_travel             String[]  
+  images                     String[]
+  travel_count               Int
 }
 
 model Experience {
-  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
-  name                     String
-  city                     String
-  isActivity               Boolean
-  image                    String
-  duration                 String
-  price                    Price  
-  destinationId            String        @map("destination_id")
-}
-
-type Price {
-  jan                      Int[]
-  fev                      Int[]
-  mar                      Int[]
-  apr                      Int[]
-  may                      Int[]
-  jun                      Int[]
-  jul                      Int[]
-  aug                      Int[]
-  sep                      Int[]
-  oct                      Int[]
-  nov                      Int[]
-  dec                      Int[]
+  id                         String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                       String
+  city                       String
+  image                      String
+  mapLink                    String
+  startDate                  DateTime
+  duration                   Float
+  isActivity                 Boolean
+  type                       String[]
+  maxPeople                  Int
+  minAge                     Int
+  overView                   String
+  include                    String[]
+  exclude                    String[]
+  plans                      String[]
+  price                      Json  
+  destination_id             String       
 }
 
 model Review {
-  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
-  name                     String
-  email                    String
-  comment                  String
-  image                    String
-  score                    Score  
-  createdAt                DateTime     @default(now())
-  experienceId             String       @map("experiense_id")
-}
-
-type Score {
-  services                 Int
-  location                 Int
-  amenities                Int
-  prices                   Int
-  food                     Int
-  roomComfortAndQuality    Int          @map("room_comfort_and_quality")  
+  id                         String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                       String
+  email                      String
+  comment                    String
+  image                      String
+  score                      Json  
+  createdAt                  DateTime     @default(now())
+  experienseId               String      
 }
 
 model Favorite {
-  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
-  favorites                String[]
-  userId                   String       @map("user_id")
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  favorites                   String[]
+  userId                      String       @map("user_id")
 }
 
 model Booking {
-  id                       String       @id @default(auto()) @map("_id") @db.ObjectId
-  date                     String
-  time                     String
-  ticket                   Ticket
-  userId                   String       @map("user_id")
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  date                        String
+  duration                    Float
+  ticket                      Json
+  userId                      String       @map("user_id")
 }
 
-type Ticket {
-  adults    Int
-  kids      Int
-  children  Int
+model Plan {
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  time                        String
+  title                       String
+  description                 String
+  userId                      String      
+}
+
+model Newsletter {
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email                       String
+  userId                      String      
 }
