@@ -244,7 +244,7 @@
           "population",
           "time_zone",
           "time_to_travel",
-          "images"
+          "image"
         ],
         "properties": {
           "name": {
@@ -314,16 +314,10 @@
               "August"
             ]
           },
-          "images": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Array of image URLs related to the destination",
-            "example": [
-              "https://example.com/image1.jpg",
-              "https://example.com/image2.jpg"
-            ]
+          "image": {
+            "type": "string",
+            "description": "Image URL related to the destination",
+            "example": "https://example.com/image1.jpg"
           }
         }
       },
@@ -412,6 +406,11 @@
               "July",
               "August"
             ]
+          },
+          "image": {
+            "type": "string",
+            "description": "Image URL related to the destination",
+            "example": "https://example.com/image1.jpg"
           },
           "images": {
             "type": "array",
@@ -834,7 +833,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DestinationInsert"
+                "$ref": "#/components/schemas/DestinationUpsert"
               }
             }
           }
@@ -977,7 +976,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DestinationUpdate"
+                "$ref": "#/components/schemas/DestinationUpsert"
               }
             }
           }

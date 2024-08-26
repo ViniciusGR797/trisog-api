@@ -233,7 +233,7 @@ components:
         - population
         - time_zone
         - time_to_travel
-        - images
+        - image
       properties:
         name:
           type: string
@@ -287,14 +287,10 @@ components:
             - June
             - July
             - August
-        images:
-          type: array
-          items:
-            type: string
-          description: Array of image URLs related to the destination
-          example:
-            - https://example.com/image1.jpg
-            - https://example.com/image2.jpg
+        image:
+          type: string
+          description: Image URL related to the destination
+          example: https://example.com/image1.jpg
     DestinationExtended:
       type: object
       required:
@@ -365,6 +361,10 @@ components:
             - June
             - July
             - August
+        image:
+          type: string
+          description: Image URL related to the destination
+          example: https://example.com/image1.jpg
         images:
           type: array
           items:
@@ -684,7 +684,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DestinationInsert'
+              $ref: '#/components/schemas/DestinationUpsert'
       responses:
         '201':
           description: Success
@@ -772,7 +772,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/DestinationUpdate'
+              $ref: '#/components/schemas/DestinationUpsert'
       security:
         - jwt: []
       responses:

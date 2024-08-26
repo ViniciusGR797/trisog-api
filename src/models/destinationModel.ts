@@ -325,7 +325,7 @@ class Destination {
  *         - population
  *         - time_zone
  *         - time_to_travel
- *         - images
+ *         - image
  *       properties:
  *         name:
  *           type: string
@@ -374,12 +374,10 @@ class Destination {
  *             type: string
  *           description: Best months to travel to the destination
  *           example: ["May", "June", "July", "August"]
- *         images:
- *           type: array
- *           items:
- *             type: string
- *           description: Array of image URLs related to the destination
- *           example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+ *         image:
+ *           type: string
+ *           description: Image URL related to the destination
+ *           example: "https://example.com/image1.jpg"
  */
 
 class DestinationUpsert {
@@ -434,13 +432,9 @@ class DestinationUpsert {
   @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
   time_to_travel: string[];
 
-  @IsArray({ message: "The images field must be an array of strings" })
-  @IsString({
-    each: true,
-    message: "Each item in the images array must be a string",
-  })
-  @IsNotEmpty({ message: "The images field is mandatory" })
-  images: string[];
+  @IsString({ message: "The image field must be a string" })
+  @IsNotEmpty({ message: "The image field is mandatory" })
+  image: string;
 
   constructor(payload: DestinationUpsert) {
     this.name =
@@ -468,7 +462,8 @@ class DestinationUpsert {
         ? payload.time_zone.trim()
         : payload.time_zone;
     this.time_to_travel = payload.time_to_travel;
-    this.images = payload.images;
+    this.image =
+      typeof payload.image === "string" ? payload.image.trim() : payload.image;
   }
 }
 
@@ -541,6 +536,10 @@ class DestinationUpsert {
  *             type: string
  *           description: Best months to travel to the destination
  *           example: ["May", "June", "July", "August"]
+ *         image:
+ *           type: string
+ *           description: Image URL related to the destination
+ *           example: "https://example.com/image1.jpg"
  *         images:
  *           type: array
  *           items:
@@ -554,10 +553,21 @@ class DestinationUpsert {
  */
 
 class DestinationExtended extends DestinationUpsert {
+  @IsArray({ message: "The images field must be an array of strings" })
+  @IsString({
+    each: true,
+    message: "Each item in the images array must be a string",
+  })
+  @IsNotEmpty({ message: "The images field is mandatory" })
+  images: string[];
+
+  @IsInt({ message: "The travel_count field must be an integer" })
+  @IsNotEmpty({ message: "The travel_count field is mandatory" })
   travel_count: number;
 
   constructor(payload: DestinationExtended) {
     super(payload);
+    this.images = payload.images;
     this.travel_count = payload.travel_count;
   }
 }

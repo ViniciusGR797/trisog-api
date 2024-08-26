@@ -98,7 +98,7 @@ router.get('/:destination_id', DestinationController.getDestinationById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/DestinationInsert"
+ *             $ref: "#/components/schemas/DestinationUpsert"
  *     responses:
  *       201:
  *         description: Success
@@ -138,8 +138,7 @@ router.get('/:destination_id', DestinationController.getDestinationById);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-// router.post('/', authMiddleware, DestinationController.createDestination);
-router.post('/', DestinationController.createDestination);
+router.post('/', authMiddleware, DestinationController.createDestination);
 
 /**
  * @swagger
@@ -162,7 +161,7 @@ router.post('/', DestinationController.createDestination);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/DestinationUpdate"
+ *             $ref: "#/components/schemas/DestinationUpsert"
  *     security:
  *       - jwt: []
  *     responses:
@@ -204,8 +203,7 @@ router.post('/', DestinationController.createDestination);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-// router.put('/:destination_id', authMiddleware, DestinationController.updateDestination);
-router.put('/:destination_id', DestinationController.updateDestination);
+router.put('/:destination_id', authMiddleware, DestinationController.updateDestination);
 
 /**
  * @swagger
@@ -264,7 +262,6 @@ router.put('/:destination_id', DestinationController.updateDestination);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-// router.delete('/:destination_id', authMiddleware, DestinationController.deleteDestination);
-router.delete('/:destination_id', DestinationController.deleteDestination);
+router.delete('/:destination_id', authMiddleware, DestinationController.deleteDestination);
 
 export default router;

@@ -17,12 +17,12 @@ export class DestinationService {
   }
 
   static async getDestinationById(
-    destination_id: string
+    destinationId: string
   ): Promise<{ destination: Destination | null; error: string | null }> {
     try {
       const destination = await prismaClient.destination.findUnique({
         where: {
-          id: destination_id,
+          id: destinationId,
         },
       });
 
@@ -38,12 +38,12 @@ export class DestinationService {
   }
   
   static async countExperiencesByDestination(
-    destination_id: string
+    destinationId: string
   ): Promise<{ count: number; error: string | null }> {
     try {
       const count = await prismaClient.experience.count({
         where: {
-          destination_id: destination_id,
+          destination_id: destinationId,
         },
       });
 
@@ -55,31 +55,31 @@ export class DestinationService {
   }
 
   static async createDestination(
-    data: DestinationExtended
+    newData: DestinationExtended
   ): Promise<{ createdDestinationId: string | null; error: string | null }> {
     try {
       const result = await prismaClient.destination.create({
         data: {
-          name: data.name,
-          about: data.about,
-          continent: data.continent,
-          map_link: data.map_link,
-          language: data.language,
-          currency: data.currency,
-          area: data.area,
-          population: data.population,
-          time_zone: data.time_zone,
-          time_to_travel: data.time_to_travel,
-          images: data.images,
+          name: newData.name,
+          about: newData.about,
+          continent: newData.continent,
+          map_link: newData.map_link,
+          language: newData.language,
+          currency: newData.currency,
+          area: newData.area,
+          population: newData.population,
+          time_zone: newData.time_zone,
+          time_to_travel: newData.time_to_travel,
+          images: newData.images,
           weather: {
-            jan_fev: data.weather.jan_fev,
-            mar_apr: data.weather.mar_apr,
-            may_jun: data.weather.may_jun,
-            jul_ago: data.weather.jul_ago,
-            sep_oct: data.weather.sep_oct,
-            nov_dec: data.weather.nov_dec
+            jan_fev: newData.weather.jan_fev,
+            mar_apr: newData.weather.mar_apr,
+            may_jun: newData.weather.may_jun,
+            jul_ago: newData.weather.jul_ago,
+            sep_oct: newData.weather.sep_oct,
+            nov_dec: newData.weather.nov_dec
           },
-          travel_count: data.travel_count
+          travel_count: newData.travel_count
         }
       });
 
@@ -91,35 +91,35 @@ export class DestinationService {
   }
 
     static async updateDestination(
-      destination_id: string,
-      data: DestinationExtended
+      destinationId: string,
+      updatedData: DestinationExtended
     ): Promise<{ updatedDestination: Destination | null; error: string | null }> {
       try {
         const result = await prismaClient.destination.update({
           where: {
-            id: destination_id
+            id: destinationId
           },
           data: {
-            name: data.name,
-            about: data.about,
-            continent: data.continent,
-            map_link: data.map_link,
-            language: data.language,
-            currency: data.currency,
-            area: data.area,
-            population: data.population,
-            time_zone: data.time_zone,
-            time_to_travel: data.time_to_travel,
-            images: data.images,
+            name: updatedData.name,
+            about: updatedData.about,
+            continent: updatedData.continent,
+            map_link: updatedData.map_link,
+            language: updatedData.language,
+            currency: updatedData.currency,
+            area: updatedData.area,
+            population: updatedData.population,
+            time_zone: updatedData.time_zone,
+            time_to_travel: updatedData.time_to_travel,
+            images: updatedData.images,
             weather: {
-              jan_fev: data.weather.jan_fev,
-              mar_apr: data.weather.mar_apr,
-              may_jun: data.weather.may_jun,
-              jul_ago: data.weather.jul_ago,
-              sep_oct: data.weather.sep_oct,
-              nov_dec: data.weather.nov_dec
+              jan_fev: updatedData.weather.jan_fev,
+              mar_apr: updatedData.weather.mar_apr,
+              may_jun: updatedData.weather.may_jun,
+              jul_ago: updatedData.weather.jul_ago,
+              sep_oct: updatedData.weather.sep_oct,
+              nov_dec: updatedData.weather.nov_dec
             },
-            travel_count: data.travel_count
+            travel_count: updatedData.travel_count
           }
         });
 
@@ -131,12 +131,12 @@ export class DestinationService {
     }
 
     static async deleteDestination(
-      destination_id: string
+      destinationId: string
     ): Promise<{ deletedDestination: Destination | null; error: string | null }> {
       try {
         const result = await prismaClient.destination.delete({
           where: {
-            id: destination_id
+            id: destinationId
           },
         });
         return { deletedDestination: result, error: null };

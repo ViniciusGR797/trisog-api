@@ -43,10 +43,10 @@ export class DestinationController {
     req: Request,
     res: Response
   ): Promise<Response> {
-    // const userId = req.user_id;
-    // if (!isValidFirebaseUID(userId)) {
-    //   return res.status(400).json({ msg: 'Invalid user ID' });
-    // }
+    const userId = req.user_id;
+    if (!isValidFirebaseUID(userId)) {
+      return res.status(400).json({ msg: 'Invalid user ID' });
+    }
 
     const payload = new DestinationUpsert(req.body);
     const errors = await validate(payload);
@@ -60,6 +60,7 @@ export class DestinationController {
 
     const newPayload = new DestinationExtended({
       ...payload,
+      images: [payload.image] || [],
       travel_count: 0,
     });
 
@@ -88,10 +89,10 @@ export class DestinationController {
     req: Request,
     res: Response
   ): Promise<Response> {
-    // const userId = req.user_id;
-    // if (!isValidFirebaseUID(userId)) {
-    //   return res.status(400).json({ msg: 'Invalid user ID' });
-    // }
+    const userId = req.user_id;
+    if (!isValidFirebaseUID(userId)) {
+      return res.status(400).json({ msg: 'Invalid user ID' });
+    }
 
     const destinationId = req.params.destination_id;
     if (!isValidObjectId(destinationId)) {
@@ -119,6 +120,7 @@ export class DestinationController {
 
     const newPayload = new DestinationExtended({
       ...payload,
+      images: [payload.image, ...destination.images.slice(1)],
       travel_count: destination.travel_count,
     });
 
@@ -137,10 +139,10 @@ export class DestinationController {
     req: Request,
     res: Response
   ): Promise<Response> {
-    // const userId = req.user_id;
-    // if (!isValidFirebaseUID(userId)) {
-    //   return res.status(400).json({ msg: 'Invalid user ID' });
-    // }
+    const userId = req.user_id;
+    if (!isValidFirebaseUID(userId)) {
+      return res.status(400).json({ msg: 'Invalid user ID' });
+    }
 
     const destinationId = req.params.destination_id;
     if (!isValidObjectId(destinationId)) {
