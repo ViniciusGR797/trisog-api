@@ -3,6 +3,7 @@ import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
 import { swaggerSpec, swaggerSpecJson, swaggerStyle } from './swagger/swaggerConfig';
 // import bookingRoutes from './routes/bookingRoute';
+import categoryRoutes from './routes/categoryRoute';
 import destinationRoutes from './routes/destinationRoute';
 // import experienceRoutes from './routes/experienceRoute';
 // import favoriteRoutes from './routes/favoriteRoute';
@@ -17,6 +18,7 @@ app.use(cors({
 }));
 
 // app.use('/bookings', bookingRoutes);
+app.use('/categories', categoryRoutes);
 app.use('/destinations', destinationRoutes);
 // app.use('/experiences', experienceRoutes);
 // app.use('/favorites', favoriteRoutes);
