@@ -1,5 +1,13 @@
 import { JsonValue } from "@prisma/client/runtime/library";
-import { IsArray, IsNotEmpty, IsString, Matches, IsInt } from "class-validator";
+import {
+  IsArray,
+  IsNotEmpty,
+  IsString,
+  Matches,
+  IsInt,
+  IsNumber,
+  Min,
+} from "class-validator";
 
 /**
  * @swagger
@@ -17,8 +25,15 @@ import { IsArray, IsNotEmpty, IsString, Matches, IsInt } from "class-validator";
  *   schemas:
  *     Weather:
  *       type: object
+ *       required:
+ *         - jan_feb
+ *         - mar_apr
+ *         - may_jun
+ *         - jul_aug
+ *         - sep_oct
+ *         - nov_dec
  *       properties:
- *         jan_fev:
+ *         jan_feb:
  *           type: object
  *           properties:
  *             min:
@@ -51,7 +66,7 @@ import { IsArray, IsNotEmpty, IsString, Matches, IsInt } from "class-validator";
  *               type: number
  *               description: Maximum temperature for May-June in degrees Celsius
  *               example: 22
- *         jul_ago:
+ *         jul_aug:
  *           type: object
  *           properties:
  *             min:
@@ -87,35 +102,35 @@ import { IsArray, IsNotEmpty, IsString, Matches, IsInt } from "class-validator";
  */
 
 class Weather {
-  @IsInt({ message: "The jan_fev field must be an integer" })
-  @IsNotEmpty({ message: "The jan_fev field is mandatory" })
-  jan_fev: number;
+  @IsNumber({}, { message: "The jan_feb field must be a number" })
+  @IsNotEmpty({ message: "The jan_feb field is mandatory" })
+  jan_feb: number;
 
-  @IsInt({ message: "The mar_apr field must be an integer" })
+  @IsNumber({}, { message: "The mar_apr field must be a number" })
   @IsNotEmpty({ message: "The mar_apr field is mandatory" })
   mar_apr: number;
 
-  @IsInt({ message: "The may_jun field must be an integer" })
+  @IsNumber({}, { message: "The may_jun field must be a number" })
   @IsNotEmpty({ message: "The may_jun field is mandatory" })
   may_jun: number;
 
-  @IsInt({ message: "The jul_ago field must be an integer" })
-  @IsNotEmpty({ message: "The jul_ago field is mandatory" })
-  jul_ago: number;
+  @IsNumber({}, { message: "The jul_aug field must be a number" })
+  @IsNotEmpty({ message: "The jul_aug field is mandatory" })
+  jul_aug: number;
 
-  @IsInt({ message: "The sep_oct field must be an integer" })
+  @IsNumber({}, { message: "The sep_oct field must be a number" })
   @IsNotEmpty({ message: "The sep_oct field is mandatory" })
   sep_oct: number;
 
-  @IsInt({ message: "The nov_dec field must be an integer" })
+  @IsNumber({}, { message: "The nov_dec field must be a number" })
   @IsNotEmpty({ message: "The nov_dec field is mandatory" })
   nov_dec: number;
 
   constructor(payload: Weather) {
-    this.jan_fev = payload.jan_fev;
+    this.jan_feb = payload.jan_feb;
     this.mar_apr = payload.mar_apr;
     this.may_jun = payload.may_jun;
-    this.jul_ago = payload.jul_ago;
+    this.jul_aug = payload.jul_aug;
     this.sep_oct = payload.sep_oct;
     this.nov_dec = payload.nov_dec;
   }
@@ -150,14 +165,14 @@ class Weather {
  *         name:
  *           type: string
  *           description: Name of the destination
- *           example: "Paris"
+ *           example: "France"
  *         about:
  *           type: string
  *           description: Description of the destination
- *           example: "Capital city of France, known for its art, fashion, and culture."
+ *           example: "The capital city of France is Paris, known for its rich history, art, and culture. The Eiffel Tower is one of its most iconic landmarks."
  *         continent:
  *           type: string
- *           description: Continent where the destination is located
+ *           description: Continent where the destination is located, valid options are Africa, America, Antarctica, Asia, Europe, Oceania
  *           example: "Europe"
  *         map_link:
  *           type: string
@@ -179,11 +194,11 @@ class Weather {
  *         area:
  *           type: integer
  *           description: Area of the destination in square miles
- *           example: 248573
+ *           example: 551695
  *         population:
  *           type: integer
  *           description: Population of the destination in number of inhabitants
- *           example: 67000000
+ *           example: 65273511
  *         time_zone:
  *           type: string
  *           description: Time zone of the destination
@@ -192,8 +207,8 @@ class Weather {
  *           type: array
  *           items:
  *             type: string
- *           description: Best months to travel to the destination
- *           example: ["May", "June", "July", "August"]
+ *           description: Best months to travel to the destination, valid options are Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+ *           example: ["Jan", "Feb", "Mar"]
  *         images:
  *           type: array
  *           items:
@@ -221,6 +236,10 @@ class Destination {
 
   @IsString({ message: "The continent field must be a string" })
   @IsNotEmpty({ message: "The continent field is mandatory" })
+  @Matches(/^(Africa|America|Antarctica|Asia|Europe|Oceania)$/, {
+    message:
+      "The continent field must be a valid continent name with the first letter capitalized. Valid options are: Africa, America, Antarctica, Asia, Europe, Oceania.",
+  })
   continent: string;
 
   @IsString({ message: "The map_link field must be a string" })
@@ -244,10 +263,12 @@ class Destination {
 
   @IsInt({ message: "The area field must be an integer" })
   @IsNotEmpty({ message: "The area field is mandatory" })
+  @Min(0, { message: "The area must be greater than or equal to zero" })
   area: number;
 
   @IsInt({ message: "The population field must be an integer" })
   @IsNotEmpty({ message: "The population field is mandatory" })
+  @Min(0, { message: "The population must be greater than or equal to zero" })
   population: number;
 
   @IsString({ message: "The time_zone field must be a string" })
@@ -255,11 +276,16 @@ class Destination {
   time_zone: string;
 
   @IsArray({ message: "The time_to_travel field must be an array of strings" })
+  @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
   @IsString({
     each: true,
     message: "Each item in the time_to_travel array must be a string",
   })
-  @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
+  @Matches(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/, {
+    each: true,
+    message:
+      "Each item in the time_to_travel array must be a valid three-letter month abbreviation in English. Valid options are: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec.",
+  })
   time_to_travel: string[];
 
   @IsArray({ message: "The images field must be an array of strings" })
@@ -272,34 +298,28 @@ class Destination {
 
   @IsInt({ message: "The travel_count field must be an integer" })
   @IsNotEmpty({ message: "The travel_count field is mandatory" })
+  @Min(0, { message: "The travel_count must be greater than or equal to zero" })
   travel_count: number;
 
   constructor(payload: Destination) {
-    this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
+    this.id = 
+      typeof payload.id === "string" ? payload.id.trim() : payload.id;
     this.name =
       typeof payload.name === "string" ? payload.name.trim() : payload.name;
     this.about =
       typeof payload.about === "string" ? payload.about.trim() : payload.about;
     this.continent =
-      typeof payload.continent === "string"
-        ? payload.continent.trim()
-        : payload.continent;
+      typeof payload.continent === "string" ? payload.continent.trim() : payload.continent;
     this.map_link =
-      typeof payload.map_link === "string"
-        ? payload.map_link.trim()
-        : payload.map_link;
+      typeof payload.map_link === "string" ? payload.map_link.trim() : payload.map_link;
     this.weather = payload.weather;
     this.language = payload.language;
     this.currency =
-      typeof payload.currency === "string"
-        ? payload.currency.trim()
-        : payload.currency;
+      typeof payload.currency === "string" ? payload.currency.trim() : payload.currency;
     this.area = payload.area;
     this.population = payload.population;
     this.time_zone =
-      typeof payload.time_zone === "string"
-        ? payload.time_zone.trim()
-        : payload.time_zone;
+      typeof payload.time_zone === "string" ? payload.time_zone.trim() : payload.time_zone;
     this.time_to_travel = payload.time_to_travel;
     this.images = payload.images;
     this.travel_count = payload.travel_count;
@@ -330,14 +350,14 @@ class Destination {
  *         name:
  *           type: string
  *           description: Name of the destination
- *           example: "Paris"
+ *           example: "France"
  *         about:
  *           type: string
  *           description: Description of the destination
- *           example: "Capital city of France, known for its art, fashion, and culture."
+ *           example: "The capital city of France is Paris, known for its rich history, art, and culture. The Eiffel Tower is one of its most iconic landmarks."
  *         continent:
  *           type: string
- *           description: Continent where the destination is located
+ *           description: Continent where the destination is located, valid options are Africa, America, Antarctica, Asia, Europe, Oceania
  *           example: "Europe"
  *         map_link:
  *           type: string
@@ -359,11 +379,11 @@ class Destination {
  *         area:
  *           type: integer
  *           description: Area of the destination in square miles
- *           example: 248573
+ *           example: 551695
  *         population:
  *           type: integer
  *           description: Population of the destination in number of inhabitants
- *           example: 67000000
+ *           example: 65273511
  *         time_zone:
  *           type: string
  *           description: Time zone of the destination
@@ -372,8 +392,8 @@ class Destination {
  *           type: array
  *           items:
  *             type: string
- *           description: Best months to travel to the destination
- *           example: ["May", "June", "July", "August"]
+ *           description: Best months to travel to the destination, valid options are Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+ *           example: ["Jan", "Feb", "Mar"]
  *         image:
  *           type: string
  *           description: Image URL related to the destination
@@ -391,6 +411,10 @@ class DestinationUpsert {
 
   @IsString({ message: "The continent field must be a string" })
   @IsNotEmpty({ message: "The continent field is mandatory" })
+  @Matches(/^(Africa|America|Antarctica|Asia|Europe|Oceania)$/, {
+    message:
+      "The continent field must be a valid continent name with the first letter capitalized. Valid options are: Africa, America, Antarctica, Asia, Europe, Oceania.",
+  })
   continent: string;
 
   @IsString({ message: "The map_link field must be a string" })
@@ -414,10 +438,12 @@ class DestinationUpsert {
 
   @IsInt({ message: "The area field must be an integer" })
   @IsNotEmpty({ message: "The area field is mandatory" })
+  @Min(0, { message: "The area must be greater than or equal to zero" })
   area: number;
 
   @IsInt({ message: "The population field must be an integer" })
   @IsNotEmpty({ message: "The population field is mandatory" })
+  @Min(0, { message: "The population must be greater than or equal to zero" })
   population: number;
 
   @IsString({ message: "The time_zone field must be a string" })
@@ -425,11 +451,16 @@ class DestinationUpsert {
   time_zone: string;
 
   @IsArray({ message: "The time_to_travel field must be an array of strings" })
+  @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
   @IsString({
     each: true,
     message: "Each item in the time_to_travel array must be a string",
   })
-  @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
+  @Matches(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/, {
+    each: true,
+    message:
+      "Each item in the time_to_travel array must be a valid three-letter month abbreviation in English. Valid options are: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec.",
+  })
   time_to_travel: string[];
 
   @IsString({ message: "The image field must be a string" })
@@ -442,25 +473,17 @@ class DestinationUpsert {
     this.about =
       typeof payload.about === "string" ? payload.about.trim() : payload.about;
     this.continent =
-      typeof payload.continent === "string"
-        ? payload.continent.trim()
-        : payload.continent;
+      typeof payload.continent === "string" ? payload.continent.trim() : payload.continent;
     this.map_link =
-      typeof payload.map_link === "string"
-        ? payload.map_link.trim()
-        : payload.map_link;
+      typeof payload.map_link === "string" ? payload.map_link.trim() : payload.map_link;
     this.weather = new Weather(payload.weather);
     this.language = payload.language;
     this.currency =
-      typeof payload.currency === "string"
-        ? payload.currency.trim()
-        : payload.currency;
+      typeof payload.currency === "string" ? payload.currency.trim() : payload.currency;
     this.area = payload.area;
     this.population = payload.population;
     this.time_zone =
-      typeof payload.time_zone === "string"
-        ? payload.time_zone.trim()
-        : payload.time_zone;
+      typeof payload.time_zone === "string" ? payload.time_zone.trim() : payload.time_zone;
     this.time_to_travel = payload.time_to_travel;
     this.image =
       typeof payload.image === "string" ? payload.image.trim() : payload.image;
@@ -492,14 +515,14 @@ class DestinationUpsert {
  *         name:
  *           type: string
  *           description: Name of the destination
- *           example: "Paris"
+ *           example: "France"
  *         about:
  *           type: string
  *           description: Description of the destination
- *           example: "Capital city of France, known for its art, fashion, and culture."
+ *           example: "The capital city of France is Paris, known for its rich history, art, and culture. The Eiffel Tower is one of its most iconic landmarks."
  *         continent:
  *           type: string
- *           description: Continent where the destination is located
+ *           description: Continent where the destination is located, valid options are Africa, America, Antarctica, Asia, Europe, Oceania
  *           example: "Europe"
  *         map_link:
  *           type: string
@@ -521,11 +544,11 @@ class DestinationUpsert {
  *         area:
  *           type: integer
  *           description: Area of the destination in square miles
- *           example: 248573
+ *           example: 551695
  *         population:
  *           type: integer
  *           description: Population of the destination in number of inhabitants
- *           example: 67000000
+ *           example: 65273511
  *         time_zone:
  *           type: string
  *           description: Time zone of the destination
@@ -534,8 +557,8 @@ class DestinationUpsert {
  *           type: array
  *           items:
  *             type: string
- *           description: Best months to travel to the destination
- *           example: ["May", "June", "July", "August"]
+ *           description: Best months to travel to the destination, valid options are Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+ *           example: ["Jan", "Feb", "Mar"]
  *         image:
  *           type: string
  *           description: Image URL related to the destination
@@ -563,6 +586,7 @@ class DestinationExtended extends DestinationUpsert {
 
   @IsInt({ message: "The travel_count field must be an integer" })
   @IsNotEmpty({ message: "The travel_count field is mandatory" })
+  @Min(0, { message: "The travel_count must be greater than or equal to zero" })
   travel_count: number;
 
   constructor(payload: DestinationExtended) {

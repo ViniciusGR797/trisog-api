@@ -72,10 +72,10 @@ export class DestinationService {
           time_to_travel: newData.time_to_travel,
           images: newData.images,
           weather: {
-            jan_fev: newData.weather.jan_fev,
+            jan_feb: newData.weather.jan_feb,
             mar_apr: newData.weather.mar_apr,
             may_jun: newData.weather.may_jun,
-            jul_ago: newData.weather.jul_ago,
+            jul_aug: newData.weather.jul_aug,
             sep_oct: newData.weather.sep_oct,
             nov_dec: newData.weather.nov_dec
           },
@@ -112,10 +112,10 @@ export class DestinationService {
             time_to_travel: updatedData.time_to_travel,
             images: updatedData.images,
             weather: {
-              jan_fev: updatedData.weather.jan_fev,
+              jan_feb: updatedData.weather.jan_feb,
               mar_apr: updatedData.weather.mar_apr,
               may_jun: updatedData.weather.may_jun,
-              jul_ago: updatedData.weather.jul_ago,
+              jul_aug: updatedData.weather.jul_aug,
               sep_oct: updatedData.weather.sep_oct,
               nov_dec: updatedData.weather.nov_dec
             },

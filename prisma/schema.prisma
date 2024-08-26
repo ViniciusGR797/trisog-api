@@ -8,57 +8,72 @@ url      = env("DATABASE_URL")
 }
 
 model Destination {
-  id                         String       @id @default(auto()) @map("_id") @db.ObjectId
-  name                       String
-  about                      String
-  continent                  String
-  map_link                   String    
-  weather                    Json 
-  language                   String[]
-  currency                   String
-  area                       Int
-  population                 Int
-  time_zone                  String     
-  time_to_travel             String[]  
-  images                     String[]
-  travel_count               Int
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                        String
+  about                       String
+  continent                   String
+  map_link                    String    
+  weather                     Json 
+  language                    String[]
+  currency                    String
+  area                        Int
+  population                  Int
+  time_zone                   String     
+  time_to_travel              String[]  
+  images                      String[]
+  travel_count                Int
+}
+
+model Category {
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                        String
+}
+
+model Plan {
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  time                        String
+  title                       String
+  description                 String      
 }
 
 model Experience {
-  id                         String       @id @default(auto()) @map("_id") @db.ObjectId
-  name                       String
-  city                       String
-  image                      String
-  mapLink                    String
-  startDate                  DateTime
-  duration                   Float
-  isActivity                 Boolean
-  type                       String[]
-  maxPeople                  Int
-  minAge                     Int
-  overView                   String
-  include                    String[]
-  exclude                    String[]
-  plans                      String[]
-  price                      Json  
-  destination_id             String       
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                        String
+  city                        String
+  image                       String
+  video                       String
+  gallery                     String
+  map_link                    String
+  start_date                  DateTime
+  duration                    Float
+  is_activity                 Boolean
+  max_people                  Int
+  min_age                     Int
+  over_view                   String
+  include                     String[]
+  exclude                     String[]
+  rating                      Float
+  price                       Json  
+  categories_id               String[]
+  plans_id                    String[]
+  destination_id              String       
 }
 
 model Review {
-  id                         String       @id @default(auto()) @map("_id") @db.ObjectId
-  name                       String
-  email                      String
-  comment                    String
-  image                      String
-  score                      Json  
-  createdAt                  DateTime     @default(now())
-  experienseId               String      
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name                        String
+  email                       String
+  comment                     String
+  image                       String
+  score                       Json  
+  created_at                  DateTime     @default(now())
+  experiense_id               String      
 }
 
 model Favorite {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
   favorites                   String[]
-  userId                      String       @map("user_id")
+  user_id                     String       @map("user_id")
 }
 
 model Booking {
@@ -66,19 +81,11 @@ model Booking {
   date                        String
   duration                    Float
   ticket                      Json
-  userId                      String       @map("user_id")
-}
-
-model Plan {
-  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  time                        String
-  title                       String
-  description                 String
-  userId                      String      
+  user_id                     String       @map("user_id")
 }
 
 model Newsletter {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
   email                       String
-  userId                      String      
+  user_id                     String      
 }

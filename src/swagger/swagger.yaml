@@ -57,14 +57,48 @@ components:
       name: Authorization
       description: To authenticate, pass the JWT token in the format **Bearer _token_**.
   schemas:
+    CategoryList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Category'
+    Category:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the category
+          example: 60b8d295f1c0d2b0f1b2c3d8
+        name:
+          type: string
+          description: Descriptive name of the category
+          example: Adventure
+    CategoryUpsert:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Descriptive name of the category
+          example: Adventure
     DestinationList:
       type: array
       items:
         $ref: '#/components/schemas/Destination'
     Weather:
       type: object
+      required:
+        - jan_feb
+        - mar_apr
+        - may_jun
+        - jul_aug
+        - sep_oct
+        - nov_dec
       properties:
-        jan_fev:
+        jan_feb:
           type: object
           properties:
             min:
@@ -97,7 +131,7 @@ components:
               type: number
               description: Maximum temperature for May-June in degrees Celsius
               example: 22
-        jul_ago:
+        jul_aug:
           type: object
           properties:
             min:
@@ -155,14 +189,19 @@ components:
         name:
           type: string
           description: Name of the destination
-          example: Paris
+          example: France
         about:
           type: string
           description: Description of the destination
-          example: Capital city of France, known for its art, fashion, and culture.
+          example: >-
+            The capital city of France is Paris, known for its rich history,
+            art, and culture. The Eiffel Tower is one of its most iconic
+            landmarks.
         continent:
           type: string
-          description: Continent where the destination is located
+          description: >-
+            Continent where the destination is located, valid options are
+            Africa, America, Antarctica, Asia, Europe, Oceania
           example: Europe
         map_link:
           type: string
@@ -185,11 +224,11 @@ components:
         area:
           type: integer
           description: Area of the destination in square miles
-          example: 248573
+          example: 551695
         population:
           type: integer
           description: Population of the destination in number of inhabitants
-          example: 67000000
+          example: 65273511
         time_zone:
           type: string
           description: Time zone of the destination
@@ -198,12 +237,13 @@ components:
           type: array
           items:
             type: string
-          description: Best months to travel to the destination
+          description: >-
+            Best months to travel to the destination, valid options are Jan,
+            Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
           example:
-            - May
-            - June
-            - July
-            - August
+            - Jan
+            - Feb
+            - Mar
         images:
           type: array
           items:
@@ -238,14 +278,19 @@ components:
         name:
           type: string
           description: Name of the destination
-          example: Paris
+          example: France
         about:
           type: string
           description: Description of the destination
-          example: Capital city of France, known for its art, fashion, and culture.
+          example: >-
+            The capital city of France is Paris, known for its rich history,
+            art, and culture. The Eiffel Tower is one of its most iconic
+            landmarks.
         continent:
           type: string
-          description: Continent where the destination is located
+          description: >-
+            Continent where the destination is located, valid options are
+            Africa, America, Antarctica, Asia, Europe, Oceania
           example: Europe
         map_link:
           type: string
@@ -268,11 +313,11 @@ components:
         area:
           type: integer
           description: Area of the destination in square miles
-          example: 248573
+          example: 551695
         population:
           type: integer
           description: Population of the destination in number of inhabitants
-          example: 67000000
+          example: 65273511
         time_zone:
           type: string
           description: Time zone of the destination
@@ -281,12 +326,13 @@ components:
           type: array
           items:
             type: string
-          description: Best months to travel to the destination
+          description: >-
+            Best months to travel to the destination, valid options are Jan,
+            Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
           example:
-            - May
-            - June
-            - July
-            - August
+            - Jan
+            - Feb
+            - Mar
         image:
           type: string
           description: Image URL related to the destination
@@ -312,14 +358,19 @@ components:
         name:
           type: string
           description: Name of the destination
-          example: Paris
+          example: France
         about:
           type: string
           description: Description of the destination
-          example: Capital city of France, known for its art, fashion, and culture.
+          example: >-
+            The capital city of France is Paris, known for its rich history,
+            art, and culture. The Eiffel Tower is one of its most iconic
+            landmarks.
         continent:
           type: string
-          description: Continent where the destination is located
+          description: >-
+            Continent where the destination is located, valid options are
+            Africa, America, Antarctica, Asia, Europe, Oceania
           example: Europe
         map_link:
           type: string
@@ -342,11 +393,11 @@ components:
         area:
           type: integer
           description: Area of the destination in square miles
-          example: 248573
+          example: 551695
         population:
           type: integer
           description: Population of the destination in number of inhabitants
-          example: 67000000
+          example: 65273511
         time_zone:
           type: string
           description: Time zone of the destination
@@ -355,12 +406,13 @@ components:
           type: array
           items:
             type: string
-          description: Best months to travel to the destination
+          description: >-
+            Best months to travel to the destination, valid options are Jan,
+            Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
           example:
-            - May
-            - June
-            - July
-            - August
+            - Jan
+            - Feb
+            - Mar
         image:
           type: string
           description: Image URL related to the destination
@@ -379,131 +431,487 @@ components:
             The number of travels, tours, or activities available at the
             destination
           example: 5
+    ExperienceList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Experience'
     Price:
       type: object
+      required:
+        - jan
+        - feb
+        - mar
+        - apr
+        - may
+        - jun
+        - jul
+        - aug
+        - sep
+        - oct
+        - nov
+        - dec
       properties:
         jan:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in January
           example:
             - 100
+            - 105
+            - 110
+            - 115
+            - 120
+            - 130
+            - 125
+            - 135
+            - 140
             - 150
+            - 145
+            - 155
+            - 160
+            - 170
+            - 165
+            - 175
+            - 180
+            - 185
+            - 190
             - 200
-            - ...
+            - 195
+            - 205
+            - 210
+            - 220
+            - 215
+            - 225
+            - 230
+            - 235
+            - 240
+            - 250
+            - 255
         feb:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in February
           example:
             - 100
+            - 110
+            - 120
+            - 130
+            - 140
             - 150
+            - 160
+            - 170
+            - 180
+            - 190
             - 200
-            - ...
+            - 210
+            - 220
+            - 230
+            - 240
+            - 250
+            - 260
+            - 270
+            - 280
+            - 290
+            - 300
+            - 310
+            - 320
+            - 330
+            - 340
+            - 350
+            - 360
+            - 370
+            - 380
         mar:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in March
           example:
-            - 100
+            - 105
+            - 110
+            - 115
+            - 120
+            - 125
+            - 135
+            - 130
+            - 140
+            - 145
             - 150
+            - 155
+            - 160
+            - 165
+            - 170
+            - 180
+            - 175
+            - 185
+            - 190
+            - 195
             - 200
-            - ...
+            - 210
+            - 205
+            - 215
+            - 220
+            - 225
+            - 235
+            - 230
+            - 240
+            - 245
+            - 255
+            - 250
         apr:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in April
           example:
-            - 100
+            - 110
+            - 115
+            - 120
+            - 125
+            - 130
+            - 135
+            - 145
+            - 140
             - 150
+            - 155
+            - 160
+            - 165
+            - 175
+            - 170
+            - 180
+            - 185
+            - 190
+            - 195
             - 200
-            - ...
+            - 210
+            - 205
+            - 215
+            - 220
+            - 225
+            - 235
+            - 230
+            - 240
+            - 245
+            - 250
+            - 260
         may:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in May
           example:
-            - 100
+            - 115
+            - 120
+            - 125
+            - 130
+            - 140
+            - 135
+            - 145
             - 150
+            - 155
+            - 160
+            - 170
+            - 165
+            - 175
+            - 180
+            - 185
+            - 195
+            - 190
             - 200
-            - ...
+            - 205
+            - 215
+            - 210
+            - 220
+            - 225
+            - 235
+            - 230
+            - 240
+            - 245
+            - 250
+            - 260
+            - 265
+            - 275
         jun:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in June
           example:
-            - 100
+            - 120
+            - 125
+            - 130
+            - 140
+            - 135
+            - 145
             - 150
+            - 155
+            - 160
+            - 170
+            - 165
+            - 175
+            - 180
+            - 185
+            - 195
+            - 190
             - 200
-            - ...
+            - 210
+            - 205
+            - 215
+            - 225
+            - 220
+            - 230
+            - 235
+            - 245
+            - 240
+            - 250
+            - 255
+            - 265
+            - 260
         jul:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in July
           example:
-            - 100
+            - 125
+            - 130
+            - 135
+            - 140
+            - 145
             - 150
+            - 160
+            - 155
+            - 165
+            - 170
+            - 175
+            - 180
+            - 190
+            - 185
+            - 195
             - 200
-            - ...
+            - 205
+            - 215
+            - 210
+            - 220
+            - 225
+            - 235
+            - 230
+            - 240
+            - 245
+            - 255
+            - 250
+            - 260
+            - 265
+            - 275
+            - 270
         aug:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in August
           example:
-            - 100
+            - 130
+            - 135
+            - 140
+            - 145
             - 150
+            - 160
+            - 155
+            - 165
+            - 170
+            - 175
+            - 185
+            - 180
+            - 190
+            - 195
             - 200
-            - ...
+            - 210
+            - 205
+            - 215
+            - 220
+            - 225
+            - 235
+            - 230
+            - 240
+            - 245
+            - 255
+            - 250
+            - 260
+            - 265
+            - 275
+            - 280
+            - 290
         sep:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in September
           example:
-            - 100
+            - 135
+            - 140
+            - 145
             - 150
+            - 160
+            - 155
+            - 165
+            - 170
+            - 175
+            - 185
+            - 180
+            - 190
+            - 195
             - 200
-            - ...
+            - 210
+            - 205
+            - 215
+            - 220
+            - 230
+            - 225
+            - 235
+            - 240
+            - 245
+            - 255
+            - 250
+            - 260
+            - 265
+            - 275
+            - 280
+            - 285
         oct:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in October
           example:
-            - 100
+            - 140
+            - 145
             - 150
+            - 160
+            - 155
+            - 165
+            - 170
+            - 175
+            - 185
+            - 180
+            - 190
+            - 195
             - 200
-            - ...
+            - 210
+            - 205
+            - 215
+            - 220
+            - 230
+            - 225
+            - 235
+            - 240
+            - 250
+            - 245
+            - 255
+            - 260
+            - 270
+            - 265
+            - 275
+            - 280
+            - 290
+            - 285
         nov:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in November
           example:
-            - 100
+            - 145
             - 150
+            - 160
+            - 155
+            - 165
+            - 170
+            - 175
+            - 185
+            - 180
+            - 190
+            - 195
             - 200
-            - ...
+            - 210
+            - 205
+            - 215
+            - 220
+            - 230
+            - 225
+            - 235
+            - 240
+            - 250
+            - 245
+            - 255
+            - 260
+            - 270
+            - 265
+            - 275
+            - 280
+            - 285
+            - 295
         dec:
           type: array
           items:
-            type: integer
+            type: number
           description: Array of prices for each day in December
           example:
-            - 100
             - 150
+            - 160
+            - 155
+            - 165
+            - 170
+            - 180
+            - 175
+            - 185
+            - 190
             - 200
-            - ...
+            - 195
+            - 205
+            - 210
+            - 220
+            - 215
+            - 225
+            - 230
+            - 240
+            - 235
+            - 245
+            - 250
+            - 260
+            - 255
+            - 265
+            - 270
+            - 280
+            - 275
+            - 285
+            - 290
+            - 300
+            - 295
     Experience:
       type: object
+      required:
+        - id
+        - name
+        - city
+        - image
+        - video
+        - gallery
+        - map_link
+        - start_date
+        - duration
+        - is_activity
+        - max_people
+        - min_age
+        - over_view
+        - include
+        - exclude
+        - rating
+        - price
+        - categories
+        - plans
+        - destination_id
       properties:
         id:
           type: string
@@ -517,93 +925,244 @@ components:
           type: string
           description: City where the experience takes place
           example: New York
-        isActivity:
-          type: boolean
-          description: Indicates if the experience is an activity
-          example: true
         image:
           type: string
           description: URL to an image representing the experience
           example: https://example.com/image.jpg
+        video:
+          type: string
+          description: URL to a video related to the experience
+          example: https://example.com/video.mp4
+        gallery:
+          type: string
+          description: URL to a gallery related to the experience
+          example: https://example.com/gallery
+        map_link:
+          type: string
+          description: URL to the map location of the experience
+          example: https://example.com/map
+        start_date:
+          type: string
+          format: date-time
+          description: Start date of the experience in ISO 8601 format
+          example: '2024-03-24T04:42:34.208Z'
         duration:
           type: string
           description: Duration of the experience
-          example: Full Day
+          example: 24
+        is_activity:
+          type: boolean
+          description: Indicates if the experience is an activity
+          example: false
+        max_people:
+          type: integer
+          description: Maximum number of people allowed for the experience
+          example: 30
+        min_age:
+          type: integer
+          description: Minimum age required for participation in the experience
+          example: 18
+        over_view:
+          type: string
+          description: Overview of the experience
+          example: A comprehensive tour of the city with stops at major landmarks.
+        include:
+          type: array
+          items:
+            type: string
+          description: List of items included in the experience
+          example:
+            - Lunch
+            - Guide
+        exclude:
+          type: array
+          items:
+            type: string
+          description: List of items excluded from the experience
+          example:
+            - Transportation
+        rating:
+          type: number
+          description: Average rating score for the experience
+          example: 4.5
         price:
-          type: object
           $ref: '#/components/schemas/Price'
-        destinationId:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
+        plans:
+          type: array
+          items:
+            $ref: '#/components/schemas/Plan'
+        destination_id:
           type: string
           description: ID of the destination associated with the experience
           example: 63f47adf2d7e6b04e4f978c7
-    ExperienceInsert:
+    ExperienceUpsert:
+      type: >-
+        object - name - city - image - video - gallery - map_link - start_date -
+        duration - is_activity - max_people - min_age - over_view - include -
+        exclude - rating - price - categories_id - plans_id - destination_id
+      properties:
+        name:
+          type: string
+          description: Name of the experience
+          example: City Tour
+        city:
+          type: string
+          description: City where the experience takes place
+          example: New York
+        image:
+          type: string
+          description: URL to an image representing the experience
+          example: https://example.com/image.jpg
+        video:
+          type: string
+          description: URL to a video related to the experience
+          example: https://example.com/video.mp4
+        gallery:
+          type: string
+          description: URL to a gallery related to the experience
+          example: https://example.com/gallery
+        map_link:
+          type: string
+          description: URL to the map location of the experience
+          example: https://example.com/map
+        start_date:
+          type: string
+          format: date-time
+          description: Start date of the experience in ISO 8601 format
+          example: '2024-03-24T04:42:34.208Z'
+        duration:
+          type: string
+          description: Duration of the experience
+          example: 24
+        is_activity:
+          type: boolean
+          description: Indicates if the experience is an activity
+          example: false
+        max_people:
+          type: integer
+          description: Maximum number of people allowed for the experience
+          example: 30
+        min_age:
+          type: integer
+          description: Minimum age required for participation in the experience
+          example: 18
+        over_view:
+          type: string
+          description: Overview of the experience
+          example: A comprehensive tour of the city with stops at major landmarks.
+        include:
+          type: array
+          items:
+            type: string
+          description: List of items included in the experience
+          example:
+            - Lunch
+            - Guide
+        exclude:
+          type: array
+          items:
+            type: string
+          description: List of items excluded from the experience
+          example:
+            - Transportation
+        rating:
+          type: number
+          description: Average rating score for the experience
+          example: 4.5
+        price:
+          $ref: '#/components/schemas/Price'
+        categories_id:
+          type: array
+          items:
+            type: string
+            description: List of category IDs associated with the experience
+          description: List of category IDs associated with the experience
+          example:
+            - 60b8d295f1c0d2b0f1b2c3d4
+            - 60b8d295f1c0d2b0f1b2c3d5
+        plans_id:
+          type: array
+          items:
+            type: string
+          description: List of plan IDs associated with the experience
+          example:
+            - 60b8d295f1c0d2b0f1b2c3d6
+            - 60b8d295f1c0d2b0f1b2c3d7
+        destination_id:
+          type: string
+          description: ID of the destination associated with the experience
+          example: 63f47adf2d7e6b04e4f978c7
+    PlanList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Plan'
+    Plan:
       type: object
       required:
-        - name
-        - city
-        - isActivity
-        - image
-        - duration
-        - price
-        - destinationId
+        - id
+        - time
+        - title
+        - description
+        - topics
       properties:
-        name:
+        id:
           type: string
-          description: Name of the experience
+          description: Unique identifier for the plan
+          example: 60b8d295f1c0d2b0f1b2c3d6
+        time:
+          type: string
+          description: Time associated with the plan
+          example: '2024-08-26T14:30:00Z'
+        title:
+          type: string
+          description: Title of the plan
           example: City Tour
-        city:
+        description:
           type: string
-          description: City where the experience takes place
-          example: New York
-        isActivity:
-          type: boolean
-          description: Indicates if the experience is an activity
-          example: true
-        image:
-          type: string
-          description: URL to an image representing the experience
-          example: https://example.com/image.jpg
-        duration:
-          type: string
-          description: Duration of the experience
-          example: Full Day
-        price:
-          type: object
-          $ref: '#/components/schemas/Price'
-        destinationId:
-          type: string
-          description: ID of the destination associated with the experience
-          example: 63f47adf2d7e6b04e4f978c7
-    ExperienceUpdate:
+          description: Description of the plan
+          example: A detailed tour around the city's historical landmarks.
+        topics:
+          type: array
+          items:
+            type: string
+          description: List of topics covered in the plan
+          example:
+            - History
+            - Architecture
+            - Culture
+    PlanUpsert:
       type: object
+      required:
+        - time
+        - title
+        - description
+        - topics
       properties:
-        name:
+        time:
           type: string
-          description: Name of the experience
+          description: Time associated with the plan
+          example: '2024-08-26T14:30:00Z'
+        title:
+          type: string
+          description: Title of the plan
           example: City Tour
-        city:
+        description:
           type: string
-          description: City where the experience takes place
-          example: New York
-        isActivity:
-          type: boolean
-          description: Indicates if the experience is an activity
-          example: true
-        image:
-          type: string
-          description: URL to an image representing the experience
-          example: https://example.com/image.jpg
-        duration:
-          type: string
-          description: Duration of the experience
-          example: Full Day
-        price:
-          type: object
-          $ref: '#/components/schemas/Price'
-        destinationId:
-          type: string
-          description: ID of the destination associated with the experience
-          example: 63f47adf2d7e6b04e4f978c7
+          description: Description of the plan
+          example: A detailed tour around the city's historical landmarks.
+        topics:
+          type: array
+          items:
+            type: string
+          description: List of topics covered in the plan
+          example:
+            - History
+            - Architecture
+            - Culture
     DeleteSuccess:
       type: object
       properties:
