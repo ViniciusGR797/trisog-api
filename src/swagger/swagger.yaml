@@ -337,7 +337,7 @@ components:
           type: string
           description: Image URL related to the destination
           example: https://example.com/image1.jpg
-    DestinationExtended:
+    DestinationUpsertExtended:
       type: object
       required:
         - name
@@ -435,460 +435,22 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Experience'
-    Price:
+    CustomPrice:
       type: object
       required:
-        - jan
-        - feb
-        - mar
-        - apr
-        - may
-        - jun
-        - jul
-        - aug
-        - sep
-        - oct
-        - nov
-        - dec
+        - date
+        - price
       properties:
-        jan:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in January
-          example:
-            - 100
-            - 105
-            - 110
-            - 115
-            - 120
-            - 130
-            - 125
-            - 135
-            - 140
-            - 150
-            - 145
-            - 155
-            - 160
-            - 170
-            - 165
-            - 175
-            - 180
-            - 185
-            - 190
-            - 200
-            - 195
-            - 205
-            - 210
-            - 220
-            - 215
-            - 225
-            - 230
-            - 235
-            - 240
-            - 250
-            - 255
-        feb:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in February
-          example:
-            - 100
-            - 110
-            - 120
-            - 130
-            - 140
-            - 150
-            - 160
-            - 170
-            - 180
-            - 190
-            - 200
-            - 210
-            - 220
-            - 230
-            - 240
-            - 250
-            - 260
-            - 270
-            - 280
-            - 290
-            - 300
-            - 310
-            - 320
-            - 330
-            - 340
-            - 350
-            - 360
-            - 370
-            - 380
-        mar:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in March
-          example:
-            - 105
-            - 110
-            - 115
-            - 120
-            - 125
-            - 135
-            - 130
-            - 140
-            - 145
-            - 150
-            - 155
-            - 160
-            - 165
-            - 170
-            - 180
-            - 175
-            - 185
-            - 190
-            - 195
-            - 200
-            - 210
-            - 205
-            - 215
-            - 220
-            - 225
-            - 235
-            - 230
-            - 240
-            - 245
-            - 255
-            - 250
-        apr:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in April
-          example:
-            - 110
-            - 115
-            - 120
-            - 125
-            - 130
-            - 135
-            - 145
-            - 140
-            - 150
-            - 155
-            - 160
-            - 165
-            - 175
-            - 170
-            - 180
-            - 185
-            - 190
-            - 195
-            - 200
-            - 210
-            - 205
-            - 215
-            - 220
-            - 225
-            - 235
-            - 230
-            - 240
-            - 245
-            - 250
-            - 260
-        may:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in May
-          example:
-            - 115
-            - 120
-            - 125
-            - 130
-            - 140
-            - 135
-            - 145
-            - 150
-            - 155
-            - 160
-            - 170
-            - 165
-            - 175
-            - 180
-            - 185
-            - 195
-            - 190
-            - 200
-            - 205
-            - 215
-            - 210
-            - 220
-            - 225
-            - 235
-            - 230
-            - 240
-            - 245
-            - 250
-            - 260
-            - 265
-            - 275
-        jun:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in June
-          example:
-            - 120
-            - 125
-            - 130
-            - 140
-            - 135
-            - 145
-            - 150
-            - 155
-            - 160
-            - 170
-            - 165
-            - 175
-            - 180
-            - 185
-            - 195
-            - 190
-            - 200
-            - 210
-            - 205
-            - 215
-            - 225
-            - 220
-            - 230
-            - 235
-            - 245
-            - 240
-            - 250
-            - 255
-            - 265
-            - 260
-        jul:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in July
-          example:
-            - 125
-            - 130
-            - 135
-            - 140
-            - 145
-            - 150
-            - 160
-            - 155
-            - 165
-            - 170
-            - 175
-            - 180
-            - 190
-            - 185
-            - 195
-            - 200
-            - 205
-            - 215
-            - 210
-            - 220
-            - 225
-            - 235
-            - 230
-            - 240
-            - 245
-            - 255
-            - 250
-            - 260
-            - 265
-            - 275
-            - 270
-        aug:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in August
-          example:
-            - 130
-            - 135
-            - 140
-            - 145
-            - 150
-            - 160
-            - 155
-            - 165
-            - 170
-            - 175
-            - 185
-            - 180
-            - 190
-            - 195
-            - 200
-            - 210
-            - 205
-            - 215
-            - 220
-            - 225
-            - 235
-            - 230
-            - 240
-            - 245
-            - 255
-            - 250
-            - 260
-            - 265
-            - 275
-            - 280
-            - 290
-        sep:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in September
-          example:
-            - 135
-            - 140
-            - 145
-            - 150
-            - 160
-            - 155
-            - 165
-            - 170
-            - 175
-            - 185
-            - 180
-            - 190
-            - 195
-            - 200
-            - 210
-            - 205
-            - 215
-            - 220
-            - 230
-            - 225
-            - 235
-            - 240
-            - 245
-            - 255
-            - 250
-            - 260
-            - 265
-            - 275
-            - 280
-            - 285
-        oct:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in October
-          example:
-            - 140
-            - 145
-            - 150
-            - 160
-            - 155
-            - 165
-            - 170
-            - 175
-            - 185
-            - 180
-            - 190
-            - 195
-            - 200
-            - 210
-            - 205
-            - 215
-            - 220
-            - 230
-            - 225
-            - 235
-            - 240
-            - 250
-            - 245
-            - 255
-            - 260
-            - 270
-            - 265
-            - 275
-            - 280
-            - 290
-            - 285
-        nov:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in November
-          example:
-            - 145
-            - 150
-            - 160
-            - 155
-            - 165
-            - 170
-            - 175
-            - 185
-            - 180
-            - 190
-            - 195
-            - 200
-            - 210
-            - 205
-            - 215
-            - 220
-            - 230
-            - 225
-            - 235
-            - 240
-            - 250
-            - 245
-            - 255
-            - 260
-            - 270
-            - 265
-            - 275
-            - 280
-            - 285
-            - 295
-        dec:
-          type: array
-          items:
-            type: number
-          description: Array of prices for each day in December
-          example:
-            - 150
-            - 160
-            - 155
-            - 165
-            - 170
-            - 180
-            - 175
-            - 185
-            - 190
-            - 200
-            - 195
-            - 205
-            - 210
-            - 220
-            - 215
-            - 225
-            - 230
-            - 240
-            - 235
-            - 245
-            - 250
-            - 260
-            - 255
-            - 265
-            - 270
-            - 280
-            - 275
-            - 285
-            - 290
-            - 300
-            - 295
+        date:
+          type: string
+          format: date
+          description: The date for which the price is specified.
+          example: '2024-08-01'
+        price:
+          type: number
+          format: float
+          description: The price for the specified date.
+          example: 120
     Experience:
       type: object
       required:
@@ -900,6 +462,7 @@ components:
         - gallery
         - map_link
         - start_date
+        - end_date
         - duration
         - is_activity
         - max_people
@@ -908,7 +471,7 @@ components:
         - include
         - exclude
         - rating
-        - price
+        - default_price
         - categories
         - plans
         - destination_id
@@ -944,10 +507,15 @@ components:
         start_date:
           type: string
           format: date-time
-          description: Start date of the experience in ISO 8601 format
-          example: '2024-03-24T04:42:34.208Z'
-        duration:
+          description: Start date of the availability period YYYY-MM-DD
+          example: '2024-03-24'
+        end_date:
           type: string
+          format: date-time
+          description: End date of the availability period YYYY-MM-DD
+          example: '2024-03-24'
+        duration:
+          type: number
           description: Duration of the experience
           example: 24
         is_activity:
@@ -985,8 +553,15 @@ components:
           type: number
           description: Average rating score for the experience
           example: 4.5
-        price:
-          $ref: '#/components/schemas/Price'
+        default_price:
+          type: number
+          description: The default price applied when no custom price is specified
+          example: 4.5
+        custom_prices:
+          type: array
+          description: An array of custom prices for specific dates
+          items:
+            $ref: '#/components/schemas/CustomPrice'
         categories:
           type: array
           items:
@@ -999,11 +574,142 @@ components:
           type: string
           description: ID of the destination associated with the experience
           example: 63f47adf2d7e6b04e4f978c7
-    ExperienceUpsert:
+    ExperienceRaw:
       type: >-
-        object - name - city - image - video - gallery - map_link - start_date -
-        duration - is_activity - max_people - min_age - over_view - include -
-        exclude - rating - price - categories_id - plans_id - destination_id
+        object - id - name - city - image - video - gallery - map_link -
+        start_date - end_date - duration - is_activity - max_people - min_age -
+        over_view - include - exclude - rating - default_price - custom_prices -
+        categories_id - plans_id - destination_id
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the experience
+          example: 63f47adf2d7e6b04e4f978c7
+        name:
+          type: string
+          description: Name of the experience
+          example: City Tour
+        city:
+          type: string
+          description: City where the experience takes place
+          example: New York
+        image:
+          type: string
+          description: URL to an image representing the experience
+          example: https://example.com/image.jpg
+        video:
+          type: string
+          description: URL to a video related to the experience
+          example: https://example.com/video.mp4
+        gallery:
+          type: string
+          description: URL to a gallery related to the experience
+          example: https://example.com/gallery
+        map_link:
+          type: string
+          description: URL to the map location of the experience
+          example: https://example.com/map
+        start_date:
+          type: string
+          format: date-time
+          description: Start date of the availability period YYYY-MM-DD
+          example: '2024-03-24'
+        end_date:
+          type: string
+          format: date-time
+          description: End date of the availability period YYYY-MM-DD
+          example: '2024-03-24'
+        duration:
+          type: number
+          description: Duration of the experience
+          example: 24
+        is_activity:
+          type: boolean
+          description: Indicates if the experience is an activity
+          example: false
+        max_people:
+          type: integer
+          description: Maximum number of people allowed for the experience
+          example: 30
+        min_age:
+          type: integer
+          description: Minimum age required for participation in the experience
+          example: 18
+        over_view:
+          type: string
+          description: Overview of the experience
+          example: A comprehensive tour of the city with stops at major landmarks.
+        include:
+          type: array
+          items:
+            type: string
+          description: List of items included in the experience
+          example:
+            - Lunch
+            - Guide
+        exclude:
+          type: array
+          items:
+            type: string
+          description: List of items excluded from the experience
+          example:
+            - Transportation
+        rating:
+          type: number
+          description: Average rating score for the experience
+          example: 4.5
+        default_price:
+          type: number
+          description: The default price applied when no custom price is specified
+          example: 4.5
+        custom_prices:
+          type: array
+          description: An array of custom prices for specific dates
+          items:
+            $ref: '#/components/schemas/CustomPrice'
+        categories_id:
+          type: array
+          items:
+            type: string
+            description: List of category IDs associated with the experience
+          description: List of category IDs associated with the experience
+          example:
+            - 60b8d295f1c0d2b0f1b2c3d4
+            - 60b8d295f1c0d2b0f1b2c3d5
+        plans_id:
+          type: array
+          items:
+            type: string
+          description: List of plan IDs associated with the experience
+          example:
+            - 60b8d295f1c0d2b0f1b2c3d6
+            - 60b8d295f1c0d2b0f1b2c3d7
+        destination_id:
+          type: string
+          description: ID of the destination associated with the experience
+          example: 63f47adf2d7e6b04e4f978c7
+    ExperienceUpsert:
+      type: object
+      required:
+        - name
+        - city
+        - image
+        - video
+        - gallery
+        - map_link
+        - start_date
+        - end_date
+        - duration
+        - is_activity
+        - max_people
+        - min_age
+        - over_view
+        - include
+        - exclude
+        - default_price
+        - categories_id
+        - plans_id
+        - destination_id
       properties:
         name:
           type: string
@@ -1032,10 +738,121 @@ components:
         start_date:
           type: string
           format: date-time
-          description: Start date of the experience in ISO 8601 format
-          example: '2024-03-24T04:42:34.208Z'
-        duration:
+          description: Start date of the availability period YYYY-MM-DD
+          example: '2024-03-24'
+        end_date:
           type: string
+          format: date-time
+          description: End date of the availability period YYYY-MM-DD
+          example: '2024-03-24'
+        duration:
+          type: number
+          description: Duration of the experience
+          example: 24
+        is_activity:
+          type: boolean
+          description: Indicates if the experience is an activity
+          example: false
+        max_people:
+          type: integer
+          description: Maximum number of people allowed for the experience
+          example: 30
+        min_age:
+          type: integer
+          description: Minimum age required for participation in the experience
+          example: 18
+        over_view:
+          type: string
+          description: Overview of the experience
+          example: A comprehensive tour of the city with stops at major landmarks.
+        include:
+          type: array
+          items:
+            type: string
+          description: List of items included in the experience
+          example:
+            - Lunch
+            - Guide
+        exclude:
+          type: array
+          items:
+            type: string
+          description: List of items excluded from the experience
+          example:
+            - Transportation
+        default_price:
+          type: number
+          description: The default price applied when no custom price is specified
+          example: 4.5
+        custom_prices:
+          type: array
+          description: An array of custom prices for specific dates
+          items:
+            $ref: '#/components/schemas/CustomPrice'
+        categories_id:
+          type: array
+          items:
+            type: string
+            description: List of category IDs associated with the experience
+          description: List of category IDs associated with the experience
+          example:
+            - 60b8d295f1c0d2b0f1b2c3d4
+            - 60b8d295f1c0d2b0f1b2c3d5
+        plans_id:
+          type: array
+          items:
+            type: string
+          description: List of plan IDs associated with the experience
+          example:
+            - 60b8d295f1c0d2b0f1b2c3d6
+            - 60b8d295f1c0d2b0f1b2c3d7
+        destination_id:
+          type: string
+          description: ID of the destination associated with the experience
+          example: 63f47adf2d7e6b04e4f978c7
+    ExperienceUpsertExtended:
+      type: >-
+        object - name - city - image - video - gallery - map_link - start_date -
+        end_date - duration - is_activity - max_people - min_age - over_view -
+        include - exclude - default_price - custom_prices - categories_id -
+        plans_id - destination_id
+      properties:
+        name:
+          type: string
+          description: Name of the experience
+          example: City Tour
+        city:
+          type: string
+          description: City where the experience takes place
+          example: New York
+        image:
+          type: string
+          description: URL to an image representing the experience
+          example: https://example.com/image.jpg
+        video:
+          type: string
+          description: URL to a video related to the experience
+          example: https://example.com/video.mp4
+        gallery:
+          type: string
+          description: URL to a gallery related to the experience
+          example: https://example.com/gallery
+        map_link:
+          type: string
+          description: URL to the map location of the experience
+          example: https://example.com/map
+        start_date:
+          type: string
+          format: date-time
+          description: Start date of the availability period YYYY-MM-DD
+          example: '2024-03-24'
+        end_date:
+          type: string
+          format: date-time
+          description: End date of the availability period YYYY-MM-DD
+          example: '2024-03-24'
+        duration:
+          type: number
           description: Duration of the experience
           example: 24
         is_activity:
@@ -1073,8 +890,15 @@ components:
           type: number
           description: Average rating score for the experience
           example: 4.5
-        price:
-          $ref: '#/components/schemas/Price'
+        default_price:
+          type: number
+          description: The default price applied when no custom price is specified
+          example: 4.5
+        custom_prices:
+          type: array
+          description: An array of custom prices for specific dates
+          items:
+            $ref: '#/components/schemas/CustomPrice'
         categories_id:
           type: array
           items:
@@ -1622,6 +1446,212 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /experiences:
+    get:
+      summary: View all experiences
+      description: Returns information about all experiences
+      tags:
+        - Experience
+      operationId: get_all_experiences
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExperienceList'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    post:
+      summary: Create a new experience
+      description: Creates a new experience based on the data provided in the request body.
+      tags:
+        - Experience
+      operationId: create_experience
+      security:
+        - jwt: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExperienceUpsert'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /experiences/{experience_id}:
+    parameters:
+      - name: experience_id
+        in: path
+        required: true
+        description: ID of the experience to be deleted
+        schema:
+          type: string
+    get:
+      summary: View experience by id
+      description: Returns experience information by id
+      tags:
+        - Experience
+      operationId: get_experience_by_id
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    put:
+      summary: Update experience
+      description: Updates the information of the desired experience
+      tags:
+        - Experience
+      operationId: update_experience
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExperienceUpsert'
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Experience'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      summary: Remove experience
+      description: Deletes a experience based on the ID provided
+      tags:
+        - Experience
+      operationId: delete_experience
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSuccess'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
   /plans:
     get:
       summary: View all plans
@@ -1833,5 +1863,7 @@ tags:
     description: Routes for category manipulation
   - name: Destination
     description: Routes for destination manipulation
+  - name: Experience
+    description: Routes for experience manipulation
   - name: Plan
     description: Routes for plan manipulation

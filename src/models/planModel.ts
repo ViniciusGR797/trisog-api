@@ -64,11 +64,11 @@ class Plan {
   @IsNotEmpty({ message: "The description field is mandatory" })
   description: string;
 
-  @IsArray({ message: "The topics field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the topics array must be a string",
   })
+  @IsArray({ message: "The topics field must be an array of strings" })
   @IsNotEmpty({ message: "The topics field is mandatory" })
   topics: string[];
 
@@ -131,11 +131,11 @@ class PlanUpsert {
   @IsNotEmpty({ message: "The description field is mandatory" })
   description: string;
 
-  @IsArray({ message: "The topics field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the topics array must be a string",
   })
+  @IsArray({ message: "The topics field must be an array of strings" })
   @IsNotEmpty({ message: "The topics field is mandatory" })
   topics: string[];
 

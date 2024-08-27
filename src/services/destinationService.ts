@@ -1,4 +1,4 @@
-import { Destination, DestinationExtended } from "../models/destinationModel";
+import { Destination, DestinationUpsertExtended } from "../models/destinationModel";
 import prismaClient from "../utils/database";
 
 export class DestinationService {
@@ -55,7 +55,7 @@ export class DestinationService {
   }
 
   static async createDestination(
-    newData: DestinationExtended
+    newData: DestinationUpsertExtended
   ): Promise<{ createdDestinationId: string | null; error: string | null }> {
     try {
       const result = await prismaClient.destination.create({
@@ -92,7 +92,7 @@ export class DestinationService {
 
     static async updateDestination(
       destinationId: string,
-      updatedData: DestinationExtended
+      updatedData: DestinationUpsertExtended
     ): Promise<{ updatedDestination: Destination | null; error: string | null }> {
       try {
         const result = await prismaClient.destination.update({

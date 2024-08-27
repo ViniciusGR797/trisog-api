@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {
-  DestinationExtended,
+  DestinationUpsertExtended,
   DestinationUpsert,
 } from "../models/destinationModel";
 import { isValidFirebaseUID, isValidObjectId } from "../utils/validate";
@@ -58,7 +58,7 @@ export class DestinationController {
       return res.status(400).json({ msg: errorMessage });
     }
 
-    const newPayload = new DestinationExtended({
+    const newPayload = new DestinationUpsertExtended({
       ...payload,
       images: [payload.image] || [],
       travel_count: 0,
@@ -118,7 +118,7 @@ export class DestinationController {
       return res.status(400).json({ msg: errorMessage });
     }
 
-    const newPayload = new DestinationExtended({
+    const newPayload = new DestinationUpsertExtended({
       ...payload,
       images: [payload.image, ...destination.images.slice(1)],
       travel_count: destination.travel_count,

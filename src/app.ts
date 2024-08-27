@@ -5,7 +5,7 @@ import { swaggerSpec, swaggerSpecJson, swaggerStyle } from './swagger/swaggerCon
 // import bookingRoutes from './routes/bookingRoute';
 import categoryRoutes from './routes/categoryRoute';
 import destinationRoutes from './routes/destinationRoute';
-// import experienceRoutes from './routes/experienceRoute';
+import experienceRoutes from './routes/experienceRoute';
 // import favoriteRoutes from './routes/favoriteRoute';
 import planRoutes from './routes/planRoute';
 // import reviewRoutes from './routes/reviewRoute';
@@ -21,7 +21,7 @@ app.use(cors({
 // app.use('/bookings', bookingRoutes);
 app.use('/categories', categoryRoutes);
 app.use('/destinations', destinationRoutes);
-// app.use('/experiences', experienceRoutes);
+app.use('/experiences', experienceRoutes);
 // app.use('/favorites', favoriteRoutes);
 app.use('/plans', planRoutes);
 // app.use('/reviews', reviewRoutes);

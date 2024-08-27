@@ -234,12 +234,12 @@ class Destination {
   @IsNotEmpty({ message: "The about field is mandatory" })
   about: string;
 
-  @IsString({ message: "The continent field must be a string" })
-  @IsNotEmpty({ message: "The continent field is mandatory" })
   @Matches(/^(Africa|America|Antarctica|Asia|Europe|Oceania)$/, {
     message:
       "The continent field must be a valid continent name with the first letter capitalized. Valid options are: Africa, America, Antarctica, Asia, Europe, Oceania.",
   })
+  @IsString({ message: "The continent field must be a string" })
+  @IsNotEmpty({ message: "The continent field is mandatory" })
   continent: string;
 
   @IsString({ message: "The map_link field must be a string" })
@@ -249,11 +249,11 @@ class Destination {
   @IsNotEmpty({ message: "The weather field is mandatory" })
   weather: JsonValue;
 
-  @IsArray({ message: "The language field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the language array must be a string",
   })
+  @IsArray({ message: "The language field must be an array of strings" })
   @IsNotEmpty({ message: "The language field is mandatory" })
   language: string[];
 
@@ -261,44 +261,44 @@ class Destination {
   @IsNotEmpty({ message: "The currency field is mandatory" })
   currency: string;
 
+  @Min(0, { message: "The area must be greater than or equal to zero" })
   @IsInt({ message: "The area field must be an integer" })
   @IsNotEmpty({ message: "The area field is mandatory" })
-  @Min(0, { message: "The area must be greater than or equal to zero" })
   area: number;
 
+  @Min(0, { message: "The population must be greater than or equal to zero" })
   @IsInt({ message: "The population field must be an integer" })
   @IsNotEmpty({ message: "The population field is mandatory" })
-  @Min(0, { message: "The population must be greater than or equal to zero" })
   population: number;
 
   @IsString({ message: "The time_zone field must be a string" })
   @IsNotEmpty({ message: "The time_zone field is mandatory" })
   time_zone: string;
 
-  @IsArray({ message: "The time_to_travel field must be an array of strings" })
-  @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
-  @IsString({
-    each: true,
-    message: "Each item in the time_to_travel array must be a string",
-  })
   @Matches(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/, {
     each: true,
     message:
       "Each item in the time_to_travel array must be a valid three-letter month abbreviation in English. Valid options are: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec.",
   })
+  @IsString({
+    each: true,
+    message: "Each item in the time_to_travel array must be a string",
+  })
+  @IsArray({ message: "The time_to_travel field must be an array of strings" })
+  @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
   time_to_travel: string[];
 
-  @IsArray({ message: "The images field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the images array must be a string",
   })
+  @IsArray({ message: "The images field must be an array of strings" })
   @IsNotEmpty({ message: "The images field is mandatory" })
   images: string[];
 
+  @Min(0, { message: "The travel_count must be greater than or equal to zero" })
   @IsInt({ message: "The travel_count field must be an integer" })
   @IsNotEmpty({ message: "The travel_count field is mandatory" })
-  @Min(0, { message: "The travel_count must be greater than or equal to zero" })
   travel_count: number;
 
   constructor(payload: Destination) {
@@ -409,12 +409,12 @@ class DestinationUpsert {
   @IsNotEmpty({ message: "The about field is mandatory" })
   about: string;
 
-  @IsString({ message: "The continent field must be a string" })
-  @IsNotEmpty({ message: "The continent field is mandatory" })
   @Matches(/^(Africa|America|Antarctica|Asia|Europe|Oceania)$/, {
     message:
       "The continent field must be a valid continent name with the first letter capitalized. Valid options are: Africa, America, Antarctica, Asia, Europe, Oceania.",
   })
+  @IsString({ message: "The continent field must be a string" })
+  @IsNotEmpty({ message: "The continent field is mandatory" })
   continent: string;
 
   @IsString({ message: "The map_link field must be a string" })
@@ -424,11 +424,11 @@ class DestinationUpsert {
   @IsNotEmpty({ message: "The weather field is mandatory" })
   weather: Weather;
 
-  @IsArray({ message: "The language field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the language array must be a string",
   })
+  @IsArray({ message: "The language field must be an array of strings" })
   @IsNotEmpty({ message: "The language field is mandatory" })
   language: string[];
 
@@ -436,31 +436,31 @@ class DestinationUpsert {
   @IsNotEmpty({ message: "The currency field is mandatory" })
   currency: string;
 
+  @Min(0, { message: "The area must be greater than or equal to zero" })
   @IsInt({ message: "The area field must be an integer" })
   @IsNotEmpty({ message: "The area field is mandatory" })
-  @Min(0, { message: "The area must be greater than or equal to zero" })
   area: number;
 
+  @Min(0, { message: "The population must be greater than or equal to zero" })
   @IsInt({ message: "The population field must be an integer" })
   @IsNotEmpty({ message: "The population field is mandatory" })
-  @Min(0, { message: "The population must be greater than or equal to zero" })
   population: number;
 
   @IsString({ message: "The time_zone field must be a string" })
   @IsNotEmpty({ message: "The time_zone field is mandatory" })
   time_zone: string;
 
-  @IsArray({ message: "The time_to_travel field must be an array of strings" })
-  @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
-  @IsString({
-    each: true,
-    message: "Each item in the time_to_travel array must be a string",
-  })
   @Matches(/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)$/, {
     each: true,
     message:
       "Each item in the time_to_travel array must be a valid three-letter month abbreviation in English. Valid options are: Jan, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec.",
   })
+  @IsString({
+    each: true,
+    message: "Each item in the time_to_travel array must be a string",
+  })
+  @IsArray({ message: "The time_to_travel field must be an array of strings" })
+  @IsNotEmpty({ message: "The time_to_travel field is mandatory" })
   time_to_travel: string[];
 
   @IsString({ message: "The image field must be a string" })
@@ -494,7 +494,7 @@ class DestinationUpsert {
  * @swagger
  * components:
  *   schemas:
- *     DestinationExtended:
+ *     DestinationUpsertExtended:
  *       type: object
  *       required:
  *         - name
@@ -575,25 +575,25 @@ class DestinationUpsert {
  *           example: 5
  */
 
-class DestinationExtended extends DestinationUpsert {
-  @IsArray({ message: "The images field must be an array of strings" })
+class DestinationUpsertExtended extends DestinationUpsert {
   @IsString({
     each: true,
     message: "Each item in the images array must be a string",
   })
+  @IsArray({ message: "The images field must be an array of strings" })
   @IsNotEmpty({ message: "The images field is mandatory" })
   images: string[];
 
+  @Min(0, { message: "The travel_count must be greater than or equal to zero" })
   @IsInt({ message: "The travel_count field must be an integer" })
   @IsNotEmpty({ message: "The travel_count field is mandatory" })
-  @Min(0, { message: "The travel_count must be greater than or equal to zero" })
   travel_count: number;
 
-  constructor(payload: DestinationExtended) {
+  constructor(payload: DestinationUpsertExtended) {
     super(payload);
     this.images = payload.images;
     this.travel_count = payload.travel_count;
   }
 }
 
-export { Destination, DestinationUpsert, DestinationExtended };
+export { Destination, DestinationUpsert, DestinationUpsertExtended };

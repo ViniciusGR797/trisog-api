@@ -6,7 +6,9 @@ import {
   IsNumber,
   Min,
   IsInt,
-  Matches,
+  IsDate,
+  ValidateNested,
+  IsOptional,
 } from "class-validator";
 import { JsonValue } from "@prisma/client/runtime/library";
 
@@ -24,218 +26,42 @@ import { JsonValue } from "@prisma/client/runtime/library";
  * @swagger
  * components:
  *   schemas:
- *     Price:
+ *     CustomPrice:
  *       type: object
  *       required:
- *         - jan
- *         - feb
- *         - mar
- *         - apr
- *         - may
- *         - jun
- *         - jul
- *         - aug
- *         - sep
- *         - oct
- *         - nov
- *         - dec
+ *         - date
+ *         - price
  *       properties:
- *         jan:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in January
- *           example: [100, 105, 110, 115, 120, 130, 125, 135, 140, 150, 145, 155, 160, 170, 165, 175, 180, 185, 190, 200, 195, 205, 210, 220, 215, 225, 230, 235, 240, 250, 255]
- *         feb:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in February
- *           example: [100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 210, 220, 230, 240, 250, 260, 270, 280, 290, 300, 310, 320, 330, 340, 350, 360, 370, 380]
- *         mar:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in March
- *           example: [105, 110, 115, 120, 125, 135, 130, 140, 145, 150, 155, 160, 165, 170, 180, 175, 185, 190, 195, 200, 210, 205, 215, 220, 225, 235, 230, 240, 245, 255, 250]
- *         apr:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in April
- *           example: [110, 115, 120, 125, 130, 135, 145, 140, 150, 155, 160, 165, 175, 170, 180, 185, 190, 195, 200, 210, 205, 215, 220, 225, 235, 230, 240, 245, 250, 260]
- *         may:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in May
- *           example: [115, 120, 125, 130, 140, 135, 145, 150, 155, 160, 170, 165, 175, 180, 185, 195, 190, 200, 205, 215, 210, 220, 225, 235, 230, 240, 245, 250, 260, 265, 275]
- *         jun:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in June
- *           example: [120, 125, 130, 140, 135, 145, 150, 155, 160, 170, 165, 175, 180, 185, 195, 190, 200, 210, 205, 215, 225, 220, 230, 235, 245, 240, 250, 255, 265, 260]
- *         jul:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in July
- *           example: [125, 130, 135, 140, 145, 150, 160, 155, 165, 170, 175, 180, 190, 185, 195, 200, 205, 215, 210, 220, 225, 235, 230, 240, 245, 255, 250, 260, 265, 275, 270]
- *         aug:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in August
- *           example: [130, 135, 140, 145, 150, 160, 155, 165, 170, 175, 185, 180, 190, 195, 200, 210, 205, 215, 220, 225, 235, 230, 240, 245, 255, 250, 260, 265, 275, 280, 290]
- *         sep:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in September
- *           example: [135, 140, 145, 150, 160, 155, 165, 170, 175, 185, 180, 190, 195, 200, 210, 205, 215, 220, 230, 225, 235, 240, 245, 255, 250, 260, 265, 275, 280, 285]
- *         oct:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in October
- *           example: [140, 145, 150, 160, 155, 165, 170, 175, 185, 180, 190, 195, 200, 210, 205, 215, 220, 230, 225, 235, 240, 250, 245, 255, 260, 270, 265, 275, 280, 290, 285]
- *         nov:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in November
- *           example: [145, 150, 160, 155, 165, 170, 175, 185, 180, 190, 195, 200, 210, 205, 215, 220, 230, 225, 235, 240, 250, 245, 255, 260, 270, 265, 275, 280, 285, 295]
- *         dec:
- *           type: array
- *           items:
- *             type: number
- *           description: Array of prices for each day in December
- *           example: [150, 160, 155, 165, 170, 180, 175, 185, 190, 200, 195, 205, 210, 220, 215, 225, 230, 240, 235, 245, 250, 260, 255, 265, 270, 280, 275, 285, 290, 300, 295]
+ *         date:
+ *           type: string
+ *           format: date
+ *           description: The date for which the price is specified.
+ *           example: "2024-08-01"
+ *         price:
+ *           type: number
+ *           format: float
+ *           description: The price for the specified date.
+ *           example: 120
  */
 
-class Price {
-  @IsArray({ message: "The jan field must be an array of numbers" })
-  @IsNotEmpty({ message: "The jan field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in jan must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in jan must be greater than or equal to zero",
-  })
-  jan: number[];
+class CustomPrice {
+  @IsDate({ message: "The date field in custom price must be a valid date" })
+  @IsNotEmpty({ message: "The date field in custom price  is mandatory" })
+  date: Date;
 
-  @IsArray({ message: "The feb field must be an array of numbers" })
-  @IsNotEmpty({ message: "The feb field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in feb must be a number" })
   @Min(0, {
-    each: true,
-    message: "Each value in feb must be greater than or equal to zero",
+    message: "The price in custom price must be greater than or equal to zero",
   })
-  feb: number[];
+  @IsNumber(
+    {},
+    { message: "The price field in custom price must be a number" }
+  )
+  @IsNotEmpty({ message: "The price field in custom price  is mandatory" })
+  price: number;
 
-  @IsArray({ message: "The mar field must be an array of numbers" })
-  @IsNotEmpty({ message: "The mar field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in mar must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in mar must be greater than or equal to zero",
-  })
-  mar: number[];
-
-  @IsArray({ message: "The apr field must be an array of numbers" })
-  @IsNotEmpty({ message: "The apr field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in apr must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in apr must be greater than or equal to zero",
-  })
-  apr: number[];
-
-  @IsArray({ message: "The may field must be an array of numbers" })
-  @IsNotEmpty({ message: "The may field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in may must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in may must be greater than or equal to zero",
-  })
-  may: number[];
-
-  @IsArray({ message: "The jun field must be an array of numbers" })
-  @IsNotEmpty({ message: "The jun field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in jun must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in jun must be greater than or equal to zero",
-  })
-  jun: number[];
-
-  @IsArray({ message: "The jul field must be an array of numbers" })
-  @IsNotEmpty({ message: "The jul field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in jul must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in jul must be greater than or equal to zero",
-  })
-  jul: number[];
-
-  @IsArray({ message: "The aug field must be an array of numbers" })
-  @IsNotEmpty({ message: "The aug field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in aug must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in aug must be greater than or equal to zero",
-  })
-  aug: number[];
-
-  @IsArray({ message: "The sep field must be an array of numbers" })
-  @IsNotEmpty({ message: "The sep field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in sep must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in sep must be greater than or equal to zero",
-  })
-  sep: number[];
-
-  @IsArray({ message: "The oct field must be an array of numbers" })
-  @IsNotEmpty({ message: "The oct field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in oct must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in oct must be greater than or equal to zero",
-  })
-  oct: number[];
-
-  @IsArray({ message: "The nov field must be an array of numbers" })
-  @IsNotEmpty({ message: "The nov field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in nov must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in nov must be greater than or equal to zero",
-  })
-  nov: number[];
-
-  @IsArray({ message: "The dec field must be an array of numbers" })
-  @IsNotEmpty({ message: "The dec field is mandatory" })
-  @IsNumber({}, { each: true, message: "Each value in dec must be a number" })
-  @Min(0, {
-    each: true,
-    message: "Each value in dec must be greater than or equal to zero",
-  })
-  dec: number[];
-
-  constructor(payload: Price) {
-    this.jan = payload.jan;
-    this.feb = payload.feb;
-    this.mar = payload.mar;
-    this.apr = payload.apr;
-    this.may = payload.may;
-    this.jun = payload.jun;
-    this.jul = payload.jul;
-    this.aug = payload.aug;
-    this.sep = payload.sep;
-    this.oct = payload.oct;
-    this.nov = payload.nov;
-    this.dec = payload.dec;
+  constructor(payload: CustomPrice) {
+    this.date = new Date(payload?.date);
+    this.price = payload?.price;
   }
 }
 
@@ -254,6 +80,7 @@ class Price {
  *         - gallery
  *         - map_link
  *         - start_date
+ *         - end_date
  *         - duration
  *         - is_activity
  *         - max_people
@@ -262,7 +89,7 @@ class Price {
  *         - include
  *         - exclude
  *         - rating
- *         - price
+ *         - default_price
  *         - categories
  *         - plans
  *         - destination_id
@@ -298,10 +125,15 @@ class Price {
  *         start_date:
  *           type: string
  *           format: date-time
- *           description: Start date of the experience in ISO 8601 format
- *           example: "2024-03-24T04:42:34.208Z"
- *         duration:
+ *           description: Start date of the availability period YYYY-MM-DD
+ *           example: "2024-03-24"
+ *         end_date:
  *           type: string
+ *           format: date-time
+ *           description: End date of the availability period YYYY-MM-DD
+ *           example: "2024-03-24"
+ *         duration:
+ *           type: number
  *           description: Duration of the experience
  *           example: 24
  *         is_activity:
@@ -336,8 +168,15 @@ class Price {
  *           type: number
  *           description: Average rating score for the experience
  *           example: 4.5
- *         price:
- *           $ref: "#/components/schemas/Price"
+ *         default_price:
+ *           type: number
+ *           description: The default price applied when no custom price is specified
+ *           example: 4.5
+ *         custom_prices:
+ *           type: array
+ *           description: An array of custom prices for specific dates
+ *           items:
+ *             $ref: "#/components/schemas/CustomPrice"
  *         categories:
  *           type: array
  *           items:
@@ -381,58 +220,62 @@ class Experience {
   @IsNotEmpty({ message: "The map_link field is mandatory" })
   map_link: string;
 
-  @IsString({ message: "The start_date field must be a string" })
+  @IsDate({ message: "The start_date field must be a valid date" })
   @IsNotEmpty({ message: "The start_date field is mandatory" })
-  @Matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/, {
-    message:
-      "Invalid date. The start_date must be a date in ISO 8601 format, like '2024-03-24T04:42:34.208Z'",
-  })
-  start_date: string;
+  start_date: Date;
+
+  @IsDate({ message: "The end_date field must be a valid date" })
+  @IsNotEmpty({ message: "The end_date field is mandatory" })
+  end_date: Date;
 
   @IsNumber({}, { message: "The duration field must be a number" })
   @IsNotEmpty({ message: "The duration field is mandatory" })
-  duration: string;
+  duration: number;
 
   @IsBoolean({ message: "The is_activity field must be a boolean value" })
   @IsNotEmpty({ message: "The is_activity field is mandatory" })
   is_activity: boolean;
 
+  @Min(0, { message: "The max_people must be greater than or equal to zero" })
   @IsInt({ message: "The max_people field must be an integer" })
   @IsNotEmpty({ message: "The max_people field is mandatory" })
-  @Min(0, { message: "The max_people must be greater than or equal to zero" })
-  max_people: string;
+  max_people: number;
 
+  @Min(0, { message: "The min_age must be greater than or equal to zero" })
   @IsInt({ message: "The min_age field must be an integer" })
   @IsNotEmpty({ message: "The min_age field is mandatory" })
-  @Min(0, { message: "The min_age must be greater than or equal to zero" })
-  min_age: string;
+  min_age: number;
 
   @IsString({ message: "The over_view field must be a string" })
   @IsNotEmpty({ message: "The over_view field is mandatory" })
   over_view: string;
 
-  @IsArray({ message: "The include field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the include array must be a string",
   })
+  @IsArray({ message: "The include field must be an array of strings" })
   @IsNotEmpty({ message: "The include field is mandatory" })
-  include: string;
+  include: string[];
 
-  @IsArray({ message: "The exclude field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the exclude array must be a string",
   })
+  @IsArray({ message: "The exclude field must be an array of strings" })
   @IsNotEmpty({ message: "The exclude field is mandatory" })
-  exclude: string;
+  exclude: string[];
 
   @IsNumber({}, { message: "The rating field must be a number" })
   @IsNotEmpty({ message: "The rating field is mandatory" })
-  rating: string;
+  rating: number;
 
-  @IsNotEmpty({ message: "The price field is mandatory" })
-  price: JsonValue;
+  @IsNumber({}, { message: "The default_price field must be a number" })
+  @IsNotEmpty({ message: "The default_price field is mandatory" })
+  default_price: number;
+
+  @IsOptional()
+  custom_prices: JsonValue;
 
   @IsNotEmpty({ message: "The categories field is mandatory" })
   categories: JsonValue;
@@ -462,7 +305,8 @@ class Experience {
       typeof payload.gallery === "string"
         ? payload.gallery.trim()
         : payload.gallery;
-    this.start_date = payload.start_date;
+    this.start_date = new Date(payload.start_date);
+    this.end_date = new Date(payload.end_date);
     this.duration = payload.duration;
     this.is_activity = payload.is_activity;
     this.max_people = payload.max_people;
@@ -474,7 +318,8 @@ class Experience {
     this.include = payload.include;
     this.exclude = payload.exclude;
     this.rating = payload.rating;
-    this.price = payload.price;
+    this.default_price = payload.default_price;
+    this.custom_prices = payload.custom_prices;
     this.categories = payload.categories;
     this.plans = payload.plans;
     this.destination_id =
@@ -488,8 +333,9 @@ class Experience {
  * @swagger
  * components:
  *   schemas:
- *     ExperienceUpsert:
+ *     ExperienceRaw:
  *       type: object
+ *         - id
  *         - name
  *         - city
  *         - image
@@ -497,6 +343,7 @@ class Experience {
  *         - gallery
  *         - map_link
  *         - start_date
+ *         - end_date
  *         - duration
  *         - is_activity
  *         - max_people
@@ -505,11 +352,16 @@ class Experience {
  *         - include
  *         - exclude
  *         - rating
- *         - price
+ *         - default_price
+ *         - custom_prices
  *         - categories_id
  *         - plans_id
  *         - destination_id
  *       properties:
+ *         id:
+ *           type: string
+ *           description: Unique identifier for the experience
+ *           example: "63f47adf2d7e6b04e4f978c7"
  *         name:
  *           type: string
  *           description: Name of the experience
@@ -537,10 +389,15 @@ class Experience {
  *         start_date:
  *           type: string
  *           format: date-time
- *           description: Start date of the experience in ISO 8601 format
- *           example: "2024-03-24T04:42:34.208Z"
- *         duration:
+ *           description: Start date of the availability period YYYY-MM-DD
+ *           example: "2024-03-24"
+ *         end_date:
  *           type: string
+ *           format: date-time
+ *           description: End date of the availability period YYYY-MM-DD
+ *           example: "2024-03-24"
+ *         duration:
+ *           type: number
  *           description: Duration of the experience
  *           example: 24
  *         is_activity:
@@ -575,8 +432,284 @@ class Experience {
  *           type: number
  *           description: Average rating score for the experience
  *           example: 4.5
- *         price:
- *           $ref: "#/components/schemas/Price"
+ *         default_price:
+ *           type: number
+ *           description: The default price applied when no custom price is specified
+ *           example: 4.5
+ *         custom_prices:
+ *           type: array
+ *           description: An array of custom prices for specific dates
+ *           items:
+ *             $ref: "#/components/schemas/CustomPrice"
+ *         categories_id:
+ *           type: array
+ *           items:
+ *             type: string
+ *             description: List of category IDs associated with the experience
+ *           description: List of category IDs associated with the experience
+ *           example: ["60b8d295f1c0d2b0f1b2c3d4", "60b8d295f1c0d2b0f1b2c3d5"]
+ *         plans_id:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of plan IDs associated with the experience
+ *           example: ["60b8d295f1c0d2b0f1b2c3d6", "60b8d295f1c0d2b0f1b2c3d7"]
+ *         destination_id:
+ *           type: string
+ *           description: ID of the destination associated with the experience
+ *           example: "63f47adf2d7e6b04e4f978c7"
+ */
+
+class ExperienceRaw {
+  @IsString({ message: "The id field must be a string" })
+  @IsNotEmpty({ message: "The id field is mandatory" })
+  id: string;
+
+  @IsString({ message: "The name field must be a string" })
+  @IsNotEmpty({ message: "The name field is mandatory" })
+  name: string;
+
+  @IsString({ message: "The city field must be a string" })
+  @IsNotEmpty({ message: "The city field is mandatory" })
+  city: string;
+
+  @IsString({ message: "The image field must be a string" })
+  @IsNotEmpty({ message: "The image field is mandatory" })
+  image: string;
+
+  @IsString({ message: "The video field must be a string" })
+  @IsNotEmpty({ message: "The video field is mandatory" })
+  video: string;
+
+  @IsString({ message: "The gallery field must be a string" })
+  @IsNotEmpty({ message: "The gallery field is mandatory" })
+  gallery: string;
+
+  @IsString({ message: "The map_link field must be a string" })
+  @IsNotEmpty({ message: "The map_link field is mandatory" })
+  map_link: string;
+
+  @IsDate({ message: "The start_date field must be a valid date" })
+  @IsNotEmpty({ message: "The start_date field is mandatory" })
+  start_date: Date;
+
+  @IsDate({ message: "The end_date field must be a valid date" })
+  @IsNotEmpty({ message: "The end_date field is mandatory" })
+  end_date: Date;
+
+  @IsNumber({}, { message: "The duration field must be a number" })
+  @IsNotEmpty({ message: "The duration field is mandatory" })
+  duration: number;
+
+  @IsBoolean({ message: "The is_activity field must be a boolean value" })
+  @IsNotEmpty({ message: "The is_activity field is mandatory" })
+  is_activity: boolean;
+
+  @Min(0, { message: "The max_people must be greater than or equal to zero" })
+  @IsInt({ message: "The max_people field must be an integer" })
+  @IsNotEmpty({ message: "The max_people field is mandatory" })
+  max_people: number;
+
+  @Min(0, { message: "The min_age must be greater than or equal to zero" })
+  @IsInt({ message: "The min_age field must be an integer" })
+  @IsNotEmpty({ message: "The min_age field is mandatory" })
+  min_age: number;
+
+  @IsString({ message: "The over_view field must be a string" })
+  @IsNotEmpty({ message: "The over_view field is mandatory" })
+  over_view: string;
+
+  @IsString({
+    each: true,
+    message: "Each item in the include array must be a string",
+  })
+  @IsArray({ message: "The include field must be an array of strings" })
+  @IsNotEmpty({ message: "The include field is mandatory" })
+  include: string[];
+
+  @IsString({
+    each: true,
+    message: "Each item in the exclude array must be a string",
+  })
+  @IsArray({ message: "The exclude field must be an array of strings" })
+  @IsNotEmpty({ message: "The exclude field is mandatory" })
+  exclude: string[];
+
+  @IsNumber({}, { message: "The default_price field must be a number" })
+  @IsNotEmpty({ message: "The default_price field is mandatory" })
+  default_price: number;
+
+  @IsOptional()
+  custom_prices: JsonValue;
+
+  @IsNumber({}, { message: "The rating field must be a number" })
+  @IsNotEmpty({ message: "The rating field is mandatory" })
+  rating: number;
+
+  @IsString({
+    each: true,
+    message: "Each item in the categories_id array must be a string",
+  })
+  @IsArray({ message: "The categories_id field must be an array of strings" })
+  @IsNotEmpty({ message: "The categories_id field is mandatory" })
+  categories_id: string[];
+
+  @IsString({
+    each: true,
+    message: "Each item in the plans_id array must be a string",
+  })
+  @IsArray({ message: "The plans_id field must be an array of strings" })
+  @IsNotEmpty({ message: "The plans_id field is mandatory" })
+  plans_id: string[];
+
+  @IsString({ message: "The destination_id field must be a string" })
+  @IsNotEmpty({ message: "The destination_id field is mandatory" })
+  destination_id: string;
+
+  constructor(payload: ExperienceRaw) {
+    this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
+    this.name =
+      typeof payload.name === "string" ? payload.name.trim() : payload.name;
+    this.city =
+      typeof payload.city === "string" ? payload.city.trim() : payload.city;
+    this.image =
+      typeof payload.image === "string" ? payload.image.trim() : payload.image;
+    this.video =
+      typeof payload.video === "string" ? payload.video.trim() : payload.video;
+    this.gallery =
+      typeof payload.gallery === "string"
+        ? payload.gallery.trim()
+        : payload.gallery;
+    this.map_link =
+      typeof payload.gallery === "string"
+        ? payload.gallery.trim()
+        : payload.gallery;
+    this.start_date = new Date(payload.start_date);
+    this.end_date = new Date(payload.end_date);
+    this.duration = payload.duration;
+    this.is_activity = payload.is_activity;
+    this.max_people = payload.max_people;
+    this.min_age = payload.min_age;
+    this.over_view =
+      typeof payload.over_view === "string"
+        ? payload.over_view.trim()
+        : payload.over_view;
+    this.include = payload.include;
+    this.exclude = payload.exclude;
+    this.rating = payload.rating;
+    this.default_price = payload.default_price;
+    this.custom_prices = payload.custom_prices;
+    this.categories_id = payload.categories_id;
+    this.plans_id = payload.plans_id;
+    this.destination_id =
+      typeof payload.destination_id === "string"
+        ? payload.destination_id.trim()
+        : payload.destination_id;
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ExperienceUpsert:
+ *       type: object
+ *       required:
+ *         - name
+ *         - city
+ *         - image
+ *         - video
+ *         - gallery
+ *         - map_link
+ *         - start_date
+ *         - end_date
+ *         - duration
+ *         - is_activity
+ *         - max_people
+ *         - min_age
+ *         - over_view
+ *         - include
+ *         - exclude
+ *         - default_price
+ *         - categories_id
+ *         - plans_id
+ *         - destination_id
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Name of the experience
+ *           example: "City Tour"
+ *         city:
+ *           type: string
+ *           description: City where the experience takes place
+ *           example: "New York"
+ *         image:
+ *           type: string
+ *           description: URL to an image representing the experience
+ *           example: "https://example.com/image.jpg"
+ *         video:
+ *           type: string
+ *           description: URL to a video related to the experience
+ *           example: "https://example.com/video.mp4"
+ *         gallery:
+ *           type: string
+ *           description: URL to a gallery related to the experience
+ *           example: "https://example.com/gallery"
+ *         map_link:
+ *           type: string
+ *           description: URL to the map location of the experience
+ *           example: "https://example.com/map"
+ *         start_date:
+ *           type: string
+ *           format: date-time
+ *           description: Start date of the availability period YYYY-MM-DD
+ *           example: "2024-03-24"
+ *         end_date:
+ *           type: string
+ *           format: date-time
+ *           description: End date of the availability period YYYY-MM-DD
+ *           example: "2024-03-24"
+ *         duration:
+ *           type: number
+ *           description: Duration of the experience
+ *           example: 24
+ *         is_activity:
+ *           type: boolean
+ *           description: Indicates if the experience is an activity
+ *           example: false
+ *         max_people:
+ *           type: integer
+ *           description: Maximum number of people allowed for the experience
+ *           example: 30
+ *         min_age:
+ *           type: integer
+ *           description: Minimum age required for participation in the experience
+ *           example: 18
+ *         over_view:
+ *           type: string
+ *           description: Overview of the experience
+ *           example: "A comprehensive tour of the city with stops at major landmarks."
+ *         include:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of items included in the experience
+ *           example: ["Lunch", "Guide"]
+ *         exclude:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of items excluded from the experience
+ *           example: ["Transportation"]
+ *         default_price:
+ *           type: number
+ *           description: The default price applied when no custom price is specified
+ *           example: 4.5
+ *         custom_prices:
+ *           type: array
+ *           description: An array of custom prices for specific dates
+ *           items:
+ *             $ref: "#/components/schemas/CustomPrice"
  *         categories_id:
  *           type: array
  *           items:
@@ -621,72 +754,74 @@ class ExperienceUpsert {
   @IsNotEmpty({ message: "The map_link field is mandatory" })
   map_link: string;
 
-  @IsString({ message: "The start_date field must be a string" })
+  @IsDate({ message: "The start_date field must be a valid date" })
   @IsNotEmpty({ message: "The start_date field is mandatory" })
-  @Matches(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/, {
-    message:
-      "Invalid date. The start_date must be a date in ISO 8601 format, like '2024-03-24T04:42:34.208Z'",
-  })
-  start_date: string;
+  start_date: Date;
 
+  @IsDate({ message: "The end_date field must be a valid date" })
+  @IsNotEmpty({ message: "The end_date field is mandatory" })
+  end_date: Date;
+
+  @Min(0, { message: "The duration must be greater than or equal to zero" })
   @IsNumber({}, { message: "The duration field must be a number" })
   @IsNotEmpty({ message: "The duration field is mandatory" })
-  duration: string;
+  duration: number;
 
   @IsBoolean({ message: "The is_activity field must be a boolean value" })
   @IsNotEmpty({ message: "The is_activity field is mandatory" })
   is_activity: boolean;
-
+  
+  @Min(0, { message: "The max_people must be greater than or equal to zero" })
   @IsInt({ message: "The max_people field must be an integer" })
   @IsNotEmpty({ message: "The max_people field is mandatory" })
-  @Min(0, { message: "The max_people must be greater than or equal to zero" })
-  max_people: string;
+  max_people: number;
 
+  @Min(0, { message: "The min_age must be greater than or equal to zero" })
   @IsInt({ message: "The min_age field must be an integer" })
   @IsNotEmpty({ message: "The min_age field is mandatory" })
-  @Min(0, { message: "The min_age must be greater than or equal to zero" })
-  min_age: string;
+  min_age: number;
 
   @IsString({ message: "The over_view field must be a string" })
   @IsNotEmpty({ message: "The over_view field is mandatory" })
   over_view: string;
 
-  @IsArray({ message: "The include field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the include array must be a string",
   })
+  @IsArray({ message: "The include field must be an array of strings" })
   @IsNotEmpty({ message: "The include field is mandatory" })
-  include: string;
+  include: string[];
 
-  @IsArray({ message: "The exclude field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the exclude array must be a string",
   })
+  @IsArray({ message: "The exclude field must be an array of strings" })
   @IsNotEmpty({ message: "The exclude field is mandatory" })
-  exclude: string;
+  exclude: string[];
 
-  @IsNumber({}, { message: "The rating field must be a number" })
-  @IsNotEmpty({ message: "The rating field is mandatory" })
-  rating: string;
+  @IsNumber({}, { message: "The default_price field must be a number" })
+  @IsNotEmpty({ message: "The default_price field is mandatory" })
+  default_price: number;
 
-  @IsNotEmpty({ message: "The price field is mandatory" })
-  price: Price;
+  @ValidateNested({ each: true })
+  @IsOptional()
+  custom_prices: CustomPrice[];
 
-  @IsArray({ message: "The categories_id field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the categories_id array must be a string",
   })
+  @IsArray({ message: "The categories_id field must be an array of strings" })
   @IsNotEmpty({ message: "The categories_id field is mandatory" })
   categories_id: string[];
 
-  @IsArray({ message: "The plans_id field must be an array of strings" })
   @IsString({
     each: true,
     message: "Each item in the plans_id array must be a string",
   })
+  @IsArray({ message: "The plans_id field must be an array of strings" })
   @IsNotEmpty({ message: "The plans_id field is mandatory" })
   plans_id: string[];
 
@@ -711,7 +846,8 @@ class ExperienceUpsert {
       typeof payload.gallery === "string"
         ? payload.gallery.trim()
         : payload.gallery;
-    this.start_date = payload.start_date;
+    this.start_date = new Date(payload.start_date);
+    this.end_date = new Date(payload.end_date);
     this.duration = payload.duration;
     this.is_activity = payload.is_activity;
     this.max_people = payload.max_people;
@@ -722,8 +858,8 @@ class ExperienceUpsert {
         : payload.over_view;
     this.include = payload.include;
     this.exclude = payload.exclude;
-    this.rating = payload.rating;
-    this.price = new Price(payload.price);
+    this.default_price = payload.default_price;
+    this.custom_prices = payload.custom_prices?.map(item => new CustomPrice(item));
     this.categories_id = payload.categories_id;
     this.plans_id = payload.plans_id;
     this.destination_id =
@@ -733,4 +869,145 @@ class ExperienceUpsert {
   }
 }
 
-export { Experience, ExperienceUpsert };
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ExperienceUpsertExtended:
+ *       type: object
+ *         - name
+ *         - city
+ *         - image
+ *         - video
+ *         - gallery
+ *         - map_link
+ *         - start_date
+ *         - end_date
+ *         - duration
+ *         - is_activity
+ *         - max_people
+ *         - min_age
+ *         - over_view
+ *         - include
+ *         - exclude
+ *         - default_price
+ *         - custom_prices
+ *         - categories_id
+ *         - plans_id
+ *         - destination_id
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Name of the experience
+ *           example: "City Tour"
+ *         city:
+ *           type: string
+ *           description: City where the experience takes place
+ *           example: "New York"
+ *         image:
+ *           type: string
+ *           description: URL to an image representing the experience
+ *           example: "https://example.com/image.jpg"
+ *         video:
+ *           type: string
+ *           description: URL to a video related to the experience
+ *           example: "https://example.com/video.mp4"
+ *         gallery:
+ *           type: string
+ *           description: URL to a gallery related to the experience
+ *           example: "https://example.com/gallery"
+ *         map_link:
+ *           type: string
+ *           description: URL to the map location of the experience
+ *           example: "https://example.com/map"
+ *         start_date:
+ *           type: string
+ *           format: date-time
+ *           description: Start date of the availability period YYYY-MM-DD
+ *           example: "2024-03-24"
+ *         end_date:
+ *           type: string
+ *           format: date-time
+ *           description: End date of the availability period YYYY-MM-DD
+ *           example: "2024-03-24"
+ *         duration:
+ *           type: number
+ *           description: Duration of the experience
+ *           example: 24
+ *         is_activity:
+ *           type: boolean
+ *           description: Indicates if the experience is an activity
+ *           example: false
+ *         max_people:
+ *           type: integer
+ *           description: Maximum number of people allowed for the experience
+ *           example: 30
+ *         min_age:
+ *           type: integer
+ *           description: Minimum age required for participation in the experience
+ *           example: 18
+ *         over_view:
+ *           type: string
+ *           description: Overview of the experience
+ *           example: "A comprehensive tour of the city with stops at major landmarks."
+ *         include:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of items included in the experience
+ *           example: ["Lunch", "Guide"]
+ *         exclude:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of items excluded from the experience
+ *           example: ["Transportation"]
+ *         rating:
+ *           type: number
+ *           description: Average rating score for the experience
+ *           example: 4.5
+ *         default_price:
+ *           type: number
+ *           description: The default price applied when no custom price is specified
+ *           example: 4.5
+ *         custom_prices:
+ *           type: array
+ *           description: An array of custom prices for specific dates
+ *           items:
+ *             $ref: "#/components/schemas/CustomPrice"
+ *         categories_id:
+ *           type: array
+ *           items:
+ *             type: string
+ *             description: List of category IDs associated with the experience
+ *           description: List of category IDs associated with the experience
+ *           example: ["60b8d295f1c0d2b0f1b2c3d4", "60b8d295f1c0d2b0f1b2c3d5"]
+ *         plans_id:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of plan IDs associated with the experience
+ *           example: ["60b8d295f1c0d2b0f1b2c3d6", "60b8d295f1c0d2b0f1b2c3d7"]
+ *         destination_id:
+ *           type: string
+ *           description: ID of the destination associated with the experience
+ *           example: "63f47adf2d7e6b04e4f978c7"
+ */
+
+class ExperienceUpsertExtended extends ExperienceUpsert {
+  @IsNumber({}, { message: "The rating field must be a number" })
+  @IsNotEmpty({ message: "The rating field is mandatory" })
+  rating: number;
+
+  constructor(payload: ExperienceUpsertExtended) {
+    super(payload);
+    this.rating = payload.rating;
+  }
+}
+
+export {
+  Experience,
+  ExperienceRaw,
+  ExperienceUpsert,
+  ExperienceUpsertExtended,
+};

@@ -46,6 +46,7 @@ model Experience {
   gallery                     String
   map_link                    String
   start_date                  DateTime
+  end_date                    DateTime
   duration                    Float
   is_activity                 Boolean
   max_people                  Int
@@ -54,7 +55,8 @@ model Experience {
   include                     String[]
   exclude                     String[]
   rating                      Float
-  price                       Json  
+  default_price               Float  
+  custom_prices               Json[]  
   categories_id               String[]
   plans_id                    String[]
   destination_id              String       
