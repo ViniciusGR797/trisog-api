@@ -99,9 +99,9 @@ class Review {
   @IsNotEmpty({ message: "The created_at field is mandatory" })
   created_at: Date;
 
-  @IsString({ message: "The experiense_id field must be a string" })
-  @IsNotEmpty({ message: "The experiense_id field is mandatory" })
-  experiense_id: string;
+  @IsString({ message: "The experience_id field must be a string" })
+  @IsNotEmpty({ message: "The experience_id field is mandatory" })
+  experience_id: string;
 
   constructor(payload: Review) {
     this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
@@ -117,10 +117,10 @@ class Review {
       typeof payload.image === "string" ? payload.image.trim() : payload.image;
     this.score = payload.score;
     this.created_at = new Date(payload.created_at);
-    this.experiense_id =
-      typeof payload.experiense_id === "string"
-        ? payload.experiense_id.trim()
-        : payload.experiense_id;
+    this.experience_id =
+      typeof payload.experience_id === "string"
+        ? payload.experience_id.trim()
+        : payload.experience_id;
   }
 }
 
@@ -187,9 +187,9 @@ class ReviewUpsert {
     @IsNotEmpty({ message: "The score field is mandatory" })
     score: number;
   
-    @IsString({ message: "The experiense_id field must be a string" })
-    @IsNotEmpty({ message: "The experiense_id field is mandatory" })
-    experiense_id: string;
+    @IsString({ message: "The experience_id field must be a string" })
+    @IsNotEmpty({ message: "The experience_id field is mandatory" })
+    experience_id: string;
   
     constructor(payload: ReviewUpsert) {
       this.name =
@@ -203,10 +203,10 @@ class ReviewUpsert {
       this.image =
         typeof payload.image === "string" ? payload.image.trim() : payload.image;
       this.score = payload.score;
-      this.experiense_id =
-        typeof payload.experiense_id === "string"
-          ? payload.experiense_id.trim()
-          : payload.experiense_id;
+      this.experience_id =
+        typeof payload.experience_id === "string"
+          ? payload.experience_id.trim()
+          : payload.experience_id;
     }
   }
 

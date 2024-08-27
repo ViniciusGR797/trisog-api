@@ -68,9 +68,9 @@ model Review {
   email                       String
   comment                     String
   image                       String
-  score                       Json  
+  score                       Int  
   created_at                  DateTime     @default(now())
-  experiense_id               String      
+  experience_id               String      
 }
 
 model Favorite {

@@ -1237,6 +1237,113 @@
             "example": "Internal Server Error"
           }
         }
+      },
+      "ReviewList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Review"
+        }
+      },
+      "Review": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "email",
+          "comment",
+          "image",
+          "score",
+          "created_at",
+          "experience_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the review",
+            "example": "60b8d295f1c0d2b0f1b2c3d8"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the person who wrote the review",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the person who wrote the review",
+            "example": "johndoe@example.com"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The content of the review",
+            "example": "The tour was fantastic and exceeded my expectations!"
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to an image related to the review",
+            "example": "https://example.com/review-image.jpg"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Rating score given by the reviewer, typically on a scale of 1 to 5",
+            "example": 5
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The date and time when the review was created",
+            "example": "2024-08-27T14:30:00Z"
+          },
+          "experience_id": {
+            "type": "string",
+            "description": "Unique identifier for the experience being reviewed",
+            "example": "60b8d295f1c0d2b0f1b2c3d9"
+          }
+        }
+      },
+      "ReviewUpsert": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "comment",
+          "image",
+          "score",
+          "experience_id"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the person who wrote the review",
+            "example": "John Doe"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the person who wrote the review",
+            "example": "johndoe@example.com"
+          },
+          "comment": {
+            "type": "string",
+            "description": "The content of the review",
+            "example": "The tour was fantastic and exceeded my expectations!"
+          },
+          "image": {
+            "type": "string",
+            "description": "URL to an image related to the review",
+            "example": "https://example.com/review-image.jpg"
+          },
+          "score": {
+            "type": "integer",
+            "format": "int32",
+            "description": "Rating score given by the reviewer, typically on a scale of 1 to 5",
+            "example": 5
+          },
+          "experience_id": {
+            "type": "string",
+            "description": "Unique identifier for the experience being reviewed",
+            "example": "60b8d295f1c0d2b0f1b2c3d9"
+          }
+        }
       }
     }
   },
@@ -2600,6 +2707,346 @@
           }
         }
       }
+    },
+    "/reviews": {
+      "get": {
+        "summary": "View all reviews",
+        "description": "Returns information about all reviews",
+        "tags": [
+          "Review"
+        ],
+        "operationId": "get_all_reviews",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new review",
+        "description": "Creates a new review based on the data provided in the request body.",
+        "tags": [
+          "Review"
+        ],
+        "operationId": "create_review",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewUpsert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/reviews/{review_id}": {
+      "parameters": [
+        {
+          "name": "review_id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the review to be deleted",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "View review by id",
+        "description": "Returns review information by id",
+        "tags": [
+          "Review"
+        ],
+        "operationId": "get_review_by_id",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update review",
+        "description": "Updates the information of the desired review",
+        "tags": [
+          "Review"
+        ],
+        "operationId": "update_review",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewUpsert"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Review"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove review",
+        "description": "Deletes a review based on the ID provided",
+        "tags": [
+          "Review"
+        ],
+        "operationId": "delete_review",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tags": [
@@ -2618,6 +3065,10 @@
     {
       "name": "Plan",
       "description": "Routes for plan manipulation"
+    },
+    {
+      "name": "Review",
+      "description": "Routes for review manipulation"
     }
   ]
 }
