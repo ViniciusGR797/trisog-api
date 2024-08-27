@@ -6,6 +6,9 @@ import {
 import { isValidFirebaseUID, isValidObjectId } from "../utils/validate";
 import { validate } from "class-validator";
 import { ExperienceService } from "../services/experienceService";
+import { DestinationService } from "../services/destinationService";
+import { CategoryService } from "../services/categoryService";
+import { PlanService } from "../services/planService";
 
 export class ExperienceController {
   static async getExperiences(req: Request, res: Response): Promise<Response> {
@@ -78,6 +81,59 @@ export class ExperienceController {
       return res.status(400).json({ msg: errorMessage });
     }
 
+    for (const categoryId of payload.categories_id) {
+      if (!isValidObjectId(categoryId)) {
+        return res
+          .status(400)
+          .json({ msg: `Invalid category ID ${categoryId}` });
+      }
+
+      const { category, error: getCategoryError } =
+        await CategoryService.getCategoryById(categoryId);
+      if (getCategoryError) {
+        return res.status(500).json({ msg: getCategoryError });
+      }
+      if (!category) {
+        return res.status(400).json({
+          msg: `The specified category ID ${categoryId} does not exist, please choose a valid category`,
+        });
+      }
+    }
+
+    for (const planId of payload.plans_id) {
+      if (!isValidObjectId(planId)) {
+        return res.status(400).json({ msg: `Invalid plan ID: ${planId}` });
+      }
+
+      const { plan, error: getPlanError } = await PlanService.getPlanById(
+        planId
+      );
+      if (getPlanError) {
+        return res.status(500).json({ msg: getPlanError });
+      }
+      if (!plan) {
+        return res.status(400).json({
+          msg: `The specified plan ID ${planId} does not exist, please choose a valid plan`,
+        });
+      }
+    }
+
+    const destinationId = payload.destination_id;
+    if (!isValidObjectId(destinationId)) {
+      return res.status(400).json({ msg: "Invalid destination ID" });
+    }
+
+    const { destination, error: getDestinationError } =
+      await DestinationService.getDestinationById(payload.destination_id);
+    if (getDestinationError) {
+      return res.status(500).json({ msg: getDestinationError });
+    }
+    if (!destination) {
+      return res.status(400).json({
+        msg: "The specified destination does not exist, please choose a valid destination",
+      });
+    }
+
     const newPayload = new ExperienceUpsertExtended({
       ...payload,
       rating: 0,
@@ -135,6 +191,59 @@ export class ExperienceController {
         ? Object.values(firstError.constraints)[0]
         : "Invalid and/or incomplete parameters";
       return res.status(400).json({ msg: errorMessage });
+    }
+
+    for (const categoryId of payload.categories_id) {
+      if (!isValidObjectId(categoryId)) {
+        return res
+          .status(400)
+          .json({ msg: `Invalid category ID ${categoryId}` });
+      }
+
+      const { category, error: getCategoryError } =
+        await CategoryService.getCategoryById(categoryId);
+      if (getCategoryError) {
+        return res.status(500).json({ msg: getCategoryError });
+      }
+      if (!category) {
+        return res.status(400).json({
+          msg: `The specified category ID ${categoryId} does not exist, please choose a valid category`,
+        });
+      }
+    }
+
+    for (const planId of payload.plans_id) {
+      if (!isValidObjectId(planId)) {
+        return res.status(400).json({ msg: `Invalid plan ID: ${planId}` });
+      }
+
+      const { plan, error: getPlanError } = await PlanService.getPlanById(
+        planId
+      );
+      if (getPlanError) {
+        return res.status(500).json({ msg: getPlanError });
+      }
+      if (!plan) {
+        return res.status(400).json({
+          msg: `The specified plan ID ${planId} does not exist, please choose a valid plan`,
+        });
+      }
+    }
+
+    const destinationId = payload.destination_id;
+    if (!isValidObjectId(destinationId)) {
+      return res.status(400).json({ msg: "Invalid destination ID" });
+    }
+
+    const { destination, error: getDestinationError } =
+      await DestinationService.getDestinationById(payload.destination_id);
+    if (getDestinationError) {
+      return res.status(500).json({ msg: getDestinationError });
+    }
+    if (!destination) {
+      return res.status(400).json({
+        msg: "The specified destination does not exist, please choose a valid destination",
+      });
     }
 
     const newPayload = new ExperienceUpsertExtended({
