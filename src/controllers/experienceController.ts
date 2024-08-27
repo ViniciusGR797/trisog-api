@@ -9,6 +9,10 @@ import { ExperienceService } from "../services/experienceService";
 import { DestinationService } from "../services/destinationService";
 import { CategoryService } from "../services/categoryService";
 import { PlanService } from "../services/planService";
+import { DestinationUpsertExtended, Weather } from "../models/destinationModel";
+import { JsonObject } from "@prisma/client/runtime/library";
+import { Category, CategoryUpsertExtended } from "../models/categoryModel";
+import { Plan } from "../models/planModel";
 
 export class ExperienceController {
   static async getExperiences(req: Request, res: Response): Promise<Response> {
@@ -81,6 +85,7 @@ export class ExperienceController {
       return res.status(400).json({ msg: errorMessage });
     }
 
+    let categories: Category[] = [];
     for (const categoryId of payload.categories_id) {
       if (!isValidObjectId(categoryId)) {
         return res
@@ -98,6 +103,7 @@ export class ExperienceController {
           msg: `The specified category ID ${categoryId} does not exist, please choose a valid category`,
         });
       }
+      categories.push(category);
     }
 
     for (const planId of payload.plans_id) {
@@ -155,6 +161,39 @@ export class ExperienceController {
     }
     if (!experience) {
       return res.status(404).json({ msg: "No data found" });
+    }
+
+    for (const category of categories) {
+      category.travel_count += 1;
+      const { id, ...remainingCategory } = category;
+      const newCategory = new CategoryUpsertExtended({
+        ...remainingCategory,
+      });
+      const { updatedCategory, error: updatedCategoryError } =
+        await CategoryService.updateCategory(category.id, newCategory);
+      if (updatedCategoryError) {
+        return res.status(500).json({ msg: updatedCategoryError });
+      }
+    }
+
+    destination.travel_count += 1;
+    const { id, weather, ...remainingDestination } = destination;
+    const newDestination = new DestinationUpsertExtended({
+      ...remainingDestination,
+      weather: new Weather({
+        jan_feb: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+        mar_apr: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+        may_jun: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+        jul_aug: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+        sep_oct: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+        nov_dec: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+      }),
+      image: destination.images[0],
+    });
+    const { updatedDestination, error: updatedDestinationError } =
+      await DestinationService.updateDestination(destinationId, newDestination);
+    if (updatedDestinationError) {
+      return res.status(500).json({ msg: updatedDestinationError });
     }
 
     return res.status(201).json(experience);
@@ -290,6 +329,63 @@ export class ExperienceController {
     if (deletedExperienceError) {
       return res.status(500).json({ msg: deletedExperienceError });
     }
+
+    let categories: Category[] = [];
+    for (const categoryId of experience.categories_id) {
+
+      const { category, error: getCategoryError } =
+        await CategoryService.getCategoryById(categoryId);
+      if (getCategoryError) {
+        return res.status(500).json({ msg: getCategoryError });
+      }
+      if (category) {
+        categories.push(category);
+      }
+    }
+
+    const { destination, error: getDestinationError } =
+      await DestinationService.getDestinationById(experience.destination_id);
+    if (getDestinationError) {
+      return res.status(500).json({ msg: getDestinationError });
+    }
+
+    for (const category of categories) {
+      if (category.travel_count > 0){
+        category.travel_count -= 1;
+        const { id, ...remainingCategory } = category;
+        const newCategory = new CategoryUpsertExtended({
+          ...remainingCategory,
+        });
+        const { updatedCategory, error: updatedCategoryError } =
+          await CategoryService.updateCategory(category.id, newCategory);
+        if (updatedCategoryError) {
+          return res.status(500).json({ msg: updatedCategoryError });
+        }
+      }
+    }
+
+    if (destination && destination.travel_count > 0) {
+      destination.travel_count -= 1;
+      const { id, weather, ...remainingDestination } = destination;
+      const newDestination = new DestinationUpsertExtended({
+        ...remainingDestination,
+        weather: new Weather({
+          jan_feb: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+          mar_apr: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+          may_jun: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+          jul_aug: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+          sep_oct: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+          nov_dec: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+        }),
+        image: destination.images[0],
+      });
+      const { updatedDestination, error: updatedDestinationError } =
+        await DestinationService.updateDestination(destination.id, newDestination);
+      if (updatedDestinationError) {
+        return res.status(500).json({ msg: updatedDestinationError });
+      }
+    }
+
     return res.status(200).json({ msg: "Successfully deleted" });
   }
 }

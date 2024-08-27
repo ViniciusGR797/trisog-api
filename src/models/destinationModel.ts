@@ -596,4 +596,4 @@ class DestinationUpsertExtended extends DestinationUpsert {
   }
 }
 
-export { Destination, DestinationUpsert, DestinationUpsertExtended };
+export { Weather, Destination, DestinationUpsert, DestinationUpsertExtended };

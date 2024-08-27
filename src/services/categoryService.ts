@@ -1,4 +1,4 @@
-import { Category, CategoryUpsert } from "../models/categoryModel";
+import { Category, CategoryUpsert, CategoryUpsertExtended } from "../models/categoryModel";
 import prismaClient from "../utils/database";
 
 export class CategoryService {
@@ -38,12 +38,14 @@ export class CategoryService {
   }
 
   static async createCategory(
-    newData: CategoryUpsert
+    newData: CategoryUpsertExtended
   ): Promise<{ createdCategoryId: string | null; error: string | null }> {
     try {
       const result = await prismaClient.category.create({
         data: {
           name: newData.name,
+          icon: newData.icon,
+          travel_count: newData.travel_count
         }
       });
 
@@ -56,7 +58,7 @@ export class CategoryService {
 
     static async updateCategory(
       categoryId: string,
-      updatedData: CategoryUpsert
+      updatedData: CategoryUpsertExtended
     ): Promise<{ updatedCategory: Category | null; error: string | null }> {
       try {
         const result = await prismaClient.category.update({
@@ -64,7 +66,9 @@ export class CategoryService {
             id: categoryId
           },
           data: {
-            name: updatedData.name,            
+            name: updatedData.name,    
+            icon: updatedData.icon,
+            travel_count: updatedData.travel_count    
           }
         });
 

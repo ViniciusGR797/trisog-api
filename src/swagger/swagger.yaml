@@ -66,6 +66,8 @@ components:
       required:
         - id
         - name
+        - icon
+        - travel_count
       properties:
         id:
           type: string
@@ -75,15 +77,51 @@ components:
           type: string
           description: Descriptive name of the category
           example: Adventure
+        icon:
+          type: string
+          description: URL or path to the icon representing the category
+          example: https://example.com/icons/adventure.png
+        travel_count:
+          type: integer
+          description: >-
+            The number of travels, tours, or activities available at the
+            category
+          example: 5
     CategoryUpsert:
       type: object
       required:
         - name
+        - icon
       properties:
         name:
           type: string
           description: Descriptive name of the category
           example: Adventure
+        icon:
+          type: string
+          description: URL or path to the icon representing the category
+          example: https://example.com/icons/adventure.png
+    CategoryUpsertExtended:
+      type: object
+      required:
+        - name
+        - icon
+        - travel_count
+      properties:
+        name:
+          type: string
+          description: Descriptive name of the category
+          example: Adventure
+        icon:
+          type: string
+          description: URL or path to the icon representing the category
+          example: https://example.com/icons/adventure.png
+        travel_count:
+          type: integer
+          description: >-
+            The number of travels, tours, or activities available at the
+            category
+          example: 5
     DestinationList:
       type: array
       items:

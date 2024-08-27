@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { CategoryUpsert } from "../models/categoryModel";
+import { CategoryUpsert, CategoryUpsertExtended } from "../models/categoryModel";
 import { isValidFirebaseUID, isValidObjectId } from "../utils/validate";
 import { validate } from "class-validator";
 import { CategoryService } from "../services/categoryService";
@@ -55,8 +55,13 @@ export class CategoryController {
       return res.status(400).json({ msg: errorMessage });
     }
 
+    const newPayload = new CategoryUpsertExtended({
+      ...payload,
+      travel_count: 0,
+    });
+
     const { createdCategoryId, error: createCategoryError } =
-      await CategoryService.createCategory(payload);
+      await CategoryService.createCategory(newPayload);
     if (createCategoryError) {
       return res.status(500).json({ msg: createCategoryError });
     }
@@ -109,8 +114,13 @@ export class CategoryController {
       return res.status(400).json({ msg: errorMessage });
     }
 
+    const newPayload = new CategoryUpsertExtended({
+      ...payload,
+      travel_count: category.travel_count,
+    });
+
     const { updatedCategory, error: updatedCategoryError } =
-      await CategoryService.updateCategory(categoryId, payload);
+      await CategoryService.updateCategory(categoryId, newPayload);
     if (updatedCategoryError) {
       return res.status(500).json({ msg: updatedCategoryError });
     }
