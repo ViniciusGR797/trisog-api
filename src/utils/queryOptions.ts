@@ -1,15 +1,16 @@
 interface ExperienceQueryParams {
   page?: string;
   limit?: string;
-  destinationsId?: string;
+  title?: string;
+  price?: string;
   categoriesId?: string;
+  destinationsId?: string;
+  rating?: string;
   date?: string;
   guests?: string;
-  price?: string;
-  rating?: string;
+  isActivity?: string;
   sortBy?: string;
   order?: "asc" | "desc";
-  title?: string;
 }
 
 interface QueryFilters {
@@ -35,15 +36,16 @@ export function createQueryOptions(query: ExperienceQueryParams): {
     const {
       page = '1',
       limit = '10',
-      destinationsId,
+      title,
+      price,
       categoriesId,
+      destinationsId,
+      rating,
       date,
       guests,
-      price,
-      rating,
+      isActivity = 'false',
       sortBy = 'title',
       order = 'desc',
-      title,
     } = query;
 
     const filters: QueryFilters = {};
@@ -120,6 +122,21 @@ export function createQueryOptions(query: ExperienceQueryParams): {
       filters.max_people = {
         equals: guestsInt,
       };
+    }
+
+    if (isActivity) {
+      const isActivityBool = isActivity.toLowerCase() === 'true';
+      filters.is_activity = {
+        equals: isActivityBool,
+      };
+    }
+
+    if (!['title', 'city', 'rating', 'start_date', 'end_date', 'duration'].includes(sortBy)) {
+      throw new Error("Invalid sortBy value");
+    }
+
+    if (order !== 'asc' && order !== 'desc') {
+      throw new Error("Invalid order value");
     }
 
     const queryOptions: QueryOptions = {

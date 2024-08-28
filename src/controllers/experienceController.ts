@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import {
+  Experience,
   ExperienceUpsert,
   ExperienceUpsertExtended,
+  PaginatedExperiences,
 } from "../models/experienceModel";
 import { isValidFirebaseUID, isValidObjectId } from "../utils/validate";
 import { validate } from "class-validator";
@@ -9,13 +11,20 @@ import { ExperienceService } from "../services/experienceService";
 import { DestinationService } from "../services/destinationService";
 import { CategoryService } from "../services/categoryService";
 import { PlanService } from "../services/planService";
-import { DestinationUpsertExtended, Weather } from "../models/destinationModel";
+import {
+  Destination,
+  DestinationUpsertExtended,
+  Weather,
+} from "../models/destinationModel";
 import { Category, CategoryUpsertExtended } from "../models/categoryModel";
 import { createQueryOptions } from "../utils/queryOptions";
+import { Plan } from "../models/planModel";
 
 export class ExperienceController {
   static async getExperiences(req: Request, res: Response): Promise<Response> {
-    const { queryOptions, error: queryOptionsError } = createQueryOptions(req.query);
+    const { queryOptions, error: queryOptionsError } = createQueryOptions(
+      req.query
+    );
     if (queryOptionsError) {
       return res.status(400).json({ msg: queryOptionsError });
     }
@@ -23,10 +32,84 @@ export class ExperienceController {
       return res.status(400).json({ msg: "Invalid query options" });
     }
 
-    const { experiences, error: getExperiencesError } =
+    const { experiences: experiencesRaw, error: getExperiencesError } =
       await ExperienceService.getExperiences(queryOptions);
     if (getExperiencesError) {
       return res.status(500).json({ msg: getExperiencesError });
+    }
+    if (!experiencesRaw) {
+      return res.status(200).json(experiencesRaw);
+    }
+
+    const { experiences: _, ...remainingExperiencesRaw } = experiencesRaw;
+    const experiences = new PaginatedExperiences({
+      ...remainingExperiencesRaw,
+      experiences: [],
+    });
+
+    for (const experienceRaw of experiencesRaw?.experiences || []) {
+      const {
+        categories_id,
+        plans_id,
+        destination_id,
+        ...remainingExperienceRaw
+      } = experienceRaw;
+      let categories: Category[] = [];
+      let plans: Plan[] = [];
+      let destination: Destination = {} as Destination;
+
+      for (const categoryId of categories_id) {
+        const { category, error: getCategoryError } =
+          await CategoryService.getCategoryById(categoryId);
+        if (getCategoryError) {
+          return res.status(500).json({ msg: getCategoryError });
+        }
+        if (!category) {
+          return res.status(404).json({
+            msg: `No category found for experience ID ${experienceRaw.id}`,
+          });
+        }
+        categories.push(category);
+      }
+
+      for (const planId of plans_id) {
+        const { plan, error: getPlanError } = await PlanService.getPlanById(
+          planId
+        );
+        if (getPlanError) {
+          return res.status(500).json({ msg: getPlanError });
+        }
+        if (!plan) {
+          return res.status(404).json({
+            msg: `No plan found for experience ID ${experienceRaw.id}`,
+          });
+        }
+        plans.push(plan);
+      }
+
+      if (destination_id) {
+        const { destination: getDestination, error: getDestinationError } =
+          await DestinationService.getDestinationById(destination_id);
+        if (getDestinationError) {
+          return res.status(500).json({ msg: getDestinationError });
+        }
+        if (!getDestination) {
+          return res.status(404).json({
+            msg: `No destination found for experience ID ${experienceRaw.id}`,
+          });
+        }
+
+        destination = getDestination;
+      }
+
+      const experience = new Experience({
+        ...remainingExperienceRaw,
+        categories,
+        plans,
+        destination,
+      });
+
+      experiences.experiences.push(experience);
     }
 
     return res.status(200).json(experiences);
@@ -41,14 +124,75 @@ export class ExperienceController {
       return res.status(400).json({ msg: "Invalid experience ID" });
     }
 
-    const { experience, error: getExperienceError } =
+    const { experience: experienceRaw, error: getExperienceError } =
       await ExperienceService.getExperienceById(experienceId);
     if (getExperienceError) {
       return res.status(500).json({ msg: getExperienceError });
     }
-    if (!experience) {
+    if (!experienceRaw) {
       return res.status(404).json({ msg: "No data found" });
     }
+
+    const {
+      categories_id,
+      plans_id,
+      destination_id,
+      ...remainingExperienceRaw
+    } = experienceRaw;
+    let categories: Category[] = [];
+    let plans: Plan[] = [];
+    let destination: Destination = {} as Destination;
+
+    for (const categoryId of categories_id) {
+      const { category, error: getCategoryError } =
+        await CategoryService.getCategoryById(categoryId);
+      if (getCategoryError) {
+        return res.status(500).json({ msg: getCategoryError });
+      }
+      if (!category) {
+        return res.status(404).json({
+          msg: "No category found",
+        });
+      }
+      categories.push(category);
+    }
+
+    for (const planId of plans_id) {
+      const { plan, error: getPlanError } = await PlanService.getPlanById(
+        planId
+      );
+      if (getPlanError) {
+        return res.status(500).json({ msg: getPlanError });
+      }
+      if (!plan) {
+        return res.status(404).json({
+          msg: "No plan found",
+        });
+      }
+      plans.push(plan);
+    }
+
+    if (destination_id) {
+      const { destination: getDestination, error: getDestinationError } =
+        await DestinationService.getDestinationById(destination_id);
+      if (getDestinationError) {
+        return res.status(500).json({ msg: getDestinationError });
+      }
+      if (!getDestination) {
+        return res.status(404).json({
+          msg: "No destination found",
+        });
+      }
+
+      destination = getDestination;
+    }
+
+    const experience = new Experience({
+      ...remainingExperienceRaw,
+      categories,
+      plans,
+      destination,
+    });
 
     return res.status(200).json(experience);
   }
@@ -150,6 +294,7 @@ export class ExperienceController {
     const newPayload = new ExperienceUpsertExtended({
       ...payload,
       rating: 0,
+      review_count: 0,
     });
 
     const { createdExperienceId, error: createExperienceError } =
@@ -325,6 +470,7 @@ export class ExperienceController {
     const newPayload = new ExperienceUpsertExtended({
       ...payload,
       rating: experience.rating,
+      review_count: experience.review_count,
     });
 
     const { updatedExperience, error: updatedExperienceError } =

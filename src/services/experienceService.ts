@@ -86,6 +86,7 @@ export class ExperienceService {
           include: newData.include,
           exclude: newData.exclude,
           rating: newData.rating,
+          review_count: newData.review_count,
           default_price: newData.default_price,
           custom_prices: newData.custom_prices?.map(({ date, price }) => ({
             date,
@@ -133,6 +134,7 @@ export class ExperienceService {
           include: updatedData.include,
           exclude: updatedData.exclude,
           rating: updatedData.rating,
+          review_count: updatedData.review_count,
           default_price: updatedData.default_price,
           custom_prices: updatedData.custom_prices?.map(({ date, price }) => ({
             date,

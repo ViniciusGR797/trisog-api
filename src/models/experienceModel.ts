@@ -12,6 +12,9 @@ import {
   IsNotEmptyObject,
 } from "class-validator";
 import { JsonArray, JsonValue } from "@prisma/client/runtime/library";
+import { Destination } from "./destinationModel";
+import { Category } from "./categoryModel";
+import { Plan } from "./planModel";
 
 /**
  * @swagger
@@ -63,10 +66,7 @@ class CustomPrice {
   @Min(0, {
     message: "The price in custom price must be greater than or equal to zero",
   })
-  @IsNumber(
-    {},
-    { message: "The price field in custom price must be a number" }
-  )
+  @IsNumber({}, { message: "The price field in custom price must be a number" })
   @IsNotEmpty({ message: "The price field in custom price  is mandatory" })
   price: number;
 
@@ -100,6 +100,7 @@ class CustomPrice {
  *         - include
  *         - exclude
  *         - rating
+ *         - review_count
  *         - default_price
  *         - categories
  *         - plans
@@ -179,6 +180,10 @@ class CustomPrice {
  *           type: number
  *           description: Average rating score for the experience
  *           example: 4.5
+ *         review_count:
+ *           type: integer
+ *           description: Total number of reviews for the experience
+ *           example: 100
  *         default_price:
  *           type: number
  *           description: The default price applied when no custom price is specified
@@ -196,10 +201,8 @@ class CustomPrice {
  *           type: array
  *           items:
  *             $ref: "#/components/schemas/Plan"
- *         destination_id:
- *           type: string
- *           description: ID of the destination associated with the experience
- *           example: "63f47adf2d7e6b04e4f978c7"
+ *         destination:
+ *           $ref: "#/components/schemas/Destination"
  */
 
 class Experience {
@@ -281,6 +284,11 @@ class Experience {
   @IsNotEmpty({ message: "The rating field is mandatory" })
   rating: number;
 
+  @Min(0, { message: "The review_count must be greater than or equal to zero" })
+  @IsInt({ message: "The review_count field must be an integer" })
+  @IsNotEmpty({ message: "The review_count field is mandatory" })
+  review_count: number;
+
   @IsNumber({}, { message: "The default_price field must be a number" })
   @IsNotEmpty({ message: "The default_price field is mandatory" })
   default_price: number;
@@ -288,15 +296,22 @@ class Experience {
   @IsOptional()
   custom_prices: JsonValue;
 
+  @ValidateNested({ each: true })
+  @IsArray({ message: "The categories field must be an array of strings" })
   @IsNotEmpty({ message: "The categories field is mandatory" })
-  categories: JsonValue;
+  categories: Category[];
 
+  @ValidateNested({ each: true })
+  @IsArray({ message: "The plans field must be an array of strings" })
   @IsNotEmpty({ message: "The plans field is mandatory" })
-  plans: JsonValue;
+  plans: Plan[];
 
-  @IsString({ message: "The destination_id field must be a string" })
-  @IsNotEmpty({ message: "The destination_id field is mandatory" })
-  destination_id: string;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The destination field is mandatory" }
+  )
+  destination: Destination;
 
   constructor(payload: Experience) {
     this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
@@ -329,14 +344,85 @@ class Experience {
     this.include = payload.include;
     this.exclude = payload.exclude;
     this.rating = payload.rating;
+    this.review_count = payload.review_count;
     this.default_price = payload.default_price;
     this.custom_prices = payload.custom_prices;
     this.categories = payload.categories;
     this.plans = payload.plans;
-    this.destination_id =
-      typeof payload.destination_id === "string"
-        ? payload.destination_id.trim()
-        : payload.destination_id;
+    this.destination = new Destination(payload.destination);
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     PaginatedExperiences:
+ *       type: object
+ *       required:
+ *         - page
+ *         - limit
+ *         - total_pages
+ *         - total_experiences
+ *         - experiences
+ *       properties:
+ *         page:
+ *           type: integer
+ *           description: The current page number
+ *           example: 1
+ *         limit:
+ *           type: integer
+ *           description: Number of items per page
+ *           example: 10
+ *         total_pages:
+ *           type: integer
+ *           description: Total number of pages
+ *           example: 5
+ *         total_experiences:
+ *           type: integer
+ *           description: Total number of experiences
+ *           example: 50
+ *         experiences:
+ *           type: array
+ *           items:
+ *             $ref: "#/components/schemas/ExperienceList"
+ *           description: List of experiences for the current page
+ */
+
+class PaginatedExperiences {
+  @Min(0, { message: "The page must be greater than or equal to zero" })
+  @IsInt({ message: "The page field must be an integer" })
+  @IsNotEmpty({ message: "The page field is mandatory" })
+  page: number;
+
+  @Min(0, { message: "The limit must be greater than or equal to zero" })
+  @IsInt({ message: "The limit field must be an integer" })
+  @IsNotEmpty({ message: "The limit field is mandatory" })
+  limit: number;
+
+  @Min(0, { message: "The total_pages must be greater than or equal to zero" })
+  @IsInt({ message: "The total_pages field must be an integer" })
+  @IsNotEmpty({ message: "The total_pages field is mandatory" })
+  total_pages: number;
+
+  @Min(0, {
+    message: "The total_experiences must be greater than or equal to zero",
+  })
+  @IsInt({ message: "The total_experiences field must be an integer" })
+  @IsNotEmpty({ message: "The total_experiences field is mandatory" })
+  total_experiences: number;
+
+  @ValidateNested({ each: true })
+  @IsArray({ message: "The experiences field must be an array of strings" })
+  @IsNotEmpty({ message: "The experiences field is mandatory" })
+  experiences: Experience[];
+
+  constructor(payload: PaginatedExperiences) {
+    this.page = payload.page;
+    this.limit = payload.limit;
+    this.total_pages = payload.total_pages;
+    this.total_experiences = payload.total_experiences;
+    this.experiences = payload.experiences;
   }
 }
 
@@ -364,6 +450,7 @@ class Experience {
  *         - include
  *         - exclude
  *         - rating
+ *         - review_count
  *         - default_price
  *         - custom_prices
  *         - categories_id
@@ -443,7 +530,11 @@ class Experience {
  *         rating:
  *           type: number
  *           description: Average rating score for the experience
- *           example: 4.5
+ *           example: 4.5 
+ *         review_count:
+ *           type: integer
+ *           description: Total number of reviews for the experience
+ *           example: 100
  *         default_price:
  *           type: number
  *           description: The default price applied when no custom price is specified
@@ -558,6 +649,11 @@ class ExperienceRaw {
   @IsNotEmpty({ message: "The rating field is mandatory" })
   rating: number;
 
+  @Min(0, { message: "The review_count must be greater than or equal to zero" })
+  @IsInt({ message: "The review_count field must be an integer" })
+  @IsNotEmpty({ message: "The review_count field is mandatory" })
+  review_count: number;
+
   @IsString({
     each: true,
     message: "Each item in the categories_id array must be a string",
@@ -609,6 +705,7 @@ class ExperienceRaw {
     this.include = payload.include;
     this.exclude = payload.exclude;
     this.rating = payload.rating;
+    this.review_count = payload.review_count;
     this.default_price = payload.default_price;
     this.custom_prices = payload.custom_prices;
     this.categories_id = payload.categories_id;
@@ -619,13 +716,6 @@ class ExperienceRaw {
         : payload.destination_id;
   }
 }
-
-
-
-
-
-
-
 
 /**
  * @swagger
@@ -679,13 +769,16 @@ class PaginatedExperiencesRaw {
   @IsNotEmpty({ message: "The total_pages field is mandatory" })
   total_pages: number;
 
-  @Min(0, { message: "The total_experiences must be greater than or equal to zero" })
+  @Min(0, {
+    message: "The total_experiences must be greater than or equal to zero",
+  })
   @IsInt({ message: "The total_experiences field must be an integer" })
   @IsNotEmpty({ message: "The total_experiences field is mandatory" })
   total_experiences: number;
 
   @ValidateNested({ each: true })
-  @IsNotEmptyObject({ nullable: false}, { message: "The experiences field is mandatory" })
+  @IsArray({ message: "The experiences field must be an array of strings" })
+  @IsNotEmpty({ message: "The experiences field is mandatory" })
   experiences: ExperienceRaw[];
 
   constructor(payload: PaginatedExperiencesRaw) {
@@ -693,20 +786,9 @@ class PaginatedExperiencesRaw {
     this.limit = payload.limit;
     this.total_pages = payload.total_pages;
     this.total_experiences = payload.total_experiences;
-    this.experiences = payload.experiences
+    this.experiences = payload.experiences;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
 
 /**
  * @swagger
@@ -870,7 +952,7 @@ class ExperienceUpsert {
   @IsBoolean({ message: "The is_activity field must be a boolean value" })
   @IsNotEmpty({ message: "The is_activity field is mandatory" })
   is_activity: boolean;
-  
+
   @Min(0, { message: "The max_people must be greater than or equal to zero" })
   @IsInt({ message: "The max_people field must be an integer" })
   @IsNotEmpty({ message: "The max_people field is mandatory" })
@@ -959,7 +1041,9 @@ class ExperienceUpsert {
     this.include = payload.include;
     this.exclude = payload.exclude;
     this.default_price = payload.default_price;
-    this.custom_prices = payload.custom_prices?.map(item => new CustomPrice(item));
+    this.custom_prices = payload.custom_prices?.map(
+      (item) => new CustomPrice(item)
+    );
     this.categories_id = payload.categories_id;
     this.plans_id = payload.plans_id;
     this.destination_id =
@@ -990,6 +1074,8 @@ class ExperienceUpsert {
  *         - over_view
  *         - include
  *         - exclude
+ *         - rating
+ *         - review_count
  *         - default_price
  *         - custom_prices
  *         - categories_id
@@ -1066,6 +1152,10 @@ class ExperienceUpsert {
  *           type: number
  *           description: Average rating score for the experience
  *           example: 4.5
+ *         review_count:
+ *           type: integer
+ *           description: Total number of reviews for the experience
+ *           example: 100
  *         default_price:
  *           type: number
  *           description: The default price applied when no custom price is specified
@@ -1099,14 +1189,21 @@ class ExperienceUpsertExtended extends ExperienceUpsert {
   @IsNotEmpty({ message: "The rating field is mandatory" })
   rating: number;
 
+  @Min(0, { message: "The review_count must be greater than or equal to zero" })
+  @IsInt({ message: "The review_count field must be an integer" })
+  @IsNotEmpty({ message: "The review_count field is mandatory" })
+  review_count: number;
+
   constructor(payload: ExperienceUpsertExtended) {
     super(payload);
     this.rating = payload.rating;
+    this.review_count = payload.review_count;
   }
 }
 
 export {
   Experience,
+  PaginatedExperiences,
   ExperienceRaw,
   PaginatedExperiencesRaw,
   ExperienceUpsert,

@@ -57,6 +57,7 @@ model Experience {
   include                     String[]
   exclude                     String[]
   rating                      Float
+  review_count                Int
   default_price               Float  
   custom_prices               Json[]  
   categories_id               String[]

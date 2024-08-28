@@ -20,13 +20,107 @@ const router = Router();
  *     tags:
  *       - Experience
  *     operationId: get_all_experiences
+ *     parameters:
+ *       - name: page
+ *         in: query
+ *         description: Page number for pagination
+ *         required: false
+ *         schema:
+ *           type: string
+ *           default: '1'
+ *       - name: limit
+ *         in: query
+ *         description: Number of experiences per page
+ *         required: false
+ *         schema:
+ *           type: string
+ *           default: '10'
+ *       - name: title
+ *         in: query
+ *         description: Title to search for in experiences
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: 'Tour'
+ *       - name: price
+ *         in: query
+ *         description: Maximum price to filter experiences by
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: '150'
+ *       - name: categoriesId
+ *         in: query
+ *         description: Comma-separated list of category IDs to filter by
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: '66ce29934244142ada6b021e,66ce29934244142ada6b021f'
+ *       - name: destinationsId
+ *         in: query
+ *         description: Comma-separated list of destination IDs to filter by
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: '76ce29934244142ada6b021e,76ce29934244142ada6b021f'
+ *       - name: rating
+ *         in: query
+ *         description: Minimum rating to filter experiences by
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: '4'
+ *       - name: date
+ *         in: query
+ *         description: Date to filter experiences by
+ *         required: false
+ *         schema:
+ *           type: string
+ *           format: date
+ *           example: '2024-03-24'
+ *       - name: guests
+ *         in: query
+ *         description: Number of guests to filter by
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: '2'
+ *       - name: isActivity
+ *         in: query
+ *         description: Filter by whether the experience is an activity (true/false)
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: ['true', 'false']
+ *           default: 'false'
+ *       - name: sortBy
+ *         in: query
+ *         description: Field to sort experiences by
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: 'title'
+ *       - name: order
+ *         in: query
+ *         description: Sort order (ascending or descending)
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
+ *           default: 'desc'
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/PaginatedExperiencesResponse"
+ *               $ref: "#/components/schemas/PaginatedExperiences"
+ *       400:
+ *         description: BadRequest
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/BadRequest"
  *       500:
  *         description: InternalServerError
  *         content:
