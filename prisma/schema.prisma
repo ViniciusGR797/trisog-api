@@ -41,7 +41,7 @@ model Plan {
 
 model Experience {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  name                        String
+  title                       String
   city                        String
   image                       String
   video                       String

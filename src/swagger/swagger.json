@@ -522,6 +522,12 @@
           "$ref": "#/components/schemas/Experience"
         }
       },
+      "ExperienceRawList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ExperienceRaw"
+        }
+      },
       "CustomPrice": {
         "type": "object",
         "required": [
@@ -547,7 +553,7 @@
         "type": "object",
         "required": [
           "id",
-          "name",
+          "title",
           "city",
           "image",
           "video",
@@ -574,9 +580,9 @@
             "description": "Unique identifier for the experience",
             "example": "63f47adf2d7e6b04e4f978c7"
           },
-          "name": {
+          "title": {
             "type": "string",
-            "description": "Name of the experience",
+            "description": "Title of the experience",
             "example": "City Tour"
           },
           "city": {
@@ -699,16 +705,40 @@
         }
       },
       "ExperienceRaw": {
-        "type": "object - id - name - city - image - video - gallery - map_link - start_date - end_date - duration - is_activity - max_people - min_age - over_view - include - exclude - rating - default_price - custom_prices - categories_id - plans_id - destination_id",
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "city",
+          "image",
+          "video",
+          "gallery",
+          "map_link",
+          "start_date",
+          "end_date",
+          "duration",
+          "is_activity",
+          "max_people",
+          "min_age",
+          "over_view",
+          "include",
+          "exclude",
+          "rating",
+          "default_price",
+          "custom_prices",
+          "categories_id",
+          "plans_id",
+          "destination_id"
+        ],
         "properties": {
           "id": {
             "type": "string",
             "description": "Unique identifier for the experience",
             "example": "63f47adf2d7e6b04e4f978c7"
           },
-          "name": {
+          "title": {
             "type": "string",
-            "description": "Name of the experience",
+            "description": "Title of the experience",
             "example": "City Tour"
           },
           "city": {
@@ -841,10 +871,49 @@
           }
         }
       },
+      "PaginatedExperiencesResponse": {
+        "type": "object",
+        "required": [
+          "page",
+          "limit",
+          "total_pages",
+          "total_experiences",
+          "experiences"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of items per page",
+            "example": 10
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "Total number of pages",
+            "example": 5
+          },
+          "total_experiences": {
+            "type": "integer",
+            "description": "Total number of experiences",
+            "example": 50
+          },
+          "experiences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperienceRawList"
+            },
+            "description": "List of experiences for the current page"
+          }
+        }
+      },
       "ExperienceUpsert": {
         "type": "object",
         "required": [
-          "name",
+          "title",
           "city",
           "image",
           "video",
@@ -865,9 +934,9 @@
           "destination_id"
         ],
         "properties": {
-          "name": {
+          "title": {
             "type": "string",
-            "description": "Name of the experience",
+            "description": "Title of the experience",
             "example": "City Tour"
           },
           "city": {
@@ -996,11 +1065,11 @@
         }
       },
       "ExperienceUpsertExtended": {
-        "type": "object - name - city - image - video - gallery - map_link - start_date - end_date - duration - is_activity - max_people - min_age - over_view - include - exclude - default_price - custom_prices - categories_id - plans_id - destination_id",
+        "type": "object - title - city - image - video - gallery - map_link - start_date - end_date - duration - is_activity - max_people - min_age - over_view - include - exclude - default_price - custom_prices - categories_id - plans_id - destination_id",
         "properties": {
-          "name": {
+          "title": {
             "type": "string",
-            "description": "Name of the experience",
+            "description": "Title of the experience",
             "example": "City Tour"
           },
           "city": {
@@ -2170,7 +2239,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExperienceList"
+                  "$ref": "#/components/schemas/PaginatedExperiencesResponse"
                 }
               }
             }

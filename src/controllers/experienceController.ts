@@ -10,14 +10,21 @@ import { DestinationService } from "../services/destinationService";
 import { CategoryService } from "../services/categoryService";
 import { PlanService } from "../services/planService";
 import { DestinationUpsertExtended, Weather } from "../models/destinationModel";
-import { JsonObject } from "@prisma/client/runtime/library";
 import { Category, CategoryUpsertExtended } from "../models/categoryModel";
-import { Plan } from "../models/planModel";
+import { createQueryOptions } from "../utils/queryOptions";
 
 export class ExperienceController {
   static async getExperiences(req: Request, res: Response): Promise<Response> {
+    const { queryOptions, error: queryOptionsError } = createQueryOptions(req.query);
+    if (queryOptionsError) {
+      return res.status(400).json({ msg: queryOptionsError });
+    }
+    if (!queryOptions) {
+      return res.status(400).json({ msg: "Invalid query options" });
+    }
+
     const { experiences, error: getExperiencesError } =
-      await ExperienceService.getExperiences();
+      await ExperienceService.getExperiences(queryOptions);
     if (getExperiencesError) {
       return res.status(500).json({ msg: getExperiencesError });
     }
@@ -181,12 +188,42 @@ export class ExperienceController {
     const newDestination = new DestinationUpsertExtended({
       ...remainingDestination,
       weather: new Weather({
-        jan_feb: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-        mar_apr: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-        may_jun: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-        jul_aug: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-        sep_oct: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-        nov_dec: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+        jan_feb:
+          typeof weather === "object" &&
+          weather !== null &&
+          !Array.isArray(weather)
+            ? Number(weather.jan_feb)
+            : 0,
+        mar_apr:
+          typeof weather === "object" &&
+          weather !== null &&
+          !Array.isArray(weather)
+            ? Number(weather.jan_feb)
+            : 0,
+        may_jun:
+          typeof weather === "object" &&
+          weather !== null &&
+          !Array.isArray(weather)
+            ? Number(weather.jan_feb)
+            : 0,
+        jul_aug:
+          typeof weather === "object" &&
+          weather !== null &&
+          !Array.isArray(weather)
+            ? Number(weather.jan_feb)
+            : 0,
+        sep_oct:
+          typeof weather === "object" &&
+          weather !== null &&
+          !Array.isArray(weather)
+            ? Number(weather.jan_feb)
+            : 0,
+        nov_dec:
+          typeof weather === "object" &&
+          weather !== null &&
+          !Array.isArray(weather)
+            ? Number(weather.jan_feb)
+            : 0,
       }),
       image: destination.images[0],
     });
@@ -332,7 +369,6 @@ export class ExperienceController {
 
     let categories: Category[] = [];
     for (const categoryId of experience.categories_id) {
-
       const { category, error: getCategoryError } =
         await CategoryService.getCategoryById(categoryId);
       if (getCategoryError) {
@@ -350,7 +386,7 @@ export class ExperienceController {
     }
 
     for (const category of categories) {
-      if (category.travel_count > 0){
+      if (category.travel_count > 0) {
         category.travel_count -= 1;
         const { id, ...remainingCategory } = category;
         const newCategory = new CategoryUpsertExtended({
@@ -370,17 +406,50 @@ export class ExperienceController {
       const newDestination = new DestinationUpsertExtended({
         ...remainingDestination,
         weather: new Weather({
-          jan_feb: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-          mar_apr: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-          may_jun: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-          jul_aug: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-          sep_oct: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
-          nov_dec: typeof weather === 'object' && weather !== null && !Array.isArray(weather) ? Number(weather.jan_feb) : 0,
+          jan_feb:
+            typeof weather === "object" &&
+            weather !== null &&
+            !Array.isArray(weather)
+              ? Number(weather.jan_feb)
+              : 0,
+          mar_apr:
+            typeof weather === "object" &&
+            weather !== null &&
+            !Array.isArray(weather)
+              ? Number(weather.jan_feb)
+              : 0,
+          may_jun:
+            typeof weather === "object" &&
+            weather !== null &&
+            !Array.isArray(weather)
+              ? Number(weather.jan_feb)
+              : 0,
+          jul_aug:
+            typeof weather === "object" &&
+            weather !== null &&
+            !Array.isArray(weather)
+              ? Number(weather.jan_feb)
+              : 0,
+          sep_oct:
+            typeof weather === "object" &&
+            weather !== null &&
+            !Array.isArray(weather)
+              ? Number(weather.jan_feb)
+              : 0,
+          nov_dec:
+            typeof weather === "object" &&
+            weather !== null &&
+            !Array.isArray(weather)
+              ? Number(weather.jan_feb)
+              : 0,
         }),
         image: destination.images[0],
       });
       const { updatedDestination, error: updatedDestinationError } =
-        await DestinationService.updateDestination(destination.id, newDestination);
+        await DestinationService.updateDestination(
+          destination.id,
+          newDestination
+        );
       if (updatedDestinationError) {
         return res.status(500).json({ msg: updatedDestinationError });
       }

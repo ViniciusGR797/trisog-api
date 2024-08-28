@@ -1,18 +1,42 @@
+import e from "express";
 import {
   ExperienceRaw,
+  PaginatedExperiencesRaw,
   ExperienceUpsertExtended,
 } from "../models/experienceModel";
 import prismaClient from "../utils/database";
+import { QueryOptions } from "../utils/queryOptions";
 
 export class ExperienceService {
-  static async getExperiences(): Promise<{
-    experiences: ExperienceRaw[] | null;
+  static async getExperiences(queryOptions: QueryOptions): Promise<{
+    experiences: PaginatedExperiencesRaw | null;
     error: string | null;
   }> {
     try {
-      const experiences = await prismaClient.experience.findMany();
+      const { filters, pagination, sort } = queryOptions;
+      const { page, limit } = pagination;
+      const [sortField, sortOrder] = Object.entries(sort)[0];
 
-      return { experiences, error: null };
+      const result = await prismaClient.experience.findMany({
+        where: filters,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          [sortField]: sortOrder,
+        },
+      });
+
+      const total = await prismaClient.experience.count({ where: filters });
+
+      const paginatedExperiencesRaw = {
+        page,
+        limit,
+        total_pages: Math.ceil(total / limit),
+        total_experiences: total,
+        experiences: result,
+      };
+
+      return { experiences: paginatedExperiencesRaw, error: null };
     } catch (error) {
       console.error("Error retrieving experience: ", error);
       return { experiences: null, error: "Internal Server Error" };
@@ -46,7 +70,7 @@ export class ExperienceService {
     try {
       const result = await prismaClient.experience.create({
         data: {
-          name: newData.name,
+          title: newData.title,
           city: newData.city,
           image: newData.image,
           video: newData.video,
@@ -93,7 +117,7 @@ export class ExperienceService {
           id: experienceId,
         },
         data: {
-          name: updatedData.name,
+          title: updatedData.title,
           city: updatedData.city,
           image: updatedData.image,
           video: updatedData.video,

@@ -26,7 +26,7 @@ const router = Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/ExperienceList"
+ *               $ref: "#/components/schemas/PaginatedExperiencesResponse"
  *       500:
  *         description: InternalServerError
  *         content:
