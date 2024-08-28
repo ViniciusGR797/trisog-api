@@ -1,32 +1,32 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/auth';
-import { DestinationController } from '../controllers/destinationController';
+import { CategoryController } from '../controllers/categoryController';
 
 const router = Router();
 
 /**
  * @swagger
  * tags:
- *   name: Destination
- *   description: Routes for destination manipulation
+ *   name: Category
+ *   description: Routes for category manipulation
  */
 
 /**
  * @swagger
- * /destinations:
+ * /categories:
  *   get:
- *     summary: View all destinations
- *     description: Returns information about all destinations
+ *     summary: View all categories
+ *     description: Returns information about all categories
  *     tags:
- *       - Destination
- *     operationId: get_all_destinations
+ *       - Category
+ *     operationId: get_all_categories
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/DestinationList"
+ *               $ref: "#/components/schemas/CategoryList"
  *       500:
  *         description: InternalServerError
  *         content:
@@ -35,31 +35,31 @@ const router = Router();
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/', DestinationController.getDestinations);
+router.get('/', CategoryController.getCategories);
 
 /**
  * @swagger
- * /destinations/{destination_id}:
+ * /categories/{category_id}:
  *   parameters:
- *     - name: destination_id
+ *     - name: category_id
  *       in: path
  *       required: true
- *       description: ID of the destination that will be displayed
+ *       description: ID of the category that will be displayed
  *       schema:
  *         type: string
  *   get:
- *     summary: View destination by id
- *     description: Returns destination information by id
+ *     summary: View category by id
+ *     description: Returns category information by id
  *     tags:
- *       - Destination
- *     operationId: get_destination_by_id
+ *       - Category
+ *     operationId: get_category_by_id
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Destination"
+ *               $ref: "#/components/schemas/Category"
  *       400:
  *         description: BadRequest
  *         content:
@@ -80,17 +80,17 @@ router.get('/', DestinationController.getDestinations);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/:destination_id', DestinationController.getDestinationById);
+router.get('/:category_id', CategoryController.getCategoryById);
 
 /**
  * @swagger
- * /destinations:
+ * /categories:
  *   post:
- *     summary: Create a new destination
- *     description: Creates a new destination based on the data provided in the request body.
+ *     summary: Create a new category
+ *     description: Creates a new category based on the data provided in the request body.
  *     tags:
- *       - Destination
- *     operationId: create_destination
+ *       - Category
+ *     operationId: create_category
  *     security:
  *       - jwt: []
  *     requestBody:
@@ -98,14 +98,14 @@ router.get('/:destination_id', DestinationController.getDestinationById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/DestinationUpsert"
+ *             $ref: "#/components/schemas/CategoryUpsert"
  *     responses:
  *       201:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Destination"
+ *               $ref: "#/components/schemas/Category"
  *       400:
  *         description: BadRequest
  *         content:
@@ -138,30 +138,30 @@ router.get('/:destination_id', DestinationController.getDestinationById);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.post('/', authMiddleware, DestinationController.createDestination);
+router.post('/', authMiddleware, CategoryController.createCategory);
 
 /**
  * @swagger
- * /destinations/{destination_id}:
+ * /categories/{category_id}:
  *   parameters:
- *     - name: destination_id
+ *     - name: category_id
  *       in: path
  *       required: true
- *       description: Destination ID to be updated
+ *       description: Category ID to be updated
  *       schema:
  *         type: string
  *   put:
- *     summary: Update destination
- *     description: Updates the information of the desired destination
+ *     summary: Update category
+ *     description: Updates the information of the desired category
  *     tags:
- *       - Destination
- *     operationId: update_destination
+ *       - Category
+ *     operationId: update_category
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/DestinationUpsert"
+ *             $ref: "#/components/schemas/CategoryUpsert"
  *     security:
  *       - jwt: []
  *     responses:
@@ -170,7 +170,7 @@ router.post('/', authMiddleware, DestinationController.createDestination);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Destination"
+ *               $ref: "#/components/schemas/Category"
  *       400:
  *         description: BadRequest
  *         content:
@@ -203,24 +203,24 @@ router.post('/', authMiddleware, DestinationController.createDestination);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.put('/:destination_id', authMiddleware, DestinationController.updateDestination);
+router.put('/:category_id', authMiddleware, CategoryController.updateCategory);
 
 /**
  * @swagger
- * /destinations/{destination_id}:
+ * /categories/{category_id}:
  *   parameters:
- *     - name: destination_id
+ *     - name: category_id
  *       in: path
  *       required: true
- *       description: ID of the destination to be deleted
+ *       description: ID of the category to be deleted
  *       schema:
  *         type: string
  *   delete:
- *     summary: Remove destination
- *     description: Deletes a destination based on the ID provided
+ *     summary: Remove category
+ *     description: Deletes a category based on the ID provided
  *     tags:
- *       - Destination
- *     operationId: delete_destination
+ *       - Category
+ *     operationId: delete_category
  *     security:
  *       - jwt: []
  *     responses:
@@ -262,6 +262,6 @@ router.put('/:destination_id', authMiddleware, DestinationController.updateDesti
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.delete('/:destination_id', authMiddleware, DestinationController.deleteDestination);
+router.delete('/:category_id', authMiddleware, CategoryController.deleteCategory);
 
 export default router;

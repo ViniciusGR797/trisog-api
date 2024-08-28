@@ -1,32 +1,32 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/auth';
-import { DestinationController } from '../controllers/destinationController';
+import { PlanController } from '../controllers/planController';
 
 const router = Router();
 
 /**
  * @swagger
  * tags:
- *   name: Destination
- *   description: Routes for destination manipulation
+ *   name: Plan
+ *   description: Routes for plan manipulation
  */
 
 /**
  * @swagger
- * /destinations:
+ * /plans:
  *   get:
- *     summary: View all destinations
- *     description: Returns information about all destinations
+ *     summary: View all plans
+ *     description: Returns information about all plans
  *     tags:
- *       - Destination
- *     operationId: get_all_destinations
+ *       - Plan
+ *     operationId: get_all_plans
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/DestinationList"
+ *               $ref: "#/components/schemas/PlanList"
  *       500:
  *         description: InternalServerError
  *         content:
@@ -35,31 +35,31 @@ const router = Router();
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/', DestinationController.getDestinations);
+router.get('/', PlanController.getPlans);
 
 /**
  * @swagger
- * /destinations/{destination_id}:
+ * /plans/{plan_id}:
  *   parameters:
- *     - name: destination_id
+ *     - name: plan_id
  *       in: path
  *       required: true
- *       description: ID of the destination that will be displayed
+ *       description: ID of the plan that will be displayed
  *       schema:
  *         type: string
  *   get:
- *     summary: View destination by id
- *     description: Returns destination information by id
+ *     summary: View plan by id
+ *     description: Returns plan information by id
  *     tags:
- *       - Destination
- *     operationId: get_destination_by_id
+ *       - Plan
+ *     operationId: get_plan_by_id
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Destination"
+ *               $ref: "#/components/schemas/Plan"
  *       400:
  *         description: BadRequest
  *         content:
@@ -80,17 +80,17 @@ router.get('/', DestinationController.getDestinations);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/:destination_id', DestinationController.getDestinationById);
+router.get('/:plan_id', PlanController.getPlanById);
 
 /**
  * @swagger
- * /destinations:
+ * /plans:
  *   post:
- *     summary: Create a new destination
- *     description: Creates a new destination based on the data provided in the request body.
+ *     summary: Create a new plan
+ *     description: Creates a new plan based on the data provided in the request body.
  *     tags:
- *       - Destination
- *     operationId: create_destination
+ *       - Plan
+ *     operationId: create_plan
  *     security:
  *       - jwt: []
  *     requestBody:
@@ -98,14 +98,14 @@ router.get('/:destination_id', DestinationController.getDestinationById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/DestinationUpsert"
+ *             $ref: "#/components/schemas/PlanUpsert"
  *     responses:
  *       201:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Destination"
+ *               $ref: "#/components/schemas/Plan"
  *       400:
  *         description: BadRequest
  *         content:
@@ -138,30 +138,30 @@ router.get('/:destination_id', DestinationController.getDestinationById);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.post('/', authMiddleware, DestinationController.createDestination);
+router.post('/', authMiddleware, PlanController.createPlan);
 
 /**
  * @swagger
- * /destinations/{destination_id}:
+ * /plans/{plan_id}:
  *   parameters:
- *     - name: destination_id
+ *     - name: plan_id
  *       in: path
  *       required: true
- *       description: Destination ID to be updated
+ *       description: Plan ID to be updated
  *       schema:
  *         type: string
  *   put:
- *     summary: Update destination
- *     description: Updates the information of the desired destination
+ *     summary: Update plan
+ *     description: Updates the information of the desired plan
  *     tags:
- *       - Destination
- *     operationId: update_destination
+ *       - Plan
+ *     operationId: update_plan
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/DestinationUpsert"
+ *             $ref: "#/components/schemas/PlanUpsert"
  *     security:
  *       - jwt: []
  *     responses:
@@ -170,7 +170,7 @@ router.post('/', authMiddleware, DestinationController.createDestination);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Destination"
+ *               $ref: "#/components/schemas/Plan"
  *       400:
  *         description: BadRequest
  *         content:
@@ -203,24 +203,24 @@ router.post('/', authMiddleware, DestinationController.createDestination);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.put('/:destination_id', authMiddleware, DestinationController.updateDestination);
+router.put('/:plan_id', authMiddleware, PlanController.updatePlan);
 
 /**
  * @swagger
- * /destinations/{destination_id}:
+ * /plans/{plan_id}:
  *   parameters:
- *     - name: destination_id
+ *     - name: plan_id
  *       in: path
  *       required: true
- *       description: ID of the destination to be deleted
+ *       description: ID of the plan to be deleted
  *       schema:
  *         type: string
  *   delete:
- *     summary: Remove destination
- *     description: Deletes a destination based on the ID provided
+ *     summary: Remove plan
+ *     description: Deletes a plan based on the ID provided
  *     tags:
- *       - Destination
- *     operationId: delete_destination
+ *       - Plan
+ *     operationId: delete_plan
  *     security:
  *       - jwt: []
  *     responses:
@@ -262,6 +262,6 @@ router.put('/:destination_id', authMiddleware, DestinationController.updateDesti
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.delete('/:destination_id', authMiddleware, DestinationController.deleteDestination);
+router.delete('/:plan_id', authMiddleware, PlanController.deletePlan);
 
 export default router;

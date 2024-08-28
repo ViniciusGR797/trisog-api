@@ -56,8 +56,8 @@ To access the API Trisog in production or homologation environments:
 
 <div align="center">
 
-| Ambiente       | URL                                   |
-| -------------- | ------------------------------------- |
+| Ambiente       | URL                               |
+| -------------- | ----------------------------------|
 | `Production`   | https://trisog-api.vercel.app     |
 | `Homologation` | https://trisog-api-hom.vercel.app |
 
@@ -247,7 +247,7 @@ I would like to take advantage of this space to express my sincere gratitude for
     <tr>
       <td align="center">
         <a href="https://github.com/ViniciusGR797">
-          <img src="https://avatars.githubusercontent.com/u/106624536?v=4" width="100px;" alt="Foto do Vinícius"/><br>
+          <img src="https://avatars.githubusercontent.com/u/106624536?v=4" width="100px;" alt="Photo of Vinicius"/><br>
           <sub>
             <b>Vinicius Gomes Ribeiro</b>
           </sub>
