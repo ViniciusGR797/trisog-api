@@ -77,8 +77,8 @@ model Review {
 
 model Favorite {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  favorites                   String[]
-  user_id                     String       @map("user_id")
+  experiences_id              String[]
+  user_id                     String
 }
 
 model Booking {
@@ -86,11 +86,17 @@ model Booking {
   date                        String
   duration                    Float
   ticket                      Json
-  user_id                     String       @map("user_id")
+  user_id                     String      
 }
 
 model Newsletter {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
   email                       String
   user_id                     String      
+}
+
+model Testimonial {
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  message                     String
+  author                      String      
 }

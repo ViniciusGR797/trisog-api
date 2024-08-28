@@ -1,48 +1,56 @@
-import { IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsNotEmpty, IsString } from "class-validator";
 
 /**
  * @swagger
  * components:
  *   schemas:
- *     CategoryList:
- *       type: array
- *       items:
- *         $ref: "#/components/schemas/Category"
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
- *     Category:
+ *     Favorite:
  *       type: object
  *       required:
  *         - id
- *         - name
+ *         - experiences_id
+ *         - user_id
  *       properties:
  *         id:
  *           type: string
- *           description: Unique identifier for the category
+ *           description: Unique identifier for the favorite record
  *           example: "60b8d295f1c0d2b0f1b2c3d8"
- *         name:
+ *         experiences_id:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of experience IDs associated with the favorite
+ *           example: ["66ce29934244142ada6b021e", "77ce29934244142ada6b021f"]
+ *         user_id:
  *           type: string
- *           description: Descriptive name of the category
- *           example: "Adventure"
+ *           description: Firebase UID of the user who marked the favorite
+ *           example: "user1234uid"
  */
 
-class Category {
+class Favorite {
   @IsString({ message: "The id field must be a string" })
   @IsNotEmpty({ message: "The id field is mandatory" })
   id: string;
 
-  @IsString({ message: "The name field must be a string" })
-  @IsNotEmpty({ message: "The name field is mandatory" })
-  name: string;
+  @IsString({
+    each: true,
+    message: "Each item in the experiences_id array must be a string",
+  })
+  @IsArray({ message: "The experiences_id field must be an array of strings" })
+  @IsNotEmpty({ message: "The experiences_id field is mandatory" })
+  experiences_id: string[];
 
-  constructor(payload: Category) {
+  @IsString({ message: "The user_id field must be a string" })
+  @IsNotEmpty({ message: "The user_id field is mandatory" })
+  user_id: string;
+
+  constructor(payload: Favorite) {
     this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
-    this.name =
-      typeof payload.name === "string" ? payload.name.trim() : payload.name;
+    this.experiences_id = payload.experiences_id;
+    this.user_id =
+      typeof payload.user_id === "string"
+        ? payload.user_id.trim()
+        : payload.user_id;
   }
 }
 
@@ -50,26 +58,78 @@ class Category {
  * @swagger
  * components:
  *   schemas:
- *     CategoryUpsert:
+ *     FavoriteUpsert:
  *       type: object
  *       required:
- *         - name
+ *         - experience_id
  *       properties:
- *         name:
+ *         experience_id:
  *           type: string
- *           description: Descriptive name of the category
- *           example: "Adventure"
+ *           description: Unique identifier for the favorited experience
+ *           example: "60b8d295f1c0d2b0f1b2c3d9"
  */
 
-class CategoryUpsert {
-    @IsString({ message: "The name field must be a string" })
-    @IsNotEmpty({ message: "The name field is mandatory" })
-    name: string;
-  
-    constructor(payload: CategoryUpsert) {
-      this.name =
-        typeof payload.name === "string" ? payload.name.trim() : payload.name;
-    }
-  }
+class FavoriteUpsert {
+  @IsString({ message: "The experience_id field must be a string" })
+  @IsNotEmpty({ message: "The experience_id field is mandatory" })
+  experience_id: string;
 
-export { Category, CategoryUpsert };
+  constructor(payload: FavoriteUpsert) {
+    this.experience_id =
+      typeof payload.experience_id === "string"
+        ? payload.experience_id.trim()
+        : payload.experience_id;
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FavoriteUpsertExtended:
+ *       type: object
+ *       required:
+ *         - experience_id
+ *         - experiences_id
+ *         - user_id
+ *       properties:
+ *         experience_id:
+ *           type: string
+ *           description: Unique identifier for the favorited experience
+ *           example: "60b8d295f1c0d2b0f1b2c3d9"
+ *         experiences_id:
+ *           type: array
+ *           items:
+ *             type: string
+ *           description: List of experience IDs associated with the favorite
+ *           example: ["66ce29934244142ada6b021e", "77ce29934244142ada6b021f"]
+ *         user_id:
+ *           type: string
+ *           description: Firebase UID of the user who marked the favorite
+ *           example: "user1234uid"
+ */
+
+class FavoriteUpsertExtended extends FavoriteUpsert {
+  @IsString({
+    each: true,
+    message: "Each item in the experiences_id array must be a string",
+  })
+  @IsArray({ message: "The experiences_id field must be an array of strings" })
+  @IsNotEmpty({ message: "The experiences_id field is mandatory" })
+  experiences_id: string[];
+  
+  @IsString({ message: "The user_id field must be a string" })
+  @IsNotEmpty({ message: "The user_id field is mandatory" })
+  user_id: string;
+
+  constructor(payload: FavoriteUpsertExtended) {
+    super(payload);
+    this.experiences_id = payload.experiences_id;
+    this.user_id =
+      typeof payload.user_id === "string"
+        ? payload.user_id.trim()
+        : payload.user_id;
+  }
+}
+
+export { Favorite, FavoriteUpsert, FavoriteUpsertExtended };
