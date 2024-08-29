@@ -1053,6 +1053,10 @@ components:
           type: string
           description: ID of the destination associated with the experience
           example: 63f47adf2d7e6b04e4f978c7
+    FavoriteList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Favorite'
     Favorite:
       type: object
       required:
@@ -1081,20 +1085,6 @@ components:
           type: string
           description: Unique identifier for the favorited experience
           example: 60b8d295f1c0d2b0f1b2c3d9
-    FavoriteUpsertExtended:
-      type: object
-      required:
-        - experience_id
-        - user_id
-      properties:
-        experience_id:
-          type: string
-          description: Unique identifier for the favorited experience
-          example: 60b8d295f1c0d2b0f1b2c3d9
-        user_id:
-          type: string
-          description: Firebase UID of the user who marked the favorite
-          example: user1234uid
     PlanList:
       type: array
       items:
@@ -1162,13 +1152,6 @@ components:
             - History
             - Architecture
             - Culture
-    FavoriteDeleteSuccess:
-      type: object
-      properties:
-        msg:
-          type: string
-          description: Delete success message
-          example: Successfully deleted from favorites
     DeleteSuccess:
       type: object
       properties:
@@ -2059,7 +2042,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Favorite'
+                $ref: '#/components/schemas/FavoriteList'
         '400':
           description: BadRequest
           content:
@@ -2112,7 +2095,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FavoriteDeleteSuccess'
+                $ref: '#/components/schemas/DeleteSuccess'
         '400':
           description: BadRequest
           content:

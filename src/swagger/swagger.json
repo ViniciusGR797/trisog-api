@@ -1256,6 +1256,12 @@
           }
         }
       },
+      "FavoriteList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Favorite"
+        }
+      },
       "Favorite": {
         "type": "object",
         "required": [
@@ -1291,25 +1297,6 @@
             "type": "string",
             "description": "Unique identifier for the favorited experience",
             "example": "60b8d295f1c0d2b0f1b2c3d9"
-          }
-        }
-      },
-      "FavoriteUpsertExtended": {
-        "type": "object",
-        "required": [
-          "experience_id",
-          "user_id"
-        ],
-        "properties": {
-          "experience_id": {
-            "type": "string",
-            "description": "Unique identifier for the favorited experience",
-            "example": "60b8d295f1c0d2b0f1b2c3d9"
-          },
-          "user_id": {
-            "type": "string",
-            "description": "Firebase UID of the user who marked the favorite",
-            "example": "user1234uid"
           }
         }
       },
@@ -1398,16 +1385,6 @@
               "Architecture",
               "Culture"
             ]
-          }
-        }
-      },
-      "FavoriteDeleteSuccess": {
-        "type": "object",
-        "properties": {
-          "msg": {
-            "type": "string",
-            "description": "Delete success message",
-            "example": "Successfully deleted from favorites"
           }
         }
       },
@@ -2806,7 +2783,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Favorite"
+                  "$ref": "#/components/schemas/FavoriteList"
                 }
               }
             }
@@ -2894,7 +2871,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FavoriteDeleteSuccess"
+                  "$ref": "#/components/schemas/DeleteSuccess"
                 }
               }
             }
