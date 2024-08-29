@@ -92,7 +92,7 @@ const router = Router();
  *         schema:
  *           type: string
  *           enum: ['true', 'false']
- *           default: 'false'
+ *           example: 'false'
  *       - name: sortBy
  *         in: query
  *         description: Field to sort experiences by

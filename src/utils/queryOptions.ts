@@ -43,7 +43,7 @@ export function createQueryOptions(query: ExperienceQueryParams): {
       rating,
       date,
       guests,
-      isActivity = 'false',
+      isActivity,
       sortBy = 'title',
       order = 'desc',
     } = query;

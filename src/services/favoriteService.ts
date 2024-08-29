@@ -1,13 +1,32 @@
-import { Favorite, FavoriteUpsertExtended } from "../models/favoriteModel";
+import { Favorite, FavoriteUpsert } from "../models/favoriteModel";
 import prismaClient from "../utils/database";
 
 export class FavoriteService {
+  static async getFavoritesByUser(
+    userId: string
+  ): Promise<{ favorite: Favorite[] | null; error: string | null }> {
+    try {
+      const favorite = await prismaClient.favorite.findMany({
+        where: {
+          user_id: userId,
+        },
+      });
+
+      return { favorite, error: null };
+    } catch (error) {
+      console.error("Error when searching for favorite by user: ", error);
+      return { favorite: null, error: "Internal server error" };
+    }
+  }
+
   static async getFavoriteByUser(
+    experienceId: string,
     userId: string
   ): Promise<{ favorite: Favorite | null; error: string | null }> {
     try {
       const favorite = await prismaClient.favorite.findFirst({
         where: {
+          experience_id: experienceId,
           user_id: userId,
         },
       });
@@ -23,43 +42,59 @@ export class FavoriteService {
     }
   }
 
-  static async createFavorite(
-    newData: FavoriteUpsertExtended
+  static async getFavoriteById(
+    favoriteId: string
   ): Promise<{ favorite: Favorite | null; error: string | null }> {
     try {
-      const result = await prismaClient.favorite.create({
-        data: {
-          experiences_id: newData.experiences_id,
-          user_id: newData.user_id,
+      const favorite = await prismaClient.favorite.findUnique({
+        where: {
+          id: favoriteId,
         },
       });
 
-      return { favorite: result, error: null };
+      if (favorite) {
+        return { favorite, error: null };
+      } else {
+        return { favorite: null, error: null };
+      }
     } catch (error) {
-      console.error("Error saving favorite: ", error);
+      console.error("Error when searching for favorite by ID: ", error);
       return { favorite: null, error: "Internal server error" };
     }
   }
 
-  static async updateFavorite(
-    favoriteId: string,
-    updatedData: FavoriteUpsertExtended
-  ): Promise<{ favorite: Favorite | null; error: string | null }> {
+  static async createFavorite(
+    newData: FavoriteUpsert,
+    userId: string
+  ): Promise<{ createdFavoriteId: string | null; error: string | null }> {
     try {
-      const result = await prismaClient.favorite.update({
-        where: {
-          id: favoriteId,
-        },
+      const result = await prismaClient.favorite.create({
         data: {
-          experiences_id: updatedData.experiences_id,
-          user_id: updatedData.user_id,
+          experience_id: newData.experience_id,
+          user_id: userId,
         },
       });
 
-      return { favorite: result, error: null };
+      return { createdFavoriteId: result.id, error: null };
     } catch (error) {
-      console.error("Error updating favorite: ", error);
-      return { favorite: null, error: "Internal server error" };
+      console.error("Error saving favorite: ", error);
+      return { createdFavoriteId: null, error: "Internal server error" };
+    }
+  }
+
+  static async deleteFavorite(
+    favoriteId: string
+  ): Promise<{ deletedFavorite: Favorite | null; error: string | null }> {
+    try {
+      const result = await prismaClient.favorite.delete({
+        where: {
+          id: favoriteId,
+        },
+      });
+      return { deletedFavorite: result, error: null };
+    } catch (error) {
+      console.error("Error deleting favorite:", error);
+      return { deletedFavorite: null, error: "Internal server error" };
     }
   }
 }

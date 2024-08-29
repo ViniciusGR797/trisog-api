@@ -1057,21 +1057,17 @@ components:
       type: object
       required:
         - id
-        - experiences_id
+        - experience_id
         - user_id
       properties:
         id:
           type: string
           description: Unique identifier for the favorite record
           example: 60b8d295f1c0d2b0f1b2c3d8
-        experiences_id:
-          type: array
-          items:
-            type: string
-          description: List of experience IDs associated with the favorite
-          example:
-            - 66ce29934244142ada6b021e
-            - 77ce29934244142ada6b021f
+        experience_id:
+          type: string
+          description: Unique identifier for the experience being favorited
+          example: 60b8d295f1c0d2b0f1b2c3d9
         user_id:
           type: string
           description: Firebase UID of the user who marked the favorite
@@ -1089,21 +1085,12 @@ components:
       type: object
       required:
         - experience_id
-        - experiences_id
         - user_id
       properties:
         experience_id:
           type: string
           description: Unique identifier for the favorited experience
           example: 60b8d295f1c0d2b0f1b2c3d9
-        experiences_id:
-          type: array
-          items:
-            type: string
-          description: List of experience IDs associated with the favorite
-          example:
-            - 66ce29934244142ada6b021e
-            - 77ce29934244142ada6b021f
         user_id:
           type: string
           description: Firebase UID of the user who marked the favorite
@@ -1807,7 +1794,7 @@ paths:
             enum:
               - 'true'
               - 'false'
-            default: 'false'
+            example: 'false'
         - name: sortBy
           in: query
           description: Field to sort experiences by

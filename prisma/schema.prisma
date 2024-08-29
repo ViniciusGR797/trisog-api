@@ -78,7 +78,7 @@ model Review {
 
 model Favorite {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  experiences_id              String[]
+  experience_id               String
   user_id                     String
 }
 

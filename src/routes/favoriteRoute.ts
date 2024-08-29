@@ -62,7 +62,7 @@ router.get('/', authMiddleware, FavoriteController.getFavorite);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Favorite"
+ *               $ref: "#/components/schemas/FavoriteList"
  *       400:
  *         description: BadRequest
  *         content:
@@ -95,7 +95,7 @@ router.get('/', authMiddleware, FavoriteController.getFavorite);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.post('/', authMiddleware, FavoriteController.addFavorite);
+router.post('/', authMiddleware, FavoriteController.createFavorite);
 
 /**
  * @swagger
@@ -121,7 +121,7 @@ router.post('/', authMiddleware, FavoriteController.addFavorite);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/FavoriteDeleteSuccess"
+ *               $ref: "#/components/schemas/DeleteSuccess"
  *       400:
  *         description: BadRequest
  *         content:
@@ -154,6 +154,6 @@ router.post('/', authMiddleware, FavoriteController.addFavorite);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.delete('/:experience_id', authMiddleware, FavoriteController.removeFavorite);
+router.delete('/:experience_id', authMiddleware, FavoriteController.deleteFavorite);
 
 export default router;
