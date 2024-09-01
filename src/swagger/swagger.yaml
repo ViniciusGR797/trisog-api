@@ -1415,6 +1415,47 @@ components:
           type: string
           description: Unique identifier for the experience being reviewed
           example: 60b8d295f1c0d2b0f1b2c3d9
+    TestimonialList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Testimonial'
+    Testimonial:
+      type: object
+      required:
+        - id
+        - message
+        - author
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the testimonial
+          example: 60b8d295f1c0d2b0f1b2c3d8
+        message:
+          type: string
+          description: The testimonial message provided by a customer
+          example: >-
+            The tour was amazing! Our guide was very knowledgeable and made the
+            experience unforgettable.
+        author:
+          type: string
+          description: The name of the person who provided the testimonial
+          example: John Doe
+    TestimonialUpsert:
+      type: object
+      required:
+        - message
+        - author
+      properties:
+        message:
+          type: string
+          description: The testimonial message provided by a customer
+          example: >-
+            The tour was amazing! Our guide was very knowledgeable and made the
+            experience unforgettable.
+        author:
+          type: string
+          description: The name of the person who provided the testimonial
+          example: John Doe
 paths:
   /bookings:
     get:
@@ -2878,6 +2919,214 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /testimonials:
+    get:
+      summary: View all testimonials
+      description: Returns information about all testimonials
+      tags:
+        - Testimonial
+      operationId: get_all_testimonials
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestimonialList'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    post:
+      summary: Create a new testimonial
+      description: >-
+        Creates a new testimonial based on the data provided in the request
+        body.
+      tags:
+        - Testimonial
+      operationId: create_testimonial
+      security:
+        - jwt: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestimonialUpsert'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Testimonial'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /testimonials/{testimonial_id}:
+    parameters:
+      - name: testimonial_id
+        in: path
+        required: true
+        description: ID of the testimonial to be deleted
+        schema:
+          type: string
+    get:
+      summary: View testimonial by id
+      description: Returns testimonial information by id
+      tags:
+        - Testimonial
+      operationId: get_testimonial_by_id
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Testimonial'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    put:
+      summary: Update testimonial
+      description: Updates the information of the desired testimonial
+      tags:
+        - Testimonial
+      operationId: update_testimonial
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestimonialUpsert'
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Testimonial'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      summary: Remove testimonial
+      description: Deletes a testimonial based on the ID provided
+      tags:
+        - Testimonial
+      operationId: delete_testimonial
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSuccess'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
 tags:
   - name: Booking
     description: Routes for booking manipulation
@@ -2893,3 +3142,5 @@ tags:
     description: Routes for plan manipulation
   - name: Review
     description: Routes for review manipulation
+  - name: Testimonial
+    description: Routes for testimonial manipulation

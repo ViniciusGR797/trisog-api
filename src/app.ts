@@ -10,7 +10,7 @@ import favoriteRoutes from './routes/favoriteRoute';
 // import newsletterRoutes from './routes/newsletterRoute';
 import planRoutes from './routes/planRoute';
 import reviewRoutes from './routes/reviewRoute';
-// import testimonialRoutes from './routes/testimonialRoute';
+import testimonialRoutes from './routes/testimonialRoute';
 
 const app = express();
 
@@ -28,7 +28,7 @@ app.use('/favorites', favoriteRoutes);
 // app.use('/newsletters', newsletterRoutes);
 app.use('/plans', planRoutes);
 app.use('/reviews', reviewRoutes);
-// app.use('/testimonials', testimonialRoutes);
+app.use('/testimonials', testimonialRoutes);
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, swaggerStyle));
 app.use('/', swaggerUi.serve, swaggerUi.setup(swaggerSpecJson, swaggerStyle));
