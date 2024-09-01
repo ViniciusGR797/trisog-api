@@ -49,7 +49,7 @@ model Experience {
   map_link                    String
   start_date                  DateTime
   end_date                    DateTime
-  duration                    Float
+  duration                    Int
   is_activity                 Boolean
   max_people                  Int
   min_age                     Int
@@ -84,15 +84,11 @@ model Favorite {
 
 model Booking {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  date                        String
-  duration                    Float
+  date                        DateTime
+  time                        String
   ticket                      Json
-  user_id                     String      
-}
-
-model Newsletter {
-  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  email                       String
+  total_price               Float  
+  experience_id               String      
   user_id                     String      
 }
 
@@ -100,4 +96,10 @@ model Testimonial {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
   message                     String
   author                      String      
+}
+
+model Newsletter {
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email                       String
+  user_id                     String      
 }

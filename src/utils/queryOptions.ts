@@ -35,7 +35,7 @@ export function createQueryOptions(query: ExperienceQueryParams): {
   try {
     const {
       page = '1',
-      limit = '10',
+      limit = '9',
       title,
       price,
       categoriesId,
@@ -120,7 +120,7 @@ export function createQueryOptions(query: ExperienceQueryParams): {
         throw new Error("Invalid guests value");
       }
       filters.max_people = {
-        equals: guestsInt,
+        gte: guestsInt,
       };
     }
 
@@ -131,7 +131,7 @@ export function createQueryOptions(query: ExperienceQueryParams): {
       };
     }
 
-    if (!['title', 'city', 'rating', 'start_date', 'end_date', 'duration'].includes(sortBy)) {
+    if (!['title', 'city', 'default_price', 'rating', 'review_count', 'duration', 'start_date', 'end_date'].includes(sortBy)) {
       throw new Error("Invalid sortBy value");
     }
 

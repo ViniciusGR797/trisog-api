@@ -146,8 +146,8 @@ class CustomPrice {
  *           example: "2024-03-24"
  *         duration:
  *           type: number
- *           description: Duration of the experience
- *           example: 24
+ *           description: Duration of experience in minutes
+ *           example: 60
  *         is_activity:
  *           type: boolean
  *           description: Indicates if the experience is an activity
@@ -242,7 +242,8 @@ class Experience {
   @IsNotEmpty({ message: "The end_date field is mandatory" })
   end_date: Date;
 
-  @IsNumber({}, { message: "The duration field must be a number" })
+  @Min(1, { message: "The duration must be greater than or equal to zero" })
+  @IsInt({ message: "The duration field must be an integer" })
   @IsNotEmpty({ message: "The duration field is mandatory" })
   duration: number;
 
@@ -497,8 +498,8 @@ class PaginatedExperiences {
  *           example: "2024-03-24"
  *         duration:
  *           type: number
- *           description: Duration of the experience
- *           example: 24
+ *           description: Duration of experience in minutes
+ *           example: 60
  *         is_activity:
  *           type: boolean
  *           description: Indicates if the experience is an activity
@@ -600,7 +601,8 @@ class ExperienceRaw {
   @IsNotEmpty({ message: "The end_date field is mandatory" })
   end_date: Date;
 
-  @IsNumber({}, { message: "The duration field must be a number" })
+  @Min(1, { message: "The duration must be greater than or equal to zero" })
+  @IsInt({ message: "The duration field must be an integer" })
   @IsNotEmpty({ message: "The duration field is mandatory" })
   duration: number;
 
@@ -853,8 +855,8 @@ class PaginatedExperiencesRaw {
  *           example: "2024-03-24"
  *         duration:
  *           type: number
- *           description: Duration of the experience
- *           example: 24
+ *           description: Duration of experience in minutes
+ *           example: 60
  *         is_activity:
  *           type: boolean
  *           description: Indicates if the experience is an activity
@@ -944,8 +946,8 @@ class ExperienceUpsert {
   @IsNotEmpty({ message: "The end_date field is mandatory" })
   end_date: Date;
 
-  @Min(0, { message: "The duration must be greater than or equal to zero" })
-  @IsNumber({}, { message: "The duration field must be a number" })
+  @Min(1, { message: "The duration must be greater than or equal to zero" })
+  @IsInt({ message: "The duration field must be an integer" })
   @IsNotEmpty({ message: "The duration field is mandatory" })
   duration: number;
 
@@ -1118,8 +1120,8 @@ class ExperienceUpsert {
  *           example: "2024-03-24"
  *         duration:
  *           type: number
- *           description: Duration of the experience
- *           example: 24
+ *           description: Duration of experience in minutes
+ *           example: 60
  *         is_activity:
  *           type: boolean
  *           description: Indicates if the experience is an activity
