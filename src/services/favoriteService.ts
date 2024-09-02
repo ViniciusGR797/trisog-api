@@ -4,18 +4,18 @@ import prismaClient from "../utils/database";
 export class FavoriteService {
   static async getFavoritesByUser(
     userId: string
-  ): Promise<{ favorite: Favorite[] | null; error: string | null }> {
+  ): Promise<{ favorites: Favorite[] | null; error: string | null }> {
     try {
-      const favorite = await prismaClient.favorite.findMany({
+      const favorites = await prismaClient.favorite.findMany({
         where: {
           user_id: userId,
         },
       });
 
-      return { favorite, error: null };
+      return { favorites, error: null };
     } catch (error) {
       console.error("Error when searching for favorite by user: ", error);
-      return { favorite: null, error: "Internal server error" };
+      return { favorites: null, error: "Internal server error" };
     }
   }
 

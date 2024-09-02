@@ -15,6 +15,7 @@ import { JsonArray, JsonValue } from "@prisma/client/runtime/library";
 import { Destination } from "./destinationModel";
 import { Category } from "./categoryModel";
 import { Plan } from "./planModel";
+import { Ratings } from "./reviewModel";
 
 /**
  * @swagger
@@ -99,7 +100,7 @@ class CustomPrice {
  *         - over_view
  *         - include
  *         - exclude
- *         - rating
+ *         - ratings
  *         - review_count
  *         - default_price
  *         - categories
@@ -176,10 +177,9 @@ class CustomPrice {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
- *         rating:
- *           type: number
- *           description: Average rating score for the experience
- *           example: 4.5
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
  *         review_count:
  *           type: integer
  *           description: Total number of reviews for the experience
@@ -281,9 +281,8 @@ class Experience {
   @IsNotEmpty({ message: "The exclude field is mandatory" })
   exclude: string[];
 
-  @IsNumber({}, { message: "The rating field must be a number" })
-  @IsNotEmpty({ message: "The rating field is mandatory" })
-  rating: number;
+  @IsNotEmpty({ message: "The ratings field is mandatory" })
+  ratings: JsonValue;
 
   @Min(0, { message: "The review_count must be greater than or equal to zero" })
   @IsInt({ message: "The review_count field must be an integer" })
@@ -329,9 +328,9 @@ class Experience {
         ? payload.gallery.trim()
         : payload.gallery;
     this.map_link =
-      typeof payload.gallery === "string"
-        ? payload.gallery.trim()
-        : payload.gallery;
+      typeof payload.map_link === "string"
+        ? payload.map_link.trim()
+        : payload.map_link;
     this.start_date = new Date(payload.start_date);
     this.end_date = new Date(payload.end_date);
     this.duration = payload.duration;
@@ -343,8 +342,8 @@ class Experience {
         ? payload.over_view.trim()
         : payload.over_view;
     this.include = payload.include;
-    this.exclude = payload.exclude;
-    this.rating = payload.rating;
+    this.exclude = payload.exclude;    
+    this.ratings = payload.ratings;
     this.review_count = payload.review_count;
     this.default_price = payload.default_price;
     this.custom_prices = payload.custom_prices;
@@ -450,7 +449,7 @@ class PaginatedExperiences {
  *         - over_view
  *         - include
  *         - exclude
- *         - rating
+ *         - ratings
  *         - review_count
  *         - default_price
  *         - custom_prices
@@ -528,10 +527,9 @@ class PaginatedExperiences {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
- *         rating:
- *           type: number
- *           description: Average rating score for the experience
- *           example: 4.5 
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
  *         review_count:
  *           type: integer
  *           description: Total number of reviews for the experience
@@ -647,9 +645,8 @@ class ExperienceRaw {
   @IsOptional()
   custom_prices: JsonValue;
 
-  @IsNumber({}, { message: "The rating field must be a number" })
-  @IsNotEmpty({ message: "The rating field is mandatory" })
-  rating: number;
+  @IsNotEmpty({ message: "The ratings field is mandatory" })
+  ratings: JsonValue;
 
   @Min(0, { message: "The review_count must be greater than or equal to zero" })
   @IsInt({ message: "The review_count field must be an integer" })
@@ -691,9 +688,9 @@ class ExperienceRaw {
         ? payload.gallery.trim()
         : payload.gallery;
     this.map_link =
-      typeof payload.gallery === "string"
-        ? payload.gallery.trim()
-        : payload.gallery;
+      typeof payload.map_link === "string"
+        ? payload.map_link.trim()
+        : payload.map_link;
     this.start_date = new Date(payload.start_date);
     this.end_date = new Date(payload.end_date);
     this.duration = payload.duration;
@@ -706,7 +703,7 @@ class ExperienceRaw {
         : payload.over_view;
     this.include = payload.include;
     this.exclude = payload.exclude;
-    this.rating = payload.rating;
+    this.ratings = payload.ratings;
     this.review_count = payload.review_count;
     this.default_price = payload.default_price;
     this.custom_prices = payload.custom_prices;
@@ -1027,9 +1024,9 @@ class ExperienceUpsert {
         ? payload.gallery.trim()
         : payload.gallery;
     this.map_link =
-      typeof payload.gallery === "string"
-        ? payload.gallery.trim()
-        : payload.gallery;
+      typeof payload.map_link === "string"
+        ? payload.map_link.trim()
+        : payload.map_link;
     this.start_date = new Date(payload.start_date);
     this.end_date = new Date(payload.end_date);
     this.duration = payload.duration;
@@ -1076,7 +1073,7 @@ class ExperienceUpsert {
  *         - over_view
  *         - include
  *         - exclude
- *         - rating
+ *         - ratings
  *         - review_count
  *         - default_price
  *         - custom_prices
@@ -1150,10 +1147,9 @@ class ExperienceUpsert {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
- *         rating:
- *           type: number
- *           description: Average rating score for the experience
- *           example: 4.5
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
  *         review_count:
  *           type: integer
  *           description: Total number of reviews for the experience
@@ -1187,9 +1183,12 @@ class ExperienceUpsert {
  */
 
 class ExperienceUpsertExtended extends ExperienceUpsert {
-  @IsNumber({}, { message: "The rating field must be a number" })
-  @IsNotEmpty({ message: "The rating field is mandatory" })
-  rating: number;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The ratings field is mandatory" }
+  )
+  ratings: Ratings;
 
   @Min(0, { message: "The review_count must be greater than or equal to zero" })
   @IsInt({ message: "The review_count field must be an integer" })
@@ -1197,13 +1196,14 @@ class ExperienceUpsertExtended extends ExperienceUpsert {
   review_count: number;
 
   constructor(payload: ExperienceUpsertExtended) {
-    super(payload);
-    this.rating = payload.rating;
+    super(payload);    
+    this.ratings = new Ratings(payload.ratings);
     this.review_count = payload.review_count;
   }
 }
 
 export {
+  CustomPrice,
   Experience,
   PaginatedExperiences,
   ExperienceRaw,

@@ -64,6 +64,47 @@ export class ExperienceService {
     }
   }
 
+  static async getExperiencesUserFavorites(
+    queryOptions: QueryOptions,
+    experiencesId: string[]
+  ): Promise<{ experiences: PaginatedExperiencesRaw | null; error: string | null }> {
+    try {
+      const { filters, pagination, sort } = queryOptions;
+      const { page, limit } = pagination;
+      const [sortField, sortOrder] = Object.entries(sort)[0];
+  
+      const whereClause = {
+        ...filters,
+        id: {
+          in: experiencesId,
+        },
+      };
+  
+      const result = await prismaClient.experience.findMany({
+        where: whereClause,
+        skip: (page - 1) * limit,
+        take: limit,
+        orderBy: {
+          [sortField]: sortOrder,
+        },
+      });
+  
+      const total = await prismaClient.experience.count({ where: whereClause });
+  
+      const paginatedExperiencesRaw = {
+        page,
+        limit,
+        total_pages: Math.ceil(total / limit),
+        total_experiences: total,
+        experiences: result,
+      };
+  
+      return { experiences: paginatedExperiencesRaw, error: null };
+    } catch (error) {
+      console.error("Error when searching for experiences by IDs: ", error);
+      return { experiences: null, error: "Internal server error" };
+    }
+  }
   static async createExperience(
     newData: ExperienceUpsertExtended
   ): Promise<{ createdExperienceId: string | null; error: string | null }> {
@@ -85,7 +126,14 @@ export class ExperienceService {
           over_view: newData.over_view,
           include: newData.include,
           exclude: newData.exclude,
-          rating: newData.rating,
+          ratings: {
+            services: newData.ratings.services,
+            location: newData.ratings.location,
+            amenities: newData.ratings.amenities,
+            prices: newData.ratings.prices,
+            food: newData.ratings.food,
+            room_comfort_and_quality: newData.ratings.room_comfort_and_quality,
+          },
           review_count: newData.review_count,
           default_price: newData.default_price,
           custom_prices: newData.custom_prices?.map(({ date, price }) => ({
@@ -133,7 +181,14 @@ export class ExperienceService {
           over_view: updatedData.over_view,
           include: updatedData.include,
           exclude: updatedData.exclude,
-          rating: updatedData.rating,
+          ratings: {
+            services: updatedData.ratings.services,
+            location: updatedData.ratings.location,
+            amenities: updatedData.ratings.amenities,
+            prices: updatedData.ratings.prices,
+            food: updatedData.ratings.food,
+            room_comfort_and_quality: updatedData.ratings.room_comfort_and_quality,
+          },
           review_count: updatedData.review_count,
           default_price: updatedData.default_price,
           custom_prices: updatedData.custom_prices?.map(({ date, price }) => ({

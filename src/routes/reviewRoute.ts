@@ -84,6 +84,51 @@ router.get('/:review_id', ReviewController.getReviewById);
 
 /**
  * @swagger
+ * /reviews/experience/{experience_id}:
+ *   parameters:
+ *     - name: experience_id
+ *       in: path
+ *       required: true
+ *       description: ID of the experience that will fetch the reviews
+ *       schema:
+ *         type: string
+ *   get:
+ *     summary: View review by experience
+ *     description: Returns review information by experience
+ *     tags:
+ *       - Review
+ *     operationId: get_review_by_experience
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ReviewList"
+ *       400:
+ *         description: BadRequest
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/BadRequest"
+ *       404:
+ *         description: NotFound
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/NotFound"
+ *       500:
+ *         description: InternalServerError
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/InternalServerError"
+ */
+
+router.get('/experience/:experience_id', ReviewController.getReviewsByExperience);
+
+/**
+ * @swagger
  * /reviews:
  *   post:
  *     summary: Create a new review

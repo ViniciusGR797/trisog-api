@@ -646,7 +646,7 @@ components:
         - over_view
         - include
         - exclude
-        - rating
+        - ratings
         - review_count
         - default_price
         - categories
@@ -726,10 +726,9 @@ components:
           description: List of items excluded from the experience
           example:
             - Transportation
-        rating:
-          type: number
-          description: Average rating score for the experience
-          example: 4.5
+        ratings:
+          $ref: '#/components/schemas/Ratings'
+          description: Object containing individual ratings for various categories
         review_count:
           type: integer
           description: Total number of reviews for the experience
@@ -802,7 +801,7 @@ components:
         - over_view
         - include
         - exclude
-        - rating
+        - ratings
         - review_count
         - default_price
         - custom_prices
@@ -883,10 +882,9 @@ components:
           description: List of items excluded from the experience
           example:
             - Transportation
-        rating:
-          type: number
-          description: Average rating score for the experience
-          example: 4.5
+        ratings:
+          $ref: '#/components/schemas/Ratings'
+          description: Object containing individual ratings for various categories
         review_count:
           type: integer
           description: Total number of reviews for the experience
@@ -1077,7 +1075,7 @@ components:
       type: >-
         object - title - city - image - video - gallery - map_link - start_date
         - end_date - duration - is_activity - max_people - min_age - over_view -
-        include - exclude - rating - review_count - default_price -
+        include - exclude - ratings - review_count - default_price -
         custom_prices - categories_id - plans_id - destination_id
       properties:
         title:
@@ -1149,10 +1147,9 @@ components:
           description: List of items excluded from the experience
           example:
             - Transportation
-        rating:
-          type: number
-          description: Average rating score for the experience
-          example: 4.5
+        ratings:
+          $ref: '#/components/schemas/Ratings'
+          description: Object containing individual ratings for various categories
         review_count:
           type: integer
           description: Total number of reviews for the experience
@@ -1219,6 +1216,24 @@ components:
           type: string
           description: Unique identifier for the favorited experience
           example: 60b8d295f1c0d2b0f1b2c3d9
+    NewsletterList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Newsletter'
+    Newsletter:
+      type: object
+      required:
+        - email
+        - email
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the newsletter subscription
+          example: 60b8d295f1c0d2b0f1b2c3d8
+        email:
+          type: string
+          description: Email address used for receiving notifications and updates
+          example: johndoe@example.com
     PlanList:
       type: array
       items:
@@ -1334,6 +1349,40 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Review'
+    Ratings:
+      type: object
+      required:
+        - services
+        - location
+        - amenities
+        - prices
+        - food
+        - room_comfort_and_quality
+      properties:
+        services:
+          type: number
+          description: Rating for services
+          example: 4
+        location:
+          type: number
+          description: Rating for location
+          example: 5
+        amenities:
+          type: number
+          description: Rating for amenities
+          example: 3
+        prices:
+          type: number
+          description: Rating for prices
+          example: 4
+        food:
+          type: number
+          description: Rating for food
+          example: 5
+        room_comfort_and_quality:
+          type: number
+          description: Rating for room comfort and quality
+          example: 5
     Review:
       type: object
       required:
@@ -1342,7 +1391,7 @@ components:
         - email
         - comment
         - image
-        - score
+        - ratings
         - created_at
         - experience_id
       properties:
@@ -1366,11 +1415,9 @@ components:
           type: string
           description: URL to an image related to the review
           example: https://example.com/review-image.jpg
-        score:
-          type: integer
-          format: int32
-          description: Rating score given by the reviewer, typically on a scale of 1 to 5
-          example: 5
+        ratings:
+          $ref: '#/components/schemas/Ratings'
+          description: Object containing individual ratings for various categories
         created_at:
           type: string
           format: date-time
@@ -1387,7 +1434,7 @@ components:
         - email
         - comment
         - image
-        - score
+        - ratings
         - experience_id
       properties:
         name:
@@ -1406,11 +1453,9 @@ components:
           type: string
           description: URL to an image related to the review
           example: https://example.com/review-image.jpg
-        score:
-          type: integer
-          format: int32
-          description: Rating score given by the reviewer, typically on a scale of 1 to 5
-          example: 5
+        ratings:
+          $ref: '#/components/schemas/Ratings'
+          description: Object containing individual ratings for various categories
         experience_id:
           type: string
           description: Unique identifier for the experience being reviewed
@@ -2246,6 +2291,136 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /experiences/user/favorites:
+    get:
+      summary: See all favorited experiences
+      description: Returns information about all favorited experiences
+      tags:
+        - Experience
+      operationId: get_all_favorited_experiences
+      parameters:
+        - name: page
+          in: query
+          description: Page number for pagination
+          required: false
+          schema:
+            type: string
+            default: '1'
+        - name: limit
+          in: query
+          description: Number of experiences per page
+          required: false
+          schema:
+            type: string
+            default: '10'
+        - name: title
+          in: query
+          description: Title to search for in experiences
+          required: false
+          schema:
+            type: string
+            example: Tour
+        - name: price
+          in: query
+          description: Maximum price to filter experiences by
+          required: false
+          schema:
+            type: string
+            example: '150'
+        - name: categoriesId
+          in: query
+          description: Comma-separated list of category IDs to filter by
+          required: false
+          schema:
+            type: string
+            example: 66ce29934244142ada6b021e,66ce29934244142ada6b021f
+        - name: destinationsId
+          in: query
+          description: Comma-separated list of destination IDs to filter by
+          required: false
+          schema:
+            type: string
+            example: 76ce29934244142ada6b021e,76ce29934244142ada6b021f
+        - name: rating
+          in: query
+          description: Minimum rating to filter experiences by
+          required: false
+          schema:
+            type: string
+            example: '4'
+        - name: date
+          in: query
+          description: Date to filter experiences by
+          required: false
+          schema:
+            type: string
+            format: date
+            example: '2024-03-24'
+        - name: guests
+          in: query
+          description: Number of guests to filter by
+          required: false
+          schema:
+            type: string
+            example: '2'
+        - name: isActivity
+          in: query
+          description: Filter by whether the experience is an activity (true/false)
+          required: false
+          schema:
+            type: string
+            enum:
+              - 'true'
+              - 'false'
+            example: 'false'
+        - name: sortBy
+          in: query
+          description: Field to sort experiences by
+          required: false
+          schema:
+            type: string
+            example: title
+        - name: order
+          in: query
+          description: Sort order (ascending or descending)
+          required: false
+          schema:
+            type: string
+            enum:
+              - asc
+              - desc
+            default: desc
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedExperiences'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
   /experiences/{experience_id}:
     parameters:
       - name: experience_id
@@ -2470,6 +2645,163 @@ paths:
       operationId: delete_favorite
       security:
         - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteSuccess'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /newsletters:
+    get:
+      summary: View all newsletters
+      description: Returns information about all newsletters
+      tags:
+        - Newsletter
+      operationId: get_all_newsletters
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsletterList'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    post:
+      summary: Create a new newsletter
+      description: Creates a new newsletter based on the data provided in the request body.
+      tags:
+        - Newsletter
+      operationId: create_newsletter
+      security:
+        - jwt: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewsletterUpsert'
+      responses:
+        '201':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Unauthorized'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forbidden'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+  /newsletters/{newsletter_id}:
+    parameters:
+      - name: newsletter_id
+        in: path
+        required: true
+        description: ID of the newsletter to be deleted
+        schema:
+          type: string
+    get:
+      summary: View newsletter by id
+      description: Returns newsletter information by id
+      tags:
+        - Newsletter
+      operationId: get_newsletter_by_id
+      security:
+        - jwt: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Newsletter'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
+    delete:
+      summary: Remove newsletter
+      description: Deletes a newsletter based on the ID provided
+      tags:
+        - Newsletter
+      operationId: delete_newsletter
       responses:
         '200':
           description: Success
@@ -2919,6 +3251,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InternalServerError'
+  /reviews/experience/{experience_id}:
+    parameters:
+      - name: experience_id
+        in: path
+        required: true
+        description: ID of the experience that will fetch the reviews
+        schema:
+          type: string
+    get:
+      summary: View review by experience
+      description: Returns review information by experience
+      tags:
+        - Review
+      operationId: get_review_by_experience
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewList'
+        '400':
+          description: BadRequest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequest'
+        '404':
+          description: NotFound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFound'
+        '500':
+          description: InternalServerError
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalServerError'
   /testimonials:
     get:
       summary: View all testimonials
@@ -3138,6 +3509,8 @@ tags:
     description: Routes for experience manipulation
   - name: Favorite
     description: Routes for favorite manipulation
+  - name: Newsletter
+    description: Routes for newsletter manipulation
   - name: Plan
     description: Routes for plan manipulation
   - name: Review

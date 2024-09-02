@@ -14,12 +14,12 @@ export class FavoriteController {
       return res.status(400).json({ msg: "Invalid user ID" });
     }
 
-    const { favorite, error: getFavoriteError } =
+    const { favorites, error: getFavoriteError } =
       await FavoriteService.getFavoritesByUser(userId);
     if (getFavoriteError) {
       return res.status(500).json({ msg: getFavoriteError });
     }
-    return res.status(200).json(favorite);
+    return res.status(200).json(favorites);
   }
 
   static async createFavorite(req: Request, res: Response): Promise<Response> {

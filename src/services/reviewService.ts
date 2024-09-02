@@ -37,6 +37,27 @@ export class ReviewService {
     }
   }
 
+  static async getReviewsByExperience(
+    experienceId: string
+  ): Promise<{ reviews: Review[] | null; error: string | null }> {
+    try {
+      const reviews = await prismaClient.review.findMany({
+        where: {
+          experience_id: experienceId,
+        },
+      });
+  
+      if (reviews.length > 0) {
+        return { reviews, error: null };
+      } else {
+        return { reviews: null, error: null }; // Retorna null se não houver reviews
+      }
+    } catch (error) {
+      console.error("Error when searching for reviews by experience ID: ", error);
+      return { reviews: null, error: "Internal server error" };
+    }
+  }
+
   static async createReview(
     newData: ReviewUpsert
   ): Promise<{ createdReviewId: string | null; error: string | null }> {
@@ -47,7 +68,14 @@ export class ReviewService {
           email: newData.email,
           comment: newData.comment,
           image: newData.image,
-          score: newData.score,
+          ratings: {
+            services: newData.ratings.services,
+            location: newData.ratings.location,
+            amenities: newData.ratings.amenities,
+            prices: newData.ratings.prices,
+            food: newData.ratings.food,
+            room_comfort_and_quality: newData.ratings.room_comfort_and_quality,
+          },
           experience_id: newData.experience_id,
         },
       });
@@ -73,7 +101,14 @@ export class ReviewService {
           email: updatedData.email,
           comment: updatedData.comment,
           image: updatedData.image,
-          score: updatedData.score,
+          ratings: {
+            services: updatedData.ratings.services,
+            location: updatedData.ratings.location,
+            amenities: updatedData.ratings.amenities,
+            prices: updatedData.ratings.prices,
+            food: updatedData.ratings.food,
+            room_comfort_and_quality: updatedData.ratings.room_comfort_and_quality,
+          },
           experience_id: updatedData.experience_id,
         },
       });

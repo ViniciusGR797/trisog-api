@@ -19,6 +19,9 @@ import {
 import { Category, CategoryUpsertExtended } from "../models/categoryModel";
 import { createQueryOptions } from "../utils/queryOptions";
 import { Plan } from "../models/planModel";
+import { Ratings } from "../models/reviewModel";
+import { JsonObject } from "@prisma/client/runtime/library";
+import { FavoriteService } from "../services/favoriteService";
 
 export class ExperienceController {
   static async getExperiences(req: Request, res: Response): Promise<Response> {
@@ -34,6 +37,116 @@ export class ExperienceController {
 
     const { experiences: experiencesRaw, error: getExperiencesError } =
       await ExperienceService.getExperiences(queryOptions);
+    if (getExperiencesError) {
+      return res.status(500).json({ msg: getExperiencesError });
+    }
+    if (!experiencesRaw) {
+      return res.status(200).json(experiencesRaw);
+    }
+
+    const { experiences: _, ...remainingExperiencesRaw } = experiencesRaw;
+    const experiences = new PaginatedExperiences({
+      ...remainingExperiencesRaw,
+      experiences: [],
+    });
+
+    for (const experienceRaw of experiencesRaw?.experiences || []) {
+      const {
+        categories_id,
+        plans_id,
+        destination_id,
+        ...remainingExperienceRaw
+      } = experienceRaw;
+      let categories: Category[] = [];
+      let plans: Plan[] = [];
+      let destination: Destination = {} as Destination;
+
+      for (const categoryId of categories_id) {
+        const { category, error: getCategoryError } =
+          await CategoryService.getCategoryById(categoryId);
+        if (getCategoryError) {
+          return res.status(500).json({ msg: getCategoryError });
+        }
+        if (!category) {
+          return res.status(404).json({
+            msg: `No category found for experience ID ${experienceRaw.id}`,
+          });
+        }
+        categories.push(category);
+      }
+
+      for (const planId of plans_id) {
+        const { plan, error: getPlanError } = await PlanService.getPlanById(
+          planId
+        );
+        if (getPlanError) {
+          return res.status(500).json({ msg: getPlanError });
+        }
+        if (!plan) {
+          return res.status(404).json({
+            msg: `No plan found for experience ID ${experienceRaw.id}`,
+          });
+        }
+        plans.push(plan);
+      }
+
+      if (destination_id) {
+        const { destination: getDestination, error: getDestinationError } =
+          await DestinationService.getDestinationById(destination_id);
+        if (getDestinationError) {
+          return res.status(500).json({ msg: getDestinationError });
+        }
+        if (!getDestination) {
+          return res.status(404).json({
+            msg: `No destination found for experience ID ${experienceRaw.id}`,
+          });
+        }
+
+        destination = getDestination;
+      }
+
+      const experience = new Experience({
+        ...remainingExperienceRaw,
+        categories,
+        plans,
+        destination,
+      });
+
+      experiences.experiences.push(experience);
+    }
+
+    return res.status(200).json(experiences);
+  }
+
+  static async getExperiencesUserFavorites(req: Request, res: Response): Promise<Response> {
+    const { queryOptions, error: queryOptionsError } = createQueryOptions(
+      req.query
+    );
+    if (queryOptionsError) {
+      return res.status(400).json({ msg: queryOptionsError });
+    }
+    if (!queryOptions) {
+      return res.status(400).json({ msg: "Invalid query options" });
+    }
+
+    const userId = req.user_id;
+    if (!isValidFirebaseUID(userId)) {
+      return res.status(400).json({ msg: "Invalid user ID" });
+    }
+
+    const { favorites, error: getFavoriteError } =
+      await FavoriteService.getFavoritesByUser(userId);
+    if (getFavoriteError) {
+      return res.status(500).json({ msg: getFavoriteError });
+    }
+    if (!favorites) {
+      return res.status(200).json([]);
+    }
+
+    const experienceIds = favorites.map(experience => experience.experience_id);
+
+    const { experiences: experiencesRaw, error: getExperiencesError } =
+      await ExperienceService.getExperiencesUserFavorites(queryOptions, experienceIds);
     if (getExperiencesError) {
       return res.status(500).json({ msg: getExperiencesError });
     }
@@ -293,7 +406,14 @@ export class ExperienceController {
 
     const newPayload = new ExperienceUpsertExtended({
       ...payload,
-      rating: 0,
+      ratings: new Ratings({
+        services: 0,
+        location: 0,
+        amenities: 0,
+        prices: 0,
+        food: 0,
+        room_comfort_and_quality: 0,
+      }),
       review_count: 0,
     });
 
@@ -469,7 +589,14 @@ export class ExperienceController {
 
     const newPayload = new ExperienceUpsertExtended({
       ...payload,
-      rating: experience.rating,
+      ratings: new Ratings({
+        services: Number((experience.ratings as JsonObject)?.services) || 0,
+        location: Number((experience.ratings as JsonObject)?.location) || 0,
+        amenities: Number((experience.ratings as JsonObject)?.amenities) || 0,
+        prices: Number((experience.ratings as JsonObject)?.prices) || 0,
+        food: Number((experience.ratings as JsonObject)?.food) || 0,
+        room_comfort_and_quality: Number((experience.ratings as JsonObject)?.room_comfort_and_quality) || 0,
+      }),
       review_count: experience.review_count,
     });
 

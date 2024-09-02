@@ -1,10 +1,13 @@
+import { JsonValue } from "@prisma/client/runtime/library";
 import {
   IsDate,
   IsEmail,
   IsInt,
   IsNotEmpty,
+  IsNotEmptyObject,
   IsString,
   Min,
+  ValidateNested,
 } from "class-validator";
 
 /**
@@ -21,6 +24,90 @@ import {
  * @swagger
  * components:
  *   schemas:
+ *     Ratings:
+ *       type: object
+ *       required:
+ *         - services
+ *         - location
+ *         - amenities
+ *         - prices
+ *         - food
+ *         - room_comfort_and_quality
+ *       properties:
+ *         services:
+ *           type: number
+ *           description: Rating for services
+ *           example: 4
+ *         location:
+ *           type: number
+ *           description: Rating for location
+ *           example: 5
+ *         amenities:
+ *           type: number
+ *           description: Rating for amenities
+ *           example: 3
+ *         prices:
+ *           type: number
+ *           description: Rating for prices
+ *           example: 4
+ *         food:
+ *           type: number
+ *           description: Rating for food
+ *           example: 5
+ *         room_comfort_and_quality:
+ *           type: number
+ *           description: Rating for room comfort and quality
+ *           example: 5
+ */
+
+class Ratings {
+  @Min(0, { message: "The services must be greater than or equal to zero" })
+  @IsInt({ message: "The services field must be an integer" })
+  @IsNotEmpty({ message: "The services field is mandatory" })
+  services: number;
+
+  @Min(0, { message: "The location must be greater than or equal to zero" })
+  @IsInt({ message: "The location field must be an integer" })
+  @IsNotEmpty({ message: "The location field is mandatory" })
+  location: number;
+
+  @Min(0, { message: "The amenities must be greater than or equal to zero" })
+  @IsInt({ message: "The amenities field must be an integer" })
+  @IsNotEmpty({ message: "The amenities field is mandatory" })
+  amenities: number;
+
+  @Min(0, { message: "The prices must be greater than or equal to zero" })
+  @IsInt({ message: "The prices field must be an integer" })
+  @IsNotEmpty({ message: "The prices field is mandatory" })
+  prices: number;
+
+  @Min(0, { message: "The food must be greater than or equal to zero" })
+  @IsInt({ message: "The food field must be an integer" })
+  @IsNotEmpty({ message: "The food field is mandatory" })
+  food: number;
+
+  @Min(0, {
+    message:
+      "The room_comfort_and_quality must be greater than or equal to zero",
+  })
+  @IsInt({ message: "The room_comfort_and_quality field must be an integer" })
+  @IsNotEmpty({ message: "The room_comfort_and_quality field is mandatory" })
+  room_comfort_and_quality: number;
+
+  constructor(payload: Ratings) {
+    this.services = payload.services;
+    this.location = payload.location;
+    this.amenities = payload.amenities;
+    this.prices = payload.prices;
+    this.food = payload.food;
+    this.room_comfort_and_quality = payload.room_comfort_and_quality;
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
  *     Review:
  *       type: object
  *       required:
@@ -29,7 +116,7 @@ import {
  *         - email
  *         - comment
  *         - image
- *         - score
+ *         - ratings
  *         - created_at
  *         - experience_id
  *       properties:
@@ -53,11 +140,9 @@ import {
  *           type: string
  *           description: URL to an image related to the review
  *           example: "https://example.com/review-image.jpg"
- *         score:
- *           type: integer
- *           format: int32
- *           description: Rating score given by the reviewer, typically on a scale of 1 to 5
- *           example: 5
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
  *         created_at:
  *           type: string
  *           format: date-time
@@ -90,10 +175,8 @@ class Review {
   @IsNotEmpty({ message: "The image field is mandatory" })
   image: string;
 
-  @Min(0, { message: "The score must be greater than or equal to zero" })
-  @IsInt({ message: "The score field must be an integer" })
-  @IsNotEmpty({ message: "The score field is mandatory" })
-  score: number;
+  @IsNotEmpty({ message: "The ratings field is mandatory" })
+  ratings: JsonValue;
 
   @IsDate({ message: "The created_at field must be a valid date" })
   @IsNotEmpty({ message: "The created_at field is mandatory" })
@@ -115,7 +198,7 @@ class Review {
         : payload.comment;
     this.image =
       typeof payload.image === "string" ? payload.image.trim() : payload.image;
-    this.score = payload.score;
+    this.ratings = payload.ratings;
     this.created_at = new Date(payload.created_at);
     this.experience_id =
       typeof payload.experience_id === "string"
@@ -135,7 +218,7 @@ class Review {
  *         - email
  *         - comment
  *         - image
- *         - score
+ *         - ratings
  *         - experience_id
  *       properties:
  *         name:
@@ -154,60 +237,60 @@ class Review {
  *           type: string
  *           description: URL to an image related to the review
  *           example: "https://example.com/review-image.jpg"
- *         score:
- *           type: integer
- *           format: int32
- *           description: Rating score given by the reviewer, typically on a scale of 1 to 5
- *           example: 5
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
  *         experience_id:
  *           type: string
  *           description: Unique identifier for the experience being reviewed
  *           example: "60b8d295f1c0d2b0f1b2c3d9"
  */
 
-class ReviewUpsert {  
-    @IsString({ message: "The name field must be a string" })
-    @IsNotEmpty({ message: "The name field is mandatory" })
-    name: string;
-  
-    @IsEmail({}, { message: "Invalid email" })
-    @IsNotEmpty({ message: "The email field is mandatory" })
-    email: string;
-  
-    @IsString({ message: "The comment field must be a string" })
-    @IsNotEmpty({ message: "The comment field is mandatory" })
-    comment: string;
-  
-    @IsString({ message: "The image field must be a string" })
-    @IsNotEmpty({ message: "The image field is mandatory" })
-    image: string;
-  
-    @Min(0, { message: "The score must be greater than or equal to zero" })
-    @IsInt({ message: "The score field must be an integer" })
-    @IsNotEmpty({ message: "The score field is mandatory" })
-    score: number;
-  
-    @IsString({ message: "The experience_id field must be a string" })
-    @IsNotEmpty({ message: "The experience_id field is mandatory" })
-    experience_id: string;
-  
-    constructor(payload: ReviewUpsert) {
-      this.name =
-        typeof payload.name === "string" ? payload.name.trim() : payload.name;
-      this.email =
-        typeof payload.email === "string" ? payload.email.trim() : payload.email;
-      this.comment =
-        typeof payload.comment === "string"
-          ? payload.comment.trim()
-          : payload.comment;
-      this.image =
-        typeof payload.image === "string" ? payload.image.trim() : payload.image;
-      this.score = payload.score;
-      this.experience_id =
-        typeof payload.experience_id === "string"
-          ? payload.experience_id.trim()
-          : payload.experience_id;
-    }
-  }
+class ReviewUpsert {
+  @IsString({ message: "The name field must be a string" })
+  @IsNotEmpty({ message: "The name field is mandatory" })
+  name: string;
 
-export { Review, ReviewUpsert };
+  @IsEmail({}, { message: "Invalid email" })
+  @IsNotEmpty({ message: "The email field is mandatory" })
+  email: string;
+
+  @IsString({ message: "The comment field must be a string" })
+  @IsNotEmpty({ message: "The comment field is mandatory" })
+  comment: string;
+
+  @IsString({ message: "The image field must be a string" })
+  @IsNotEmpty({ message: "The image field is mandatory" })
+  image: string;
+
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The ratings field is mandatory" }
+  )
+  ratings: Ratings;
+
+  @IsString({ message: "The experience_id field must be a string" })
+  @IsNotEmpty({ message: "The experience_id field is mandatory" })
+  experience_id: string;
+
+  constructor(payload: ReviewUpsert) {
+    this.name =
+      typeof payload.name === "string" ? payload.name.trim() : payload.name;
+    this.email =
+      typeof payload.email === "string" ? payload.email.trim() : payload.email;
+    this.comment =
+      typeof payload.comment === "string"
+        ? payload.comment.trim()
+        : payload.comment;
+    this.image =
+      typeof payload.image === "string" ? payload.image.trim() : payload.image;
+    this.ratings = new Ratings(payload.ratings);
+    this.experience_id =
+      typeof payload.experience_id === "string"
+        ? payload.experience_id.trim()
+        : payload.experience_id;
+  }
+}
+
+export { Ratings, Review, ReviewUpsert };

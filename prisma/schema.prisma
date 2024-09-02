@@ -56,7 +56,7 @@ model Experience {
   over_view                   String
   include                     String[]
   exclude                     String[]
-  rating                      Float
+  ratings                     Json
   review_count                Int
   default_price               Float  
   custom_prices               Json[]  
@@ -71,7 +71,7 @@ model Review {
   email                       String
   comment                     String
   image                       String
-  score                       Int  
+  ratings                     Json  
   created_at                  DateTime     @default(now())
   experience_id               String      
 }
@@ -87,7 +87,7 @@ model Booking {
   date                        DateTime
   time                        String
   ticket                      Json
-  total_price               Float  
+  total_price                 Float  
   experience_id               String      
   user_id                     String      
 }
@@ -100,6 +100,5 @@ model Testimonial {
 
 model Newsletter {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  email                       String
-  user_id                     String      
+  email                       String   
 }
