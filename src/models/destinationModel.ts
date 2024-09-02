@@ -7,6 +7,8 @@ import {
   IsInt,
   IsNumber,
   Min,
+  ValidateNested,
+  IsNotEmptyObject,
 } from "class-validator";
 
 /**
@@ -421,7 +423,8 @@ class DestinationUpsert {
   @IsNotEmpty({ message: "The map_link field is mandatory" })
   map_link: string;
 
-  @IsNotEmpty({ message: "The weather field is mandatory" })
+  @ValidateNested()
+  @IsNotEmptyObject({nullable: false}, { message: "The weather field is mandatory" })
   weather: Weather;
 
   @IsString({

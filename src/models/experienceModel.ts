@@ -9,8 +9,13 @@ import {
   IsDate,
   ValidateNested,
   IsOptional,
+  IsNotEmptyObject,
 } from "class-validator";
-import { JsonValue } from "@prisma/client/runtime/library";
+import { JsonArray, JsonValue } from "@prisma/client/runtime/library";
+import { Destination } from "./destinationModel";
+import { Category } from "./categoryModel";
+import { Plan } from "./planModel";
+import { Ratings } from "./reviewModel";
 
 /**
  * @swagger
@@ -20,6 +25,16 @@ import { JsonValue } from "@prisma/client/runtime/library";
  *       type: array
  *       items:
  *         $ref: "#/components/schemas/Experience"
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ExperienceRawList:
+ *       type: array
+ *       items:
+ *         $ref: "#/components/schemas/ExperienceRaw"
  */
 
 /**
@@ -52,10 +67,7 @@ class CustomPrice {
   @Min(0, {
     message: "The price in custom price must be greater than or equal to zero",
   })
-  @IsNumber(
-    {},
-    { message: "The price field in custom price must be a number" }
-  )
+  @IsNumber({}, { message: "The price field in custom price must be a number" })
   @IsNotEmpty({ message: "The price field in custom price  is mandatory" })
   price: number;
 
@@ -73,7 +85,7 @@ class CustomPrice {
  *       type: object
  *       required:
  *         - id
- *         - name
+ *         - title
  *         - city
  *         - image
  *         - video
@@ -88,7 +100,8 @@ class CustomPrice {
  *         - over_view
  *         - include
  *         - exclude
- *         - rating
+ *         - ratings
+ *         - review_count
  *         - default_price
  *         - categories
  *         - plans
@@ -98,9 +111,9 @@ class CustomPrice {
  *           type: string
  *           description: Unique identifier for the experience
  *           example: "63f47adf2d7e6b04e4f978c7"
- *         name:
+ *         title:
  *           type: string
- *           description: Name of the experience
+ *           description: Title of the experience
  *           example: "City Tour"
  *         city:
  *           type: string
@@ -134,8 +147,8 @@ class CustomPrice {
  *           example: "2024-03-24"
  *         duration:
  *           type: number
- *           description: Duration of the experience
- *           example: 24
+ *           description: Duration of experience in minutes
+ *           example: 60
  *         is_activity:
  *           type: boolean
  *           description: Indicates if the experience is an activity
@@ -164,10 +177,13 @@ class CustomPrice {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
- *         rating:
- *           type: number
- *           description: Average rating score for the experience
- *           example: 4.5
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
+ *         review_count:
+ *           type: integer
+ *           description: Total number of reviews for the experience
+ *           example: 100
  *         default_price:
  *           type: number
  *           description: The default price applied when no custom price is specified
@@ -185,10 +201,8 @@ class CustomPrice {
  *           type: array
  *           items:
  *             $ref: "#/components/schemas/Plan"
- *         destination_id:
- *           type: string
- *           description: ID of the destination associated with the experience
- *           example: "63f47adf2d7e6b04e4f978c7"
+ *         destination:
+ *           $ref: "#/components/schemas/Destination"
  */
 
 class Experience {
@@ -196,9 +210,9 @@ class Experience {
   @IsNotEmpty({ message: "The id field is mandatory" })
   id: string;
 
-  @IsString({ message: "The name field must be a string" })
-  @IsNotEmpty({ message: "The name field is mandatory" })
-  name: string;
+  @IsString({ message: "The title field must be a string" })
+  @IsNotEmpty({ message: "The title field is mandatory" })
+  title: string;
 
   @IsString({ message: "The city field must be a string" })
   @IsNotEmpty({ message: "The city field is mandatory" })
@@ -228,7 +242,8 @@ class Experience {
   @IsNotEmpty({ message: "The end_date field is mandatory" })
   end_date: Date;
 
-  @IsNumber({}, { message: "The duration field must be a number" })
+  @Min(1, { message: "The duration must be greater than or equal to zero" })
+  @IsInt({ message: "The duration field must be an integer" })
   @IsNotEmpty({ message: "The duration field is mandatory" })
   duration: number;
 
@@ -266,9 +281,13 @@ class Experience {
   @IsNotEmpty({ message: "The exclude field is mandatory" })
   exclude: string[];
 
-  @IsNumber({}, { message: "The rating field must be a number" })
-  @IsNotEmpty({ message: "The rating field is mandatory" })
-  rating: number;
+  @IsNotEmpty({ message: "The ratings field is mandatory" })
+  ratings: JsonValue;
+
+  @Min(0, { message: "The review_count must be greater than or equal to zero" })
+  @IsInt({ message: "The review_count field must be an integer" })
+  @IsNotEmpty({ message: "The review_count field is mandatory" })
+  review_count: number;
 
   @IsNumber({}, { message: "The default_price field must be a number" })
   @IsNotEmpty({ message: "The default_price field is mandatory" })
@@ -277,20 +296,27 @@ class Experience {
   @IsOptional()
   custom_prices: JsonValue;
 
+  @ValidateNested({ each: true })
+  @IsArray({ message: "The categories field must be an array of strings" })
   @IsNotEmpty({ message: "The categories field is mandatory" })
-  categories: JsonValue;
+  categories: Category[];
 
+  @ValidateNested({ each: true })
+  @IsArray({ message: "The plans field must be an array of strings" })
   @IsNotEmpty({ message: "The plans field is mandatory" })
-  plans: JsonValue;
+  plans: Plan[];
 
-  @IsString({ message: "The destination_id field must be a string" })
-  @IsNotEmpty({ message: "The destination_id field is mandatory" })
-  destination_id: string;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The destination field is mandatory" }
+  )
+  destination: Destination;
 
   constructor(payload: Experience) {
     this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
-    this.name =
-      typeof payload.name === "string" ? payload.name.trim() : payload.name;
+    this.title =
+      typeof payload.title === "string" ? payload.title.trim() : payload.title;
     this.city =
       typeof payload.city === "string" ? payload.city.trim() : payload.city;
     this.image =
@@ -302,9 +328,9 @@ class Experience {
         ? payload.gallery.trim()
         : payload.gallery;
     this.map_link =
-      typeof payload.gallery === "string"
-        ? payload.gallery.trim()
-        : payload.gallery;
+      typeof payload.map_link === "string"
+        ? payload.map_link.trim()
+        : payload.map_link;
     this.start_date = new Date(payload.start_date);
     this.end_date = new Date(payload.end_date);
     this.duration = payload.duration;
@@ -316,16 +342,87 @@ class Experience {
         ? payload.over_view.trim()
         : payload.over_view;
     this.include = payload.include;
-    this.exclude = payload.exclude;
-    this.rating = payload.rating;
+    this.exclude = payload.exclude;    
+    this.ratings = payload.ratings;
+    this.review_count = payload.review_count;
     this.default_price = payload.default_price;
     this.custom_prices = payload.custom_prices;
     this.categories = payload.categories;
     this.plans = payload.plans;
-    this.destination_id =
-      typeof payload.destination_id === "string"
-        ? payload.destination_id.trim()
-        : payload.destination_id;
+    this.destination = new Destination(payload.destination);
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     PaginatedExperiences:
+ *       type: object
+ *       required:
+ *         - page
+ *         - limit
+ *         - total_pages
+ *         - total_experiences
+ *         - experiences
+ *       properties:
+ *         page:
+ *           type: integer
+ *           description: The current page number
+ *           example: 1
+ *         limit:
+ *           type: integer
+ *           description: Number of items per page
+ *           example: 10
+ *         total_pages:
+ *           type: integer
+ *           description: Total number of pages
+ *           example: 5
+ *         total_experiences:
+ *           type: integer
+ *           description: Total number of experiences
+ *           example: 50
+ *         experiences:
+ *           type: array
+ *           items:
+ *             $ref: "#/components/schemas/ExperienceList"
+ *           description: List of experiences for the current page
+ */
+
+class PaginatedExperiences {
+  @Min(0, { message: "The page must be greater than or equal to zero" })
+  @IsInt({ message: "The page field must be an integer" })
+  @IsNotEmpty({ message: "The page field is mandatory" })
+  page: number;
+
+  @Min(0, { message: "The limit must be greater than or equal to zero" })
+  @IsInt({ message: "The limit field must be an integer" })
+  @IsNotEmpty({ message: "The limit field is mandatory" })
+  limit: number;
+
+  @Min(0, { message: "The total_pages must be greater than or equal to zero" })
+  @IsInt({ message: "The total_pages field must be an integer" })
+  @IsNotEmpty({ message: "The total_pages field is mandatory" })
+  total_pages: number;
+
+  @Min(0, {
+    message: "The total_experiences must be greater than or equal to zero",
+  })
+  @IsInt({ message: "The total_experiences field must be an integer" })
+  @IsNotEmpty({ message: "The total_experiences field is mandatory" })
+  total_experiences: number;
+
+  @ValidateNested({ each: true })
+  @IsArray({ message: "The experiences field must be an array of strings" })
+  @IsNotEmpty({ message: "The experiences field is mandatory" })
+  experiences: Experience[];
+
+  constructor(payload: PaginatedExperiences) {
+    this.page = payload.page;
+    this.limit = payload.limit;
+    this.total_pages = payload.total_pages;
+    this.total_experiences = payload.total_experiences;
+    this.experiences = payload.experiences;
   }
 }
 
@@ -335,8 +432,9 @@ class Experience {
  *   schemas:
  *     ExperienceRaw:
  *       type: object
+ *       required:
  *         - id
- *         - name
+ *         - title
  *         - city
  *         - image
  *         - video
@@ -351,7 +449,8 @@ class Experience {
  *         - over_view
  *         - include
  *         - exclude
- *         - rating
+ *         - ratings
+ *         - review_count
  *         - default_price
  *         - custom_prices
  *         - categories_id
@@ -362,9 +461,9 @@ class Experience {
  *           type: string
  *           description: Unique identifier for the experience
  *           example: "63f47adf2d7e6b04e4f978c7"
- *         name:
+ *         title:
  *           type: string
- *           description: Name of the experience
+ *           description: Title of the experience
  *           example: "City Tour"
  *         city:
  *           type: string
@@ -398,8 +497,8 @@ class Experience {
  *           example: "2024-03-24"
  *         duration:
  *           type: number
- *           description: Duration of the experience
- *           example: 24
+ *           description: Duration of experience in minutes
+ *           example: 60
  *         is_activity:
  *           type: boolean
  *           description: Indicates if the experience is an activity
@@ -428,10 +527,13 @@ class Experience {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
- *         rating:
- *           type: number
- *           description: Average rating score for the experience
- *           example: 4.5
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
+ *         review_count:
+ *           type: integer
+ *           description: Total number of reviews for the experience
+ *           example: 100
  *         default_price:
  *           type: number
  *           description: The default price applied when no custom price is specified
@@ -465,9 +567,9 @@ class ExperienceRaw {
   @IsNotEmpty({ message: "The id field is mandatory" })
   id: string;
 
-  @IsString({ message: "The name field must be a string" })
-  @IsNotEmpty({ message: "The name field is mandatory" })
-  name: string;
+  @IsString({ message: "The title field must be a string" })
+  @IsNotEmpty({ message: "The title field is mandatory" })
+  title: string;
 
   @IsString({ message: "The city field must be a string" })
   @IsNotEmpty({ message: "The city field is mandatory" })
@@ -497,7 +599,8 @@ class ExperienceRaw {
   @IsNotEmpty({ message: "The end_date field is mandatory" })
   end_date: Date;
 
-  @IsNumber({}, { message: "The duration field must be a number" })
+  @Min(1, { message: "The duration must be greater than or equal to zero" })
+  @IsInt({ message: "The duration field must be an integer" })
   @IsNotEmpty({ message: "The duration field is mandatory" })
   duration: number;
 
@@ -542,9 +645,13 @@ class ExperienceRaw {
   @IsOptional()
   custom_prices: JsonValue;
 
-  @IsNumber({}, { message: "The rating field must be a number" })
-  @IsNotEmpty({ message: "The rating field is mandatory" })
-  rating: number;
+  @IsNotEmpty({ message: "The ratings field is mandatory" })
+  ratings: JsonValue;
+
+  @Min(0, { message: "The review_count must be greater than or equal to zero" })
+  @IsInt({ message: "The review_count field must be an integer" })
+  @IsNotEmpty({ message: "The review_count field is mandatory" })
+  review_count: number;
 
   @IsString({
     each: true,
@@ -568,8 +675,8 @@ class ExperienceRaw {
 
   constructor(payload: ExperienceRaw) {
     this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
-    this.name =
-      typeof payload.name === "string" ? payload.name.trim() : payload.name;
+    this.title =
+      typeof payload.title === "string" ? payload.title.trim() : payload.title;
     this.city =
       typeof payload.city === "string" ? payload.city.trim() : payload.city;
     this.image =
@@ -581,9 +688,9 @@ class ExperienceRaw {
         ? payload.gallery.trim()
         : payload.gallery;
     this.map_link =
-      typeof payload.gallery === "string"
-        ? payload.gallery.trim()
-        : payload.gallery;
+      typeof payload.map_link === "string"
+        ? payload.map_link.trim()
+        : payload.map_link;
     this.start_date = new Date(payload.start_date);
     this.end_date = new Date(payload.end_date);
     this.duration = payload.duration;
@@ -596,7 +703,8 @@ class ExperienceRaw {
         : payload.over_view;
     this.include = payload.include;
     this.exclude = payload.exclude;
-    this.rating = payload.rating;
+    this.ratings = payload.ratings;
+    this.review_count = payload.review_count;
     this.default_price = payload.default_price;
     this.custom_prices = payload.custom_prices;
     this.categories_id = payload.categories_id;
@@ -612,10 +720,83 @@ class ExperienceRaw {
  * @swagger
  * components:
  *   schemas:
+ *     PaginatedExperiencesRaw:
+ *       type: object
+ *       required:
+ *         - page
+ *         - limit
+ *         - total_pages
+ *         - total_experiences
+ *         - experiences
+ *       properties:
+ *         page:
+ *           type: integer
+ *           description: The current page number
+ *           example: 1
+ *         limit:
+ *           type: integer
+ *           description: Number of items per page
+ *           example: 10
+ *         total_pages:
+ *           type: integer
+ *           description: Total number of pages
+ *           example: 5
+ *         total_experiences:
+ *           type: integer
+ *           description: Total number of experiences
+ *           example: 50
+ *         experiences:
+ *           type: array
+ *           items:
+ *             $ref: "#/components/schemas/ExperienceRawList"
+ *           description: List of experiences for the current page
+ */
+
+class PaginatedExperiencesRaw {
+  @Min(0, { message: "The page must be greater than or equal to zero" })
+  @IsInt({ message: "The page field must be an integer" })
+  @IsNotEmpty({ message: "The page field is mandatory" })
+  page: number;
+
+  @Min(0, { message: "The limit must be greater than or equal to zero" })
+  @IsInt({ message: "The limit field must be an integer" })
+  @IsNotEmpty({ message: "The limit field is mandatory" })
+  limit: number;
+
+  @Min(0, { message: "The total_pages must be greater than or equal to zero" })
+  @IsInt({ message: "The total_pages field must be an integer" })
+  @IsNotEmpty({ message: "The total_pages field is mandatory" })
+  total_pages: number;
+
+  @Min(0, {
+    message: "The total_experiences must be greater than or equal to zero",
+  })
+  @IsInt({ message: "The total_experiences field must be an integer" })
+  @IsNotEmpty({ message: "The total_experiences field is mandatory" })
+  total_experiences: number;
+
+  @ValidateNested({ each: true })
+  @IsArray({ message: "The experiences field must be an array of strings" })
+  @IsNotEmpty({ message: "The experiences field is mandatory" })
+  experiences: ExperienceRaw[];
+
+  constructor(payload: PaginatedExperiencesRaw) {
+    this.page = payload.page;
+    this.limit = payload.limit;
+    this.total_pages = payload.total_pages;
+    this.total_experiences = payload.total_experiences;
+    this.experiences = payload.experiences;
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
  *     ExperienceUpsert:
  *       type: object
  *       required:
- *         - name
+ *         - title
  *         - city
  *         - image
  *         - video
@@ -635,9 +816,9 @@ class ExperienceRaw {
  *         - plans_id
  *         - destination_id
  *       properties:
- *         name:
+ *         title:
  *           type: string
- *           description: Name of the experience
+ *           description: Title of the experience
  *           example: "City Tour"
  *         city:
  *           type: string
@@ -671,8 +852,8 @@ class ExperienceRaw {
  *           example: "2024-03-24"
  *         duration:
  *           type: number
- *           description: Duration of the experience
- *           example: 24
+ *           description: Duration of experience in minutes
+ *           example: 60
  *         is_activity:
  *           type: boolean
  *           description: Indicates if the experience is an activity
@@ -730,9 +911,9 @@ class ExperienceRaw {
  */
 
 class ExperienceUpsert {
-  @IsString({ message: "The name field must be a string" })
-  @IsNotEmpty({ message: "The name field is mandatory" })
-  name: string;
+  @IsString({ message: "The title field must be a string" })
+  @IsNotEmpty({ message: "The title field is mandatory" })
+  title: string;
 
   @IsString({ message: "The city field must be a string" })
   @IsNotEmpty({ message: "The city field is mandatory" })
@@ -762,15 +943,15 @@ class ExperienceUpsert {
   @IsNotEmpty({ message: "The end_date field is mandatory" })
   end_date: Date;
 
-  @Min(0, { message: "The duration must be greater than or equal to zero" })
-  @IsNumber({}, { message: "The duration field must be a number" })
+  @Min(1, { message: "The duration must be greater than or equal to zero" })
+  @IsInt({ message: "The duration field must be an integer" })
   @IsNotEmpty({ message: "The duration field is mandatory" })
   duration: number;
 
   @IsBoolean({ message: "The is_activity field must be a boolean value" })
   @IsNotEmpty({ message: "The is_activity field is mandatory" })
   is_activity: boolean;
-  
+
   @Min(0, { message: "The max_people must be greater than or equal to zero" })
   @IsInt({ message: "The max_people field must be an integer" })
   @IsNotEmpty({ message: "The max_people field is mandatory" })
@@ -830,8 +1011,8 @@ class ExperienceUpsert {
   destination_id: string;
 
   constructor(payload: ExperienceUpsert) {
-    this.name =
-      typeof payload.name === "string" ? payload.name.trim() : payload.name;
+    this.title =
+      typeof payload.title === "string" ? payload.title.trim() : payload.title;
     this.city =
       typeof payload.city === "string" ? payload.city.trim() : payload.city;
     this.image =
@@ -843,9 +1024,9 @@ class ExperienceUpsert {
         ? payload.gallery.trim()
         : payload.gallery;
     this.map_link =
-      typeof payload.gallery === "string"
-        ? payload.gallery.trim()
-        : payload.gallery;
+      typeof payload.map_link === "string"
+        ? payload.map_link.trim()
+        : payload.map_link;
     this.start_date = new Date(payload.start_date);
     this.end_date = new Date(payload.end_date);
     this.duration = payload.duration;
@@ -859,7 +1040,9 @@ class ExperienceUpsert {
     this.include = payload.include;
     this.exclude = payload.exclude;
     this.default_price = payload.default_price;
-    this.custom_prices = payload.custom_prices?.map(item => new CustomPrice(item));
+    this.custom_prices = payload.custom_prices?.map(
+      (item) => new CustomPrice(item)
+    );
     this.categories_id = payload.categories_id;
     this.plans_id = payload.plans_id;
     this.destination_id =
@@ -875,7 +1058,7 @@ class ExperienceUpsert {
  *   schemas:
  *     ExperienceUpsertExtended:
  *       type: object
- *         - name
+ *         - title
  *         - city
  *         - image
  *         - video
@@ -890,15 +1073,17 @@ class ExperienceUpsert {
  *         - over_view
  *         - include
  *         - exclude
+ *         - ratings
+ *         - review_count
  *         - default_price
  *         - custom_prices
  *         - categories_id
  *         - plans_id
  *         - destination_id
  *       properties:
- *         name:
+ *         title:
  *           type: string
- *           description: Name of the experience
+ *           description: Title of the experience
  *           example: "City Tour"
  *         city:
  *           type: string
@@ -932,8 +1117,8 @@ class ExperienceUpsert {
  *           example: "2024-03-24"
  *         duration:
  *           type: number
- *           description: Duration of the experience
- *           example: 24
+ *           description: Duration of experience in minutes
+ *           example: 60
  *         is_activity:
  *           type: boolean
  *           description: Indicates if the experience is an activity
@@ -962,10 +1147,13 @@ class ExperienceUpsert {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
- *         rating:
- *           type: number
- *           description: Average rating score for the experience
- *           example: 4.5
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
+ *         review_count:
+ *           type: integer
+ *           description: Total number of reviews for the experience
+ *           example: 100
  *         default_price:
  *           type: number
  *           description: The default price applied when no custom price is specified
@@ -995,19 +1183,31 @@ class ExperienceUpsert {
  */
 
 class ExperienceUpsertExtended extends ExperienceUpsert {
-  @IsNumber({}, { message: "The rating field must be a number" })
-  @IsNotEmpty({ message: "The rating field is mandatory" })
-  rating: number;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The ratings field is mandatory" }
+  )
+  ratings: Ratings;
+
+  @Min(0, { message: "The review_count must be greater than or equal to zero" })
+  @IsInt({ message: "The review_count field must be an integer" })
+  @IsNotEmpty({ message: "The review_count field is mandatory" })
+  review_count: number;
 
   constructor(payload: ExperienceUpsertExtended) {
-    super(payload);
-    this.rating = payload.rating;
+    super(payload);    
+    this.ratings = new Ratings(payload.ratings);
+    this.review_count = payload.review_count;
   }
 }
 
 export {
+  CustomPrice,
   Experience,
+  PaginatedExperiences,
   ExperienceRaw,
+  PaginatedExperiencesRaw,
   ExperienceUpsert,
   ExperienceUpsertExtended,
 };

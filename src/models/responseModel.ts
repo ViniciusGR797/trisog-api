@@ -2,13 +2,6 @@
  * @swagger
  * components:
  *   schemas:
- *     FavoriteDeleteSuccess:
- *       type: object
- *       properties:
- *         msg:
- *           type: string
- *           description: Delete success message
- *           example: "Successfully deleted from favorites"
  *     DeleteSuccess:
  *       type: object
  *       properties:

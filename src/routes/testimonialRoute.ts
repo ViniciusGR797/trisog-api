@@ -1,32 +1,32 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/auth';
-import { BookingController } from '../controllers/bookingController';
+import { TestimonialController } from '../controllers/testimonialController';
 
 const router = Router();
 
 /**
  * @swagger
  * tags:
- *   name: Booking
- *   description: Routes for booking manipulation
+ *   name: Testimonial
+ *   description: Routes for testimonial manipulation
  */
 
 /**
  * @swagger
- * /bookings:
+ * /testimonials:
  *   get:
- *     summary: View all bookings
- *     description: Returns information about all bookings
+ *     summary: View all testimonials
+ *     description: Returns information about all testimonials
  *     tags:
- *       - Booking
- *     operationId: get_all_bookings
+ *       - Testimonial
+ *     operationId: get_all_testimonials
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/BookingList"
+ *               $ref: "#/components/schemas/TestimonialList"
  *       500:
  *         description: InternalServerError
  *         content:
@@ -35,31 +35,31 @@ const router = Router();
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/', BookingController.getBookings);
+router.get('/', TestimonialController.getTestimonials);
 
 /**
  * @swagger
- * /bookings/{booking_id}:
+ * /testimonials/{testimonial_id}:
  *   parameters:
- *     - name: booking_id
+ *     - name: testimonial_id
  *       in: path
  *       required: true
- *       description: ID of the booking that will be displayed
+ *       description: ID of the testimonial that will be displayed
  *       schema:
  *         type: string
  *   get:
- *     summary: View booking by id
- *     description: Returns booking information by id
+ *     summary: View testimonial by id
+ *     description: Returns testimonial information by id
  *     tags:
- *       - Booking
- *     operationId: get_booking_by_id
+ *       - Testimonial
+ *     operationId: get_testimonial_by_id
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Booking"
+ *               $ref: "#/components/schemas/Testimonial"
  *       400:
  *         description: BadRequest
  *         content:
@@ -80,17 +80,17 @@ router.get('/', BookingController.getBookings);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/:booking_id', BookingController.getBookingById);
+router.get('/:testimonial_id', TestimonialController.getTestimonialById);
 
 /**
  * @swagger
- * /bookings:
+ * /testimonials:
  *   post:
- *     summary: Create a new booking
- *     description: Creates a new booking based on the data provided in the request body.
+ *     summary: Create a new testimonial
+ *     description: Creates a new testimonial based on the data provided in the request body.
  *     tags:
- *       - Booking
- *     operationId: create_booking
+ *       - Testimonial
+ *     operationId: create_testimonial
  *     security:
  *       - jwt: []
  *     requestBody:
@@ -98,14 +98,14 @@ router.get('/:booking_id', BookingController.getBookingById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/BookingUpsert"
+ *             $ref: "#/components/schemas/TestimonialUpsert"
  *     responses:
  *       201:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Booking"
+ *               $ref: "#/components/schemas/Testimonial"
  *       400:
  *         description: BadRequest
  *         content:
@@ -138,30 +138,30 @@ router.get('/:booking_id', BookingController.getBookingById);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.post('/', authMiddleware, BookingController.createBooking);
+router.post('/', authMiddleware, TestimonialController.createTestimonial);
 
 /**
  * @swagger
- * /bookings/{booking_id}:
+ * /testimonials/{testimonial_id}:
  *   parameters:
- *     - name: booking_id
+ *     - name: testimonial_id
  *       in: path
  *       required: true
- *       description: Booking ID to be updated
+ *       description: Testimonial ID to be updated
  *       schema:
  *         type: string
  *   put:
- *     summary: Update booking
- *     description: Updates the information of the desired booking
+ *     summary: Update testimonial
+ *     description: Updates the information of the desired testimonial
  *     tags:
- *       - Booking
- *     operationId: update_booking
+ *       - Testimonial
+ *     operationId: update_testimonial
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/BookingUpsert"
+ *             $ref: "#/components/schemas/TestimonialUpsert"
  *     security:
  *       - jwt: []
  *     responses:
@@ -170,7 +170,7 @@ router.post('/', authMiddleware, BookingController.createBooking);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Booking"
+ *               $ref: "#/components/schemas/Testimonial"
  *       400:
  *         description: BadRequest
  *         content:
@@ -203,24 +203,24 @@ router.post('/', authMiddleware, BookingController.createBooking);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.put('/:booking_id', authMiddleware, BookingController.updateBooking);
+router.put('/:testimonial_id', authMiddleware, TestimonialController.updateTestimonial);
 
 /**
  * @swagger
- * /bookings/{booking_id}:
+ * /testimonials/{testimonial_id}:
  *   parameters:
- *     - name: booking_id
+ *     - name: testimonial_id
  *       in: path
  *       required: true
- *       description: ID of the booking to be deleted
+ *       description: ID of the testimonial to be deleted
  *       schema:
  *         type: string
  *   delete:
- *     summary: Remove booking
- *     description: Deletes a booking based on the ID provided
+ *     summary: Remove testimonial
+ *     description: Deletes a testimonial based on the ID provided
  *     tags:
- *       - Booking
- *     operationId: delete_booking
+ *       - Testimonial
+ *     operationId: delete_testimonial
  *     security:
  *       - jwt: []
  *     responses:
@@ -262,6 +262,6 @@ router.put('/:booking_id', authMiddleware, BookingController.updateBooking);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.delete('/:booking_id', authMiddleware, BookingController.deleteBooking);
+router.delete('/:testimonial_id', authMiddleware, TestimonialController.deleteTestimonial);
 
 export default router;

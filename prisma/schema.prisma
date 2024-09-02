@@ -41,7 +41,7 @@ model Plan {
 
 model Experience {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  name                        String
+  title                       String
   city                        String
   image                       String
   video                       String
@@ -49,14 +49,15 @@ model Experience {
   map_link                    String
   start_date                  DateTime
   end_date                    DateTime
-  duration                    Float
+  duration                    Int
   is_activity                 Boolean
   max_people                  Int
   min_age                     Int
   over_view                   String
   include                     String[]
   exclude                     String[]
-  rating                      Float
+  ratings                     Json
+  review_count                Int
   default_price               Float  
   custom_prices               Json[]  
   categories_id               String[]
@@ -70,28 +71,24 @@ model Review {
   email                       String
   comment                     String
   image                       String
-  score                       Int  
+  ratings                     Json  
   created_at                  DateTime     @default(now())
   experience_id               String      
 }
 
 model Favorite {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  experiences_id              String[]
+  experience_id               String
   user_id                     String
 }
 
 model Booking {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  date                        String
-  duration                    Float
+  date                        DateTime
+  time                        String
   ticket                      Json
-  user_id                     String      
-}
-
-model Newsletter {
-  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
-  email                       String
+  total_price                 Float  
+  experience_id               String      
   user_id                     String      
 }
 
@@ -99,4 +96,9 @@ model Testimonial {
   id                          String       @id @default(auto()) @map("_id") @db.ObjectId
   message                     String
   author                      String      
+}
+
+model Newsletter {
+  id                          String       @id @default(auto()) @map("_id") @db.ObjectId
+  email                       String   
 }

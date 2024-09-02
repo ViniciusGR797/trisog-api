@@ -1,32 +1,34 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/auth';
-import { BookingController } from '../controllers/bookingController';
+import { NewsletterController } from '../controllers/newsletterController';
 
 const router = Router();
 
 /**
  * @swagger
  * tags:
- *   name: Booking
- *   description: Routes for booking manipulation
+ *   name: Newsletter
+ *   description: Routes for newsletter manipulation
  */
 
 /**
  * @swagger
- * /bookings:
+ * /newsletters:
  *   get:
- *     summary: View all bookings
- *     description: Returns information about all bookings
+ *     summary: View all newsletters
+ *     description: Returns information about all newsletters
  *     tags:
- *       - Booking
- *     operationId: get_all_bookings
+ *       - Newsletter
+ *     operationId: get_all_newsletters
+ *     security:
+ *       - jwt: []
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/BookingList"
+ *               $ref: "#/components/schemas/NewsletterList"
  *       500:
  *         description: InternalServerError
  *         content:
@@ -35,31 +37,33 @@ const router = Router();
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/', BookingController.getBookings);
+router.get('/', authMiddleware, NewsletterController.getNewsletters);
 
 /**
  * @swagger
- * /bookings/{booking_id}:
+ * /newsletters/{newsletter_id}:
  *   parameters:
- *     - name: booking_id
+ *     - name: newsletter_id
  *       in: path
  *       required: true
- *       description: ID of the booking that will be displayed
+ *       description: ID of the newsletter that will be displayed
  *       schema:
  *         type: string
  *   get:
- *     summary: View booking by id
- *     description: Returns booking information by id
+ *     summary: View newsletter by id
+ *     description: Returns newsletter information by id
  *     tags:
- *       - Booking
- *     operationId: get_booking_by_id
+ *       - Newsletter
+ *     operationId: get_newsletter_by_id
+ *     security:
+ *       - jwt: []
  *     responses:
  *       200:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Booking"
+ *               $ref: "#/components/schemas/Newsletter"
  *       400:
  *         description: BadRequest
  *         content:
@@ -80,17 +84,17 @@ router.get('/', BookingController.getBookings);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/:booking_id', BookingController.getBookingById);
+router.get('/:newsletter_id', authMiddleware, NewsletterController.getNewsletterById);
 
 /**
  * @swagger
- * /bookings:
+ * /newsletters:
  *   post:
- *     summary: Create a new booking
- *     description: Creates a new booking based on the data provided in the request body.
+ *     summary: Create a new newsletter
+ *     description: Creates a new newsletter based on the data provided in the request body.
  *     tags:
- *       - Booking
- *     operationId: create_booking
+ *       - Newsletter
+ *     operationId: create_newsletter
  *     security:
  *       - jwt: []
  *     requestBody:
@@ -98,14 +102,14 @@ router.get('/:booking_id', BookingController.getBookingById);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: "#/components/schemas/BookingUpsert"
+ *             $ref: "#/components/schemas/NewsletterUpsert"
  *     responses:
  *       201:
  *         description: Success
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/Booking"
+ *               $ref: "#/components/schemas/Newsletter"
  *       400:
  *         description: BadRequest
  *         content:
@@ -138,91 +142,24 @@ router.get('/:booking_id', BookingController.getBookingById);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.post('/', authMiddleware, BookingController.createBooking);
+router.post('/', NewsletterController.createNewsletter);
 
 /**
  * @swagger
- * /bookings/{booking_id}:
+ * /newsletters/{newsletter_id}:
  *   parameters:
- *     - name: booking_id
+ *     - name: newsletter_id
  *       in: path
  *       required: true
- *       description: Booking ID to be updated
- *       schema:
- *         type: string
- *   put:
- *     summary: Update booking
- *     description: Updates the information of the desired booking
- *     tags:
- *       - Booking
- *     operationId: update_booking
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/BookingUpsert"
- *     security:
- *       - jwt: []
- *     responses:
- *       200:
- *         description: Success
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/Booking"
- *       400:
- *         description: BadRequest
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/BadRequest"
- *       401:
- *         description: Unauthorized
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/Unauthorized"
- *       403:
- *         description: Forbidden
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/Forbidden"
- *       404:
- *         description: NotFound
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/NotFound"
- *       500:
- *         description: InternalServerError
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/InternalServerError"
- */
-
-router.put('/:booking_id', authMiddleware, BookingController.updateBooking);
-
-/**
- * @swagger
- * /bookings/{booking_id}:
- *   parameters:
- *     - name: booking_id
- *       in: path
- *       required: true
- *       description: ID of the booking to be deleted
+ *       description: ID of the newsletter to be deleted
  *       schema:
  *         type: string
  *   delete:
- *     summary: Remove booking
- *     description: Deletes a booking based on the ID provided
+ *     summary: Remove newsletter
+ *     description: Deletes a newsletter based on the ID provided
  *     tags:
- *       - Booking
- *     operationId: delete_booking
- *     security:
- *       - jwt: []
+ *       - Newsletter
+ *     operationId: delete_newsletter
  *     responses:
  *       200:
  *         description: Success
@@ -262,6 +199,6 @@ router.put('/:booking_id', authMiddleware, BookingController.updateBooking);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.delete('/:booking_id', authMiddleware, BookingController.deleteBooking);
+router.delete('/:newsletter_id', NewsletterController.deleteNewsletter);
 
 export default router;

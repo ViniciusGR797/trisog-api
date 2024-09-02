@@ -19,6 +19,169 @@
       }
     },
     "schemas": {
+      "BookingList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Booking"
+        }
+      },
+      "Ticket": {
+        "type": "object",
+        "required": [
+          "adults",
+          "kids",
+          "children"
+        ],
+        "properties": {
+          "adults": {
+            "type": "integer",
+            "description": "Number of adult tickets",
+            "example": 2
+          },
+          "kids": {
+            "type": "integer",
+            "description": "Number of kid tickets",
+            "example": 1
+          },
+          "children": {
+            "type": "integer",
+            "description": "Number of children tickets",
+            "example": 1
+          }
+        }
+      },
+      "Booking": {
+        "type": "object",
+        "required": [
+          "id",
+          "date",
+          "time",
+          "ticket",
+          "total_price",
+          "experience_id",
+          "user_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the booking",
+            "example": "60b8d295f1c0d2b0f1b2c3d8"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the booking",
+            "example": "2024-08-31"
+          },
+          "time": {
+            "type": "string",
+            "format": "time",
+            "description": "Time of the booking",
+            "example": "14:00"
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/Ticket",
+            "description": "Ticket details for the booking, including the number of adults, kids, and children"
+          },
+          "total_price": {
+            "type": "number",
+            "description": "The total price of this reservation",
+            "example": 4.5
+          },
+          "experience_id": {
+            "type": "string",
+            "description": "Unique identifier for the experience being favorited",
+            "example": "60b8d295f1c0d2b0f1b2c3d9"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "Unique identifier for the user who made the booking",
+            "example": "12345"
+          }
+        }
+      },
+      "BookingUpsert": {
+        "type": "object",
+        "required": [
+          "date",
+          "time",
+          "ticket",
+          "total_price",
+          "experience_id"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the booking",
+            "example": "2024-08-31"
+          },
+          "time": {
+            "type": "string",
+            "format": "time",
+            "description": "Time of the booking",
+            "example": "14:00"
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/Ticket",
+            "description": "Ticket details for the booking, including the number of adults, kids, and children"
+          },
+          "total_price": {
+            "type": "number",
+            "description": "The total price of this reservation",
+            "example": 4.5
+          },
+          "experience_id": {
+            "type": "string",
+            "description": "Unique identifier for the experience being favorited",
+            "example": "60b8d295f1c0d2b0f1b2c3d9"
+          }
+        }
+      },
+      "BookingUpsertExtended": {
+        "type": "object",
+        "required": [
+          "date",
+          "time",
+          "ticket",
+          "total_price",
+          "experience_id",
+          "user_id"
+        ],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the booking",
+            "example": "2024-08-31"
+          },
+          "time": {
+            "type": "string",
+            "format": "time",
+            "description": "Time of the booking",
+            "example": "14:00"
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/Ticket",
+            "description": "Ticket details for the booking, including the number of adults, kids, and children"
+          },
+          "total_price": {
+            "type": "number",
+            "description": "The total price of this reservation",
+            "example": 4.5
+          },
+          "experience_id": {
+            "type": "string",
+            "description": "Unique identifier for the experience being favorited",
+            "example": "60b8d295f1c0d2b0f1b2c3d9"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "Unique identifier for the user who made the booking",
+            "example": "12345"
+          }
+        }
+      },
       "CategoryList": {
         "type": "array",
         "items": {
@@ -522,6 +685,12 @@
           "$ref": "#/components/schemas/Experience"
         }
       },
+      "ExperienceRawList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/ExperienceRaw"
+        }
+      },
       "CustomPrice": {
         "type": "object",
         "required": [
@@ -547,7 +716,7 @@
         "type": "object",
         "required": [
           "id",
-          "name",
+          "title",
           "city",
           "image",
           "video",
@@ -562,7 +731,8 @@
           "over_view",
           "include",
           "exclude",
-          "rating",
+          "ratings",
+          "review_count",
           "default_price",
           "categories",
           "plans",
@@ -574,9 +744,9 @@
             "description": "Unique identifier for the experience",
             "example": "63f47adf2d7e6b04e4f978c7"
           },
-          "name": {
+          "title": {
             "type": "string",
-            "description": "Name of the experience",
+            "description": "Title of the experience",
             "example": "City Tour"
           },
           "city": {
@@ -618,8 +788,8 @@
           },
           "duration": {
             "type": "number",
-            "description": "Duration of the experience",
-            "example": 24
+            "description": "Duration of experience in minutes",
+            "example": 60
           },
           "is_activity": {
             "type": "boolean",
@@ -662,10 +832,14 @@
               "Transportation"
             ]
           },
-          "rating": {
-            "type": "number",
-            "description": "Average rating score for the experience",
-            "example": 4.5
+          "ratings": {
+            "$ref": "#/components/schemas/Ratings",
+            "description": "Object containing individual ratings for various categories"
+          },
+          "review_count": {
+            "type": "integer",
+            "description": "Total number of reviews for the experience",
+            "example": 100
           },
           "default_price": {
             "type": "number",
@@ -691,24 +865,86 @@
               "$ref": "#/components/schemas/Plan"
             }
           },
-          "destination_id": {
-            "type": "string",
-            "description": "ID of the destination associated with the experience",
-            "example": "63f47adf2d7e6b04e4f978c7"
+          "destination": {
+            "$ref": "#/components/schemas/Destination"
+          }
+        }
+      },
+      "PaginatedExperiences": {
+        "type": "object",
+        "required": [
+          "page",
+          "limit",
+          "total_pages",
+          "total_experiences",
+          "experiences"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of items per page",
+            "example": 10
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "Total number of pages",
+            "example": 5
+          },
+          "total_experiences": {
+            "type": "integer",
+            "description": "Total number of experiences",
+            "example": 50
+          },
+          "experiences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperienceList"
+            },
+            "description": "List of experiences for the current page"
           }
         }
       },
       "ExperienceRaw": {
-        "type": "object - id - name - city - image - video - gallery - map_link - start_date - end_date - duration - is_activity - max_people - min_age - over_view - include - exclude - rating - default_price - custom_prices - categories_id - plans_id - destination_id",
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "city",
+          "image",
+          "video",
+          "gallery",
+          "map_link",
+          "start_date",
+          "end_date",
+          "duration",
+          "is_activity",
+          "max_people",
+          "min_age",
+          "over_view",
+          "include",
+          "exclude",
+          "ratings",
+          "review_count",
+          "default_price",
+          "custom_prices",
+          "categories_id",
+          "plans_id",
+          "destination_id"
+        ],
         "properties": {
           "id": {
             "type": "string",
             "description": "Unique identifier for the experience",
             "example": "63f47adf2d7e6b04e4f978c7"
           },
-          "name": {
+          "title": {
             "type": "string",
-            "description": "Name of the experience",
+            "description": "Title of the experience",
             "example": "City Tour"
           },
           "city": {
@@ -750,8 +986,8 @@
           },
           "duration": {
             "type": "number",
-            "description": "Duration of the experience",
-            "example": 24
+            "description": "Duration of experience in minutes",
+            "example": 60
           },
           "is_activity": {
             "type": "boolean",
@@ -794,10 +1030,14 @@
               "Transportation"
             ]
           },
-          "rating": {
-            "type": "number",
-            "description": "Average rating score for the experience",
-            "example": 4.5
+          "ratings": {
+            "$ref": "#/components/schemas/Ratings",
+            "description": "Object containing individual ratings for various categories"
+          },
+          "review_count": {
+            "type": "integer",
+            "description": "Total number of reviews for the experience",
+            "example": 100
           },
           "default_price": {
             "type": "number",
@@ -841,10 +1081,49 @@
           }
         }
       },
+      "PaginatedExperiencesRaw": {
+        "type": "object",
+        "required": [
+          "page",
+          "limit",
+          "total_pages",
+          "total_experiences",
+          "experiences"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The current page number",
+            "example": 1
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of items per page",
+            "example": 10
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "Total number of pages",
+            "example": 5
+          },
+          "total_experiences": {
+            "type": "integer",
+            "description": "Total number of experiences",
+            "example": 50
+          },
+          "experiences": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExperienceRawList"
+            },
+            "description": "List of experiences for the current page"
+          }
+        }
+      },
       "ExperienceUpsert": {
         "type": "object",
         "required": [
-          "name",
+          "title",
           "city",
           "image",
           "video",
@@ -865,9 +1144,9 @@
           "destination_id"
         ],
         "properties": {
-          "name": {
+          "title": {
             "type": "string",
-            "description": "Name of the experience",
+            "description": "Title of the experience",
             "example": "City Tour"
           },
           "city": {
@@ -909,8 +1188,8 @@
           },
           "duration": {
             "type": "number",
-            "description": "Duration of the experience",
-            "example": 24
+            "description": "Duration of experience in minutes",
+            "example": 60
           },
           "is_activity": {
             "type": "boolean",
@@ -996,11 +1275,11 @@
         }
       },
       "ExperienceUpsertExtended": {
-        "type": "object - name - city - image - video - gallery - map_link - start_date - end_date - duration - is_activity - max_people - min_age - over_view - include - exclude - default_price - custom_prices - categories_id - plans_id - destination_id",
+        "type": "object - title - city - image - video - gallery - map_link - start_date - end_date - duration - is_activity - max_people - min_age - over_view - include - exclude - ratings - review_count - default_price - custom_prices - categories_id - plans_id - destination_id",
         "properties": {
-          "name": {
+          "title": {
             "type": "string",
-            "description": "Name of the experience",
+            "description": "Title of the experience",
             "example": "City Tour"
           },
           "city": {
@@ -1042,8 +1321,8 @@
           },
           "duration": {
             "type": "number",
-            "description": "Duration of the experience",
-            "example": 24
+            "description": "Duration of experience in minutes",
+            "example": 60
           },
           "is_activity": {
             "type": "boolean",
@@ -1086,10 +1365,14 @@
               "Transportation"
             ]
           },
-          "rating": {
-            "type": "number",
-            "description": "Average rating score for the experience",
-            "example": 4.5
+          "ratings": {
+            "$ref": "#/components/schemas/Ratings",
+            "description": "Object containing individual ratings for various categories"
+          },
+          "review_count": {
+            "type": "integer",
+            "description": "Total number of reviews for the experience",
+            "example": 100
           },
           "default_price": {
             "type": "number",
@@ -1133,11 +1416,17 @@
           }
         }
       },
+      "FavoriteList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Favorite"
+        }
+      },
       "Favorite": {
         "type": "object",
         "required": [
           "id",
-          "experiences_id",
+          "experience_id",
           "user_id"
         ],
         "properties": {
@@ -1146,16 +1435,10 @@
             "description": "Unique identifier for the favorite record",
             "example": "60b8d295f1c0d2b0f1b2c3d8"
           },
-          "experiences_id": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of experience IDs associated with the favorite",
-            "example": [
-              "66ce29934244142ada6b021e",
-              "77ce29934244142ada6b021f"
-            ]
+          "experience_id": {
+            "type": "string",
+            "description": "Unique identifier for the experience being favorited",
+            "example": "60b8d295f1c0d2b0f1b2c3d9"
           },
           "user_id": {
             "type": "string",
@@ -1177,34 +1460,28 @@
           }
         }
       },
-      "FavoriteUpsertExtended": {
+      "NewsletterList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Newsletter"
+        }
+      },
+      "Newsletter": {
         "type": "object",
         "required": [
-          "experience_id",
-          "experiences_id",
-          "user_id"
+          "email",
+          "email"
         ],
         "properties": {
-          "experience_id": {
+          "id": {
             "type": "string",
-            "description": "Unique identifier for the favorited experience",
-            "example": "60b8d295f1c0d2b0f1b2c3d9"
+            "description": "Unique identifier for the newsletter subscription",
+            "example": "60b8d295f1c0d2b0f1b2c3d8"
           },
-          "experiences_id": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "List of experience IDs associated with the favorite",
-            "example": [
-              "66ce29934244142ada6b021e",
-              "77ce29934244142ada6b021f"
-            ]
-          },
-          "user_id": {
+          "email": {
             "type": "string",
-            "description": "Firebase UID of the user who marked the favorite",
-            "example": "user1234uid"
+            "description": "Email address used for receiving notifications and updates",
+            "example": "johndoe@example.com"
           }
         }
       },
@@ -1296,16 +1573,6 @@
           }
         }
       },
-      "FavoriteDeleteSuccess": {
-        "type": "object",
-        "properties": {
-          "msg": {
-            "type": "string",
-            "description": "Delete success message",
-            "example": "Successfully deleted from favorites"
-          }
-        }
-      },
       "DeleteSuccess": {
         "type": "object",
         "properties": {
@@ -1372,6 +1639,49 @@
           "$ref": "#/components/schemas/Review"
         }
       },
+      "Ratings": {
+        "type": "object",
+        "required": [
+          "services",
+          "location",
+          "amenities",
+          "prices",
+          "food",
+          "room_comfort_and_quality"
+        ],
+        "properties": {
+          "services": {
+            "type": "number",
+            "description": "Rating for services",
+            "example": 4
+          },
+          "location": {
+            "type": "number",
+            "description": "Rating for location",
+            "example": 5
+          },
+          "amenities": {
+            "type": "number",
+            "description": "Rating for amenities",
+            "example": 3
+          },
+          "prices": {
+            "type": "number",
+            "description": "Rating for prices",
+            "example": 4
+          },
+          "food": {
+            "type": "number",
+            "description": "Rating for food",
+            "example": 5
+          },
+          "room_comfort_and_quality": {
+            "type": "number",
+            "description": "Rating for room comfort and quality",
+            "example": 5
+          }
+        }
+      },
       "Review": {
         "type": "object",
         "required": [
@@ -1380,7 +1690,7 @@
           "email",
           "comment",
           "image",
-          "score",
+          "ratings",
           "created_at",
           "experience_id"
         ],
@@ -1410,11 +1720,9 @@
             "description": "URL to an image related to the review",
             "example": "https://example.com/review-image.jpg"
           },
-          "score": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Rating score given by the reviewer, typically on a scale of 1 to 5",
-            "example": 5
+          "ratings": {
+            "$ref": "#/components/schemas/Ratings",
+            "description": "Object containing individual ratings for various categories"
           },
           "created_at": {
             "type": "string",
@@ -1436,7 +1744,7 @@
           "email",
           "comment",
           "image",
-          "score",
+          "ratings",
           "experience_id"
         ],
         "properties": {
@@ -1460,11 +1768,9 @@
             "description": "URL to an image related to the review",
             "example": "https://example.com/review-image.jpg"
           },
-          "score": {
-            "type": "integer",
-            "format": "int32",
-            "description": "Rating score given by the reviewer, typically on a scale of 1 to 5",
-            "example": 5
+          "ratings": {
+            "$ref": "#/components/schemas/Ratings",
+            "description": "Object containing individual ratings for various categories"
           },
           "experience_id": {
             "type": "string",
@@ -1472,10 +1778,400 @@
             "example": "60b8d295f1c0d2b0f1b2c3d9"
           }
         }
+      },
+      "TestimonialList": {
+        "type": "array",
+        "items": {
+          "$ref": "#/components/schemas/Testimonial"
+        }
+      },
+      "Testimonial": {
+        "type": "object",
+        "required": [
+          "id",
+          "message",
+          "author"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the testimonial",
+            "example": "60b8d295f1c0d2b0f1b2c3d8"
+          },
+          "message": {
+            "type": "string",
+            "description": "The testimonial message provided by a customer",
+            "example": "The tour was amazing! Our guide was very knowledgeable and made the experience unforgettable."
+          },
+          "author": {
+            "type": "string",
+            "description": "The name of the person who provided the testimonial",
+            "example": "John Doe"
+          }
+        }
+      },
+      "TestimonialUpsert": {
+        "type": "object",
+        "required": [
+          "message",
+          "author"
+        ],
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "The testimonial message provided by a customer",
+            "example": "The tour was amazing! Our guide was very knowledgeable and made the experience unforgettable."
+          },
+          "author": {
+            "type": "string",
+            "description": "The name of the person who provided the testimonial",
+            "example": "John Doe"
+          }
+        }
       }
     }
   },
   "paths": {
+    "/bookings": {
+      "get": {
+        "summary": "View all bookings",
+        "description": "Returns information about all bookings",
+        "tags": [
+          "Booking"
+        ],
+        "operationId": "get_all_bookings",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BookingList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new booking",
+        "description": "Creates a new booking based on the data provided in the request body.",
+        "tags": [
+          "Booking"
+        ],
+        "operationId": "create_booking",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingUpsert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookings/{booking_id}": {
+      "parameters": [
+        {
+          "name": "booking_id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the booking to be deleted",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "View booking by id",
+        "description": "Returns booking information by id",
+        "tags": [
+          "Booking"
+        ],
+        "operationId": "get_booking_by_id",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update booking",
+        "description": "Updates the information of the desired booking",
+        "tags": [
+          "Booking"
+        ],
+        "operationId": "update_booking",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BookingUpsert"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove booking",
+        "description": "Deletes a booking based on the ID provided",
+        "tags": [
+          "Booking"
+        ],
+        "operationId": "delete_booking",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/categories": {
       "get": {
         "summary": "View all categories",
@@ -2164,13 +2860,154 @@
           "Experience"
         ],
         "operationId": "get_all_experiences",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "1"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of experiences per page",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "10"
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Title to search for in experiences",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Tour"
+            }
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "description": "Maximum price to filter experiences by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "150"
+            }
+          },
+          {
+            "name": "categoriesId",
+            "in": "query",
+            "description": "Comma-separated list of category IDs to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "66ce29934244142ada6b021e,66ce29934244142ada6b021f"
+            }
+          },
+          {
+            "name": "destinationsId",
+            "in": "query",
+            "description": "Comma-separated list of destination IDs to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "76ce29934244142ada6b021e,76ce29934244142ada6b021f"
+            }
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "Minimum rating to filter experiences by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "4"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date to filter experiences by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-03-24"
+            }
+          },
+          {
+            "name": "guests",
+            "in": "query",
+            "description": "Number of guests to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2"
+            }
+          },
+          {
+            "name": "isActivity",
+            "in": "query",
+            "description": "Filter by whether the experience is an activity (true/false)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "example": "false"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort experiences by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "title"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Sort order (ascending or descending)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ExperienceList"
+                  "$ref": "#/components/schemas/PaginatedExperiences"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
                 }
               }
             }
@@ -2256,6 +3093,199 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/experiences/user/favorites": {
+      "get": {
+        "summary": "See all favorited experiences",
+        "description": "Returns information about all favorited experiences",
+        "tags": [
+          "Experience"
+        ],
+        "operationId": "get_all_favorited_experiences",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number for pagination",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "1"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Number of experiences per page",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "10"
+            }
+          },
+          {
+            "name": "title",
+            "in": "query",
+            "description": "Title to search for in experiences",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "Tour"
+            }
+          },
+          {
+            "name": "price",
+            "in": "query",
+            "description": "Maximum price to filter experiences by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "150"
+            }
+          },
+          {
+            "name": "categoriesId",
+            "in": "query",
+            "description": "Comma-separated list of category IDs to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "66ce29934244142ada6b021e,66ce29934244142ada6b021f"
+            }
+          },
+          {
+            "name": "destinationsId",
+            "in": "query",
+            "description": "Comma-separated list of destination IDs to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "76ce29934244142ada6b021e,76ce29934244142ada6b021f"
+            }
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "description": "Minimum rating to filter experiences by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "4"
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "Date to filter experiences by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "example": "2024-03-24"
+            }
+          },
+          {
+            "name": "guests",
+            "in": "query",
+            "description": "Number of guests to filter by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "2"
+            }
+          },
+          {
+            "name": "isActivity",
+            "in": "query",
+            "description": "Filter by whether the experience is an activity (true/false)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "false"
+              ],
+              "example": "false"
+            }
+          },
+          {
+            "name": "sortBy",
+            "in": "query",
+            "description": "Field to sort experiences by",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "title"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "description": "Sort order (ascending or descending)",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedExperiences"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -2560,7 +3590,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Favorite"
+                  "$ref": "#/components/schemas/FavoriteList"
                 }
               }
             }
@@ -2648,7 +3678,267 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FavoriteDeleteSuccess"
+                  "$ref": "#/components/schemas/DeleteSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/newsletters": {
+      "get": {
+        "summary": "View all newsletters",
+        "description": "Returns information about all newsletters",
+        "tags": [
+          "Newsletter"
+        ],
+        "operationId": "get_all_newsletters",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsletterList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new newsletter",
+        "description": "Creates a new newsletter based on the data provided in the request body.",
+        "tags": [
+          "Newsletter"
+        ],
+        "operationId": "create_newsletter",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewsletterUpsert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Newsletter"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/newsletters/{newsletter_id}": {
+      "parameters": [
+        {
+          "name": "newsletter_id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the newsletter to be deleted",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "View newsletter by id",
+        "description": "Returns newsletter information by id",
+        "tags": [
+          "Newsletter"
+        ],
+        "operationId": "get_newsletter_by_id",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Newsletter"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove newsletter",
+        "description": "Deletes a newsletter based on the ID provided",
+        "tags": [
+          "Newsletter"
+        ],
+        "operationId": "delete_newsletter",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSuccess"
                 }
               }
             }
@@ -3385,9 +4675,416 @@
           }
         }
       }
+    },
+    "/reviews/experience/{experience_id}": {
+      "parameters": [
+        {
+          "name": "experience_id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the experience that will fetch the reviews",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "View review by experience",
+        "description": "Returns review information by experience",
+        "tags": [
+          "Review"
+        ],
+        "operationId": "get_review_by_experience",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewList"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/testimonials": {
+      "get": {
+        "summary": "View all testimonials",
+        "description": "Returns information about all testimonials",
+        "tags": [
+          "Testimonial"
+        ],
+        "operationId": "get_all_testimonials",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TestimonialList"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new testimonial",
+        "description": "Creates a new testimonial based on the data provided in the request body.",
+        "tags": [
+          "Testimonial"
+        ],
+        "operationId": "create_testimonial",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestimonialUpsert"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Testimonial"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/testimonials/{testimonial_id}": {
+      "parameters": [
+        {
+          "name": "testimonial_id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the testimonial to be deleted",
+          "schema": {
+            "type": "string"
+          }
+        }
+      ],
+      "get": {
+        "summary": "View testimonial by id",
+        "description": "Returns testimonial information by id",
+        "tags": [
+          "Testimonial"
+        ],
+        "operationId": "get_testimonial_by_id",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Testimonial"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update testimonial",
+        "description": "Updates the information of the desired testimonial",
+        "tags": [
+          "Testimonial"
+        ],
+        "operationId": "update_testimonial",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TestimonialUpsert"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Testimonial"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove testimonial",
+        "description": "Deletes a testimonial based on the ID provided",
+        "tags": [
+          "Testimonial"
+        ],
+        "operationId": "delete_testimonial",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteSuccess"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "BadRequest",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "tags": [
+    {
+      "name": "Booking",
+      "description": "Routes for booking manipulation"
+    },
     {
       "name": "Category",
       "description": "Routes for category manipulation"
@@ -3405,12 +5102,20 @@
       "description": "Routes for favorite manipulation"
     },
     {
+      "name": "Newsletter",
+      "description": "Routes for newsletter manipulation"
+    },
+    {
       "name": "Plan",
       "description": "Routes for plan manipulation"
     },
     {
       "name": "Review",
       "description": "Routes for review manipulation"
+    },
+    {
+      "name": "Testimonial",
+      "description": "Routes for testimonial manipulation"
     }
   ]
 }

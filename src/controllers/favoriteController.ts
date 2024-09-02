@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import {
   FavoriteUpsert,
-  FavoriteUpsertExtended,
 } from "../models/favoriteModel";
 import { isValidFirebaseUID, isValidObjectId } from "../utils/validate";
 import { validate } from "class-validator";
@@ -15,15 +14,15 @@ export class FavoriteController {
       return res.status(400).json({ msg: "Invalid user ID" });
     }
 
-    const { favorite, error: getFavoriteError } =
-      await FavoriteService.getFavoriteByUser(userId);
+    const { favorites, error: getFavoriteError } =
+      await FavoriteService.getFavoritesByUser(userId);
     if (getFavoriteError) {
       return res.status(500).json({ msg: getFavoriteError });
     }
-    return res.status(200).json(favorite);
+    return res.status(200).json(favorites);
   }
 
-  static async addFavorite(req: Request, res: Response): Promise<Response> {
+  static async createFavorite(req: Request, res: Response): Promise<Response> {
     const userId = req.user_id;
     if (!isValidFirebaseUID(userId)) {
       return res.status(400).json({ msg: "Invalid user ID" });
@@ -39,27 +38,12 @@ export class FavoriteController {
       return res.status(400).json({ msg: errorMessage });
     }
 
-    const { favorite: previousFavorite, error: getPreviousFavoriteError } =
-      await FavoriteService.getFavoriteByUser(userId);
-    if (getPreviousFavoriteError) {
-      return res.status(500).json({ msg: getPreviousFavoriteError });
-    }
-
-    if (
-      previousFavorite &&
-      previousFavorite.experiences_id.includes(payload.experience_id)
-    ) {
-      return res.status(400).json({
-        msg: "The specified experience already exists in the favorites list",
-      });
-    }
-
     const experienceId = payload.experience_id;
     if (!isValidObjectId(experienceId)) {
       return res.status(400).json({ msg: "Invalid experience ID" });
     }
     const { experience, error: getExperienceError } =
-      await ExperienceService.getExperienceById(experienceId);
+      await ExperienceService.getExperienceById(payload.experience_id);
     if (getExperienceError) {
       return res.status(500).json({ msg: getExperienceError });
     }
@@ -69,27 +53,28 @@ export class FavoriteController {
       });
     }
 
-    const newPayload = new FavoriteUpsertExtended({
-      ...payload,
-      experiences_id: previousFavorite
-        ? [...previousFavorite.experiences_id, payload.experience_id]
-        : [payload.experience_id],
-      user_id: userId,
-    });
-
-    const { favorite: upsertFavorite, error: upsertFavoriteError } =
-      previousFavorite
-        ? await FavoriteService.updateFavorite(previousFavorite.id, newPayload)
-        : await FavoriteService.createFavorite(newPayload);
-    if (upsertFavoriteError) {
-      return res.status(500).json({ msg: upsertFavoriteError });
+    const { favorite: previousFavorite, error: getPreviousError } =
+      await FavoriteService.getFavoriteByUser(payload.experience_id, userId);
+    if (getPreviousError) {
+      return res.status(500).json({ msg: getPreviousError });
     }
-    if (!upsertFavorite) {
+    if (previousFavorite) {
+      return res.status(400).json({
+        msg: "The specified experience already exists in the favorites list",
+      });
+    }
+
+    const { createdFavoriteId, error: createFavoriteError } =
+      await FavoriteService.createFavorite(payload, userId);
+    if (createFavoriteError) {
+      return res.status(500).json({ msg: createFavoriteError });
+    }
+    if (!createdFavoriteId || createdFavoriteId === "") {
       return res.status(404).json({ msg: "No data found" });
     }
 
     const { favorite, error: getFavoriteError } =
-      await FavoriteService.getFavoriteByUser(userId);
+      await FavoriteService.getFavoriteById(createdFavoriteId);
     if (getFavoriteError) {
       return res.status(500).json({ msg: getFavoriteError });
     }
@@ -100,7 +85,7 @@ export class FavoriteController {
     return res.status(201).json(favorite);
   }
 
-  static async removeFavorite(req: Request, res: Response): Promise<Response> {
+  static async deleteFavorite(req: Request, res: Response): Promise<Response> {
     const userId = req.user_id;
     if (!isValidFirebaseUID(userId)) {
       return res.status(400).json({ msg: "Invalid user ID" });
@@ -110,50 +95,21 @@ export class FavoriteController {
     if (!isValidObjectId(experienceId)) {
       return res.status(400).json({ msg: "Invalid experience ID" });
     }
-    const { experience, error: getExperienceError } =
-      await ExperienceService.getExperienceById(experienceId);
-    if (getExperienceError) {
-      return res.status(500).json({ msg: getExperienceError });
-    }
-    if (!experience) {
-      return res.status(400).json({
-        msg: "The specified experience does not exist, please choose a valid experience",
-      });
-    }
 
-    const { favorite: previousFavorite, error: getPreviousFavoriteError } =
-      await FavoriteService.getFavoriteByUser(userId);
-    if (getPreviousFavoriteError) {
-      return res.status(500).json({ msg: getPreviousFavoriteError });
+    const { favorite, error: getFavoriteError } =
+      await FavoriteService.getFavoriteByUser(experienceId, userId);
+    if (getFavoriteError) {
+      return res.status(500).json({ msg: getFavoriteError });
     }
-    if (!previousFavorite) {
-      return res.status(400).json({
-        msg: "No data found",
-      });
-    }
-    if (previousFavorite.experiences_id.indexOf(experienceId) === -1) {
-      return res.status(400).json({
-        msg: "The specified experience does not exist, please choose a valid experience",
-      });
-    }
-
-    const newPayload = new FavoriteUpsertExtended({
-      ...previousFavorite,
-      experience_id: experienceId,
-      experiences_id: previousFavorite.experiences_id.filter(
-        (experience_id: string) => experience_id !== experienceId
-      ),
-    });
-
-    const { favorite: addedFavorite, error: addFavoriteError } =
-      await FavoriteService.updateFavorite(previousFavorite.id, newPayload);
-    if (addFavoriteError) {
-      return res.status(500).json({ msg: addFavoriteError });
-    }
-    if (!addedFavorite) {
+    if (!favorite) {
       return res.status(404).json({ msg: "No data found" });
     }
 
-    return res.status(200).json({ msg: "Successfully deleted from favorites" });
+    const { deletedFavorite, error: deletedFavoriteError } =
+      await FavoriteService.deleteFavorite(favorite.id);
+    if (deletedFavoriteError) {
+      return res.status(500).json({ msg: deletedFavoriteError });
+    }
+    return res.status(200).json({ msg: "Successfully deleted" });
   }
 }
