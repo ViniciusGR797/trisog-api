@@ -286,11 +286,106 @@ export class ReviewController {
       return res.status(404).json({ msg: "No data found" });
     }
 
+    const experienceId = review.experience_id;
+    if (!isValidObjectId(experienceId)) {
+      return res.status(400).json({ msg: "Invalid experience ID" });
+    }
+    const { experience, error: getExperienceError } =
+      await ExperienceService.getExperienceById(experienceId);
+    if (getExperienceError) {
+      return res.status(500).json({ msg: getExperienceError });
+    }
+    if (!experience) {
+      return res.status(400).json({
+        msg: "The specified experience does not exist, please choose a valid experience",
+      });
+    }
+
+    const { reviews, error: getReviewsError } =
+      await ReviewService.getReviewsByExperience(experienceId);
+    if (getReviewsError) {
+      return res.status(500).json({ msg: getReviewsError });
+    }
+    if (!reviews) {
+      return res.status(404).json({ msg: "No data found" });
+    }
+
     const { deletedReview, error: deletedReviewError } =
       await ReviewService.deleteReview(reviewId);
     if (deletedReviewError) {
       return res.status(500).json({ msg: deletedReviewError });
     }
+
+    const totalRatings: Ratings = {
+      services: 0,
+      location: 0,
+      amenities: 0,
+      prices: 0,
+      food: 0,
+      room_comfort_and_quality: 0,
+    };
+
+    reviews.forEach((review) => {
+      totalRatings.services += Number((review.ratings as JsonObject)?.services);
+      totalRatings.location += Number((review.ratings as JsonObject)?.location);
+      totalRatings.amenities += Number((review.ratings as JsonObject)?.amenities);
+      totalRatings.prices += Number((review.ratings as JsonObject)?.prices);
+      totalRatings.food += Number((review.ratings as JsonObject)?.food);
+      totalRatings.room_comfort_and_quality += Number((review.ratings as JsonObject)?.room_comfort_and_quality);
+    });
+
+    const numberOfReviews = reviews.length;
+
+    const newRating =
+      experience.review_count <= 1
+        ? new Ratings({
+            services: 0,
+            location: 0,
+            amenities: 0,
+            prices: 0,
+            food: 0,
+            room_comfort_and_quality: 0,
+          })
+        : new Ratings({
+          services: totalRatings.services / numberOfReviews,
+          location: totalRatings.location / numberOfReviews,
+          amenities: totalRatings.amenities / numberOfReviews,
+          prices: totalRatings.prices / numberOfReviews,
+          food: totalRatings.food / numberOfReviews,
+          room_comfort_and_quality: totalRatings.room_comfort_and_quality / numberOfReviews,
+        });
+
+    const newExperience = new ExperienceUpsertExtended({
+      ...experience,
+      ratings: newRating,
+      custom_prices: (experience.custom_prices as JsonArray)?.map((value) => {
+        if (
+          typeof value === "object" &&
+          value !== null &&
+          "date" in value &&
+          "price" in value
+        ) {
+          return new CustomPrice({
+            date: new Date(value.date as string),
+            price: Number(value.price),
+          });
+        } else {
+          return new CustomPrice({ date: new Date(), price: 0 });
+        }
+      }),
+      review_count: experience.review_count - 1,
+    });
+
+
+
+
+
+
+
+
+
+
+
     return res.status(200).json({ msg: "Successfully deleted" });
   }
 }
