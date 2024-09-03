@@ -1392,6 +1392,55 @@ components:
         - comment
         - image
         - ratings
+        - user_review_count
+        - created_at
+        - experience_id
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the review
+          example: 60b8d295f1c0d2b0f1b2c3d8
+        name:
+          type: string
+          description: Name of the person who wrote the review
+          example: John Doe
+        email:
+          type: string
+          description: Email address of the person who wrote the review
+          example: johndoe@example.com
+        comment:
+          type: string
+          description: The content of the review
+          example: The tour was fantastic and exceeded my expectations!
+        image:
+          type: string
+          description: URL to an image related to the review
+          example: https://example.com/review-image.jpg
+        ratings:
+          $ref: '#/components/schemas/Ratings'
+          description: Object containing individual ratings for various categories
+        user_review_count:
+          type: integer
+          description: Number of reviews submitted by the user
+          example: 5
+        created_at:
+          type: string
+          format: date-time
+          description: The date and time when the review was created
+          example: '2024-08-27T14:30:00Z'
+        experience_id:
+          type: string
+          description: Unique identifier for the experience being reviewed
+          example: 60b8d295f1c0d2b0f1b2c3d9
+    ReviewRaw:
+      type: object
+      required:
+        - id
+        - name
+        - email
+        - comment
+        - image
+        - ratings
         - created_at
         - experience_id
       properties:
