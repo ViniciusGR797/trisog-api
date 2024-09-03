@@ -245,6 +245,9 @@ class Destination {
 
   @IsString({ message: "The map_link field must be a string" })
   @IsNotEmpty({ message: "The map_link field is mandatory" })
+  @Matches(/^https:\/\/www\.google\.com\/maps\/embed/, {
+    message: "The map_link must start with 'https://www.google.com/maps/embed'",
+  })
   map_link: string;
 
   @IsNotEmpty({ message: "The weather field is mandatory" })
@@ -295,6 +298,13 @@ class Destination {
   })
   @IsArray({ message: "The images field must be an array of strings" })
   @IsNotEmpty({ message: "The images field is mandatory" })
+  @Matches(
+    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/,
+    {
+      each: true,
+      message: "Each image URL must start with a valid domain",
+    },
+  )
   images: string[];
 
   @Min(0, { message: "The travel_count must be greater than or equal to zero" })
@@ -427,6 +437,9 @@ class DestinationUpsert {
 
   @IsString({ message: "The map_link field must be a string" })
   @IsNotEmpty({ message: "The map_link field is mandatory" })
+  @Matches(/^https:\/\/www\.google\.com\/maps\/embed/, {
+    message: "The map_link must start with 'https://www.google.com/maps/embed'",
+  })
   map_link: string;
 
   @ValidateNested()
@@ -477,6 +490,8 @@ class DestinationUpsert {
 
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
+  @Matches(/^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/, 
+    { message: "The image URL must start with a valid domain" })
   image: string;
 
   constructor(payload: DestinationUpsert) {
@@ -602,6 +617,13 @@ class DestinationUpsertExtended extends DestinationUpsert {
   })
   @IsArray({ message: "The images field must be an array of strings" })
   @IsNotEmpty({ message: "The images field is mandatory" })
+  @Matches(
+    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/,
+    {
+      each: true,
+      message: "Each image URL must start with a valid domain",
+    },
+  )
   images: string[];
 
   @Min(0, { message: "The travel_count must be greater than or equal to zero" })

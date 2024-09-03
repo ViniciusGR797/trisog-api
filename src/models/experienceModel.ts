@@ -10,6 +10,7 @@ import {
   ValidateNested,
   IsOptional,
   IsNotEmptyObject,
+  Matches,
 } from "class-validator";
 import { JsonArray, JsonValue } from "@prisma/client/runtime/library";
 import { Destination } from "./destinationModel";
@@ -220,6 +221,8 @@ class Experience {
 
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
+  @Matches(/^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/, 
+    { message: "The image URL must start with a valid domain" })
   image: string;
 
   @IsString({ message: "The video field must be a string" })
@@ -232,6 +235,9 @@ class Experience {
 
   @IsString({ message: "The map_link field must be a string" })
   @IsNotEmpty({ message: "The map_link field is mandatory" })
+  @Matches(/^https:\/\/www\.google\.com\/maps\/embed/, {
+    message: "The map_link must start with 'https://www.google.com/maps/embed'",
+  })
   map_link: string;
 
   @IsDate({ message: "The start_date field must be a valid date" })
@@ -577,6 +583,8 @@ class ExperienceRaw {
 
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
+  @Matches(/^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/, 
+    { message: "The image URL must start with a valid domain" })
   image: string;
 
   @IsString({ message: "The video field must be a string" })
@@ -589,6 +597,9 @@ class ExperienceRaw {
 
   @IsString({ message: "The map_link field must be a string" })
   @IsNotEmpty({ message: "The map_link field is mandatory" })
+  @Matches(/^https:\/\/www\.google\.com\/maps\/embed/, {
+    message: "The map_link must start with 'https://www.google.com/maps/embed'",
+  })
   map_link: string;
 
   @IsDate({ message: "The start_date field must be a valid date" })
@@ -921,6 +932,8 @@ class ExperienceUpsert {
 
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
+  @Matches(/^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/, 
+    { message: "The image URL must start with a valid domain" })
   image: string;
 
   @IsString({ message: "The video field must be a string" })
@@ -933,6 +946,9 @@ class ExperienceUpsert {
 
   @IsString({ message: "The map_link field must be a string" })
   @IsNotEmpty({ message: "The map_link field is mandatory" })
+  @Matches(/^https:\/\/www\.google\.com\/maps\/embed/, {
+    message: "The map_link must start with 'https://www.google.com/maps/embed'",
+  })
   map_link: string;
 
   @IsDate({ message: "The start_date field must be a valid date" })
