@@ -3,12 +3,14 @@ import {
   IsDate,
   IsInt,
   IsNotEmpty,
+  isNotEmptyObject,
   IsNotEmptyObject,
   IsNumber,
   IsString,
   Min,
   ValidateNested,
 } from "class-validator";
+import { ExperienceRaw } from "./experienceModel";
 
 /**
  * @swagger
@@ -104,6 +106,94 @@ class Ticket {
  *           type: number
  *           description: The total price of this reservation
  *           example: 4.5
+ *         experience:
+ *           $ref: '#/components/schemas/ExperienceRaw'
+ *           description: Scheduled experience information details
+ *         user_id:
+ *           type: string
+ *           description: Unique identifier for the user who made the booking
+ *           example: "12345"
+ */
+
+class Booking {
+  @IsString({ message: "The id field must be a string" })
+  @IsNotEmpty({ message: "The id field is mandatory" })
+  id: string;
+
+  @IsDate({ message: "The date field must be a valid date" })
+  @IsNotEmpty({ message: "The date field is mandatory" })
+  date: Date;
+
+  @IsString({ message: "The time field must be a string" })
+  @IsNotEmpty({ message: "The time field is mandatory" })
+  time: string;
+
+  @IsNotEmpty({ message: "The ticket field is mandatory" })
+  ticket: JsonValue;
+
+  @IsNumber({}, { message: "The total_price field must be a number" })
+  @IsNotEmpty({ message: "The total_price field is mandatory" })
+  total_price: number;
+
+  @ValidateNested()
+  @IsNotEmptyObject({nullable: false}, { message: "The experience field is mandatory" })
+  experience: ExperienceRaw;
+
+  @IsString({ message: "The user_id field must be a string" })
+  @IsNotEmpty({ message: "The user_id field is mandatory" })
+  user_id: string;
+
+  constructor(payload: Booking) {
+    this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
+    this.date = new Date(payload.date);
+    this.time =
+      typeof payload.time === "string" ? payload.time.trim() : payload.time;
+    this.ticket = payload.ticket;
+    this.total_price = payload.total_price;
+    this.experience = new ExperienceRaw({...payload.experience});
+    this.user_id =
+      typeof payload.user_id === "string"
+        ? payload.user_id.trim()
+        : payload.user_id;
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     BookingRaw:
+ *       type: object
+ *       required:
+ *         - id
+ *         - date
+ *         - time
+ *         - ticket
+ *         - total_price
+ *         - experience_id
+ *         - user_id
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: Unique identifier for the booking
+ *           example: "60b8d295f1c0d2b0f1b2c3d8"
+ *         date:
+ *           type: string
+ *           format: date
+ *           description: Date of the booking
+ *           example: "2024-08-31"
+ *         time:
+ *           type: string
+ *           format: time
+ *           description: Time of the booking
+ *           example: "14:00"
+ *         ticket:
+ *           $ref: '#/components/schemas/Ticket'
+ *           description: Ticket details for the booking, including the number of adults, kids, and children
+ *         total_price:
+ *           type: number
+ *           description: The total price of this reservation
+ *           example: 4.5
  *         experience_id:
  *           type: string
  *           description: Unique identifier for the experience being favorited
@@ -114,7 +204,7 @@ class Ticket {
  *           example: "12345"
  */
 
-class Booking {
+class BookingRaw {
   @IsString({ message: "The id field must be a string" })
   @IsNotEmpty({ message: "The id field is mandatory" })
   id: string;
@@ -142,7 +232,7 @@ class Booking {
   @IsNotEmpty({ message: "The user_id field is mandatory" })
   user_id: string;
 
-  constructor(payload: Booking) {
+  constructor(payload: BookingRaw) {
     this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
     this.date = new Date(payload.date);
     this.time =
@@ -282,4 +372,4 @@ class BookingUpsertExtended extends BookingUpsert {
   }
 }
 
-export { Booking, BookingUpsert, BookingUpsertExtended };
+export { Booking, BookingRaw, BookingUpsert, BookingUpsertExtended };

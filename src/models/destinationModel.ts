@@ -25,6 +25,41 @@ import {
  * @swagger
  * components:
  *   schemas:
+ *     WeatherPeriod:
+ *       type: object
+ *       required:
+ *         - min
+ *         - max
+ *       properties:
+ *         min:
+ *           type: number
+ *           description: Minimum temperature for the period in degrees Celsius
+ *           example: 10
+ *         max:
+ *           type: number
+ *           description: Maximum temperature for the period in degrees Celsius
+ *           example: 16
+ */
+
+export class WeatherPeriod {
+  @IsNumber({}, { message: "The min field must be a number" })
+  @IsNotEmpty({ message: "The min field is mandatory" })
+  min: number;
+
+  @IsNumber({}, { message: "The max field must be a number" })
+  @IsNotEmpty({ message: "The max field is mandatory" })
+  max: number;
+
+  constructor(payload: WeatherPeriod) {
+    this.min = payload.min;
+    this.max = payload.max;
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
  *     Weather:
  *       type: object
  *       required:
@@ -36,105 +71,69 @@ import {
  *         - nov_dec
  *       properties:
  *         jan_feb:
- *           type: object
- *           properties:
- *             min:
- *               type: number
- *               description: Minimum temperature for January-February in degrees Celsius
- *               example: 10
- *             max:
- *               type: number
- *               description: Maximum temperature for January-February in degrees Celsius
- *               example: 16
+ *           $ref: '#/components/schemas/WeatherPeriod'
  *         mar_apr:
- *           type: object
- *           properties:
- *             min:
- *               type: number
- *               description: Minimum temperature for March-April in degrees Celsius
- *               example: 12
- *             max:
- *               type: number
- *               description: Maximum temperature for March-April in degrees Celsius
- *               example: 18
+ *           $ref: '#/components/schemas/WeatherPeriod'
  *         may_jun:
- *           type: object
- *           properties:
- *             min:
- *               type: number
- *               description: Minimum temperature for May-June in degrees Celsius
- *               example: 15
- *             max:
- *               type: number
- *               description: Maximum temperature for May-June in degrees Celsius
- *               example: 22
+ *           $ref: '#/components/schemas/WeatherPeriod'
  *         jul_aug:
- *           type: object
- *           properties:
- *             min:
- *               type: number
- *               description: Minimum temperature for July-August in degrees Celsius
- *               example: 18
- *             max:
- *               type: number
- *               description: Maximum temperature for July-August in degrees Celsius
- *               example: 25
+ *           $ref: '#/components/schemas/WeatherPeriod'
  *         sep_oct:
- *           type: object
- *           properties:
- *             min:
- *               type: number
- *               description: Minimum temperature for September-October in degrees Celsius
- *               example: 14
- *             max:
- *               type: number
- *               description: Maximum temperature for September-October in degrees Celsius
- *               example: 20
+ *           $ref: '#/components/schemas/WeatherPeriod'
  *         nov_dec:
- *           type: object
- *           properties:
- *             min:
- *               type: number
- *               description: Minimum temperature for November-December in degrees Celsius
- *               example: 10
- *             max:
- *               type: number
- *               description: Maximum temperature for November-December in degrees Celsius
- *               example: 16
+ *           $ref: '#/components/schemas/WeatherPeriod'
  */
 
 class Weather {
-  @IsNumber({}, { message: "The jan_feb field must be a number" })
-  @IsNotEmpty({ message: "The jan_feb field is mandatory" })
-  jan_feb: number;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The jan_feb field is mandatory" }
+  )
+  jan_feb: WeatherPeriod;
 
-  @IsNumber({}, { message: "The mar_apr field must be a number" })
-  @IsNotEmpty({ message: "The mar_apr field is mandatory" })
-  mar_apr: number;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The mar_apr field is mandatory" }
+  )
+  mar_apr: WeatherPeriod;
 
-  @IsNumber({}, { message: "The may_jun field must be a number" })
-  @IsNotEmpty({ message: "The may_jun field is mandatory" })
-  may_jun: number;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The may_jun field is mandatory" }
+  )
+  may_jun: WeatherPeriod;
 
-  @IsNumber({}, { message: "The jul_aug field must be a number" })
-  @IsNotEmpty({ message: "The jul_aug field is mandatory" })
-  jul_aug: number;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The jul_aug field is mandatory" }
+  )
+  jul_aug: WeatherPeriod;
 
-  @IsNumber({}, { message: "The sep_oct field must be a number" })
-  @IsNotEmpty({ message: "The sep_oct field is mandatory" })
-  sep_oct: number;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The sep_oct field is mandatory" }
+  )
+  sep_oct: WeatherPeriod;
 
-  @IsNumber({}, { message: "The nov_dec field must be a number" })
-  @IsNotEmpty({ message: "The nov_dec field is mandatory" })
-  nov_dec: number;
+  @ValidateNested()
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The nov_dec field is mandatory" }
+  )
+  nov_dec: WeatherPeriod;
 
   constructor(payload: Weather) {
-    this.jan_feb = payload.jan_feb;
-    this.mar_apr = payload.mar_apr;
-    this.may_jun = payload.may_jun;
-    this.jul_aug = payload.jul_aug;
-    this.sep_oct = payload.sep_oct;
-    this.nov_dec = payload.nov_dec;
+    this.jan_feb = new WeatherPeriod(payload.jan_feb);
+    this.mar_apr = new WeatherPeriod(payload.mar_apr);
+    this.may_jun = new WeatherPeriod(payload.may_jun);
+    this.jul_aug = new WeatherPeriod(payload.jul_aug);
+    this.sep_oct = new WeatherPeriod(payload.sep_oct);
+    this.nov_dec = new WeatherPeriod(payload.nov_dec);
   }
 }
 
@@ -304,24 +303,31 @@ class Destination {
   travel_count: number;
 
   constructor(payload: Destination) {
-    this.id = 
-      typeof payload.id === "string" ? payload.id.trim() : payload.id;
+    this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
     this.name =
       typeof payload.name === "string" ? payload.name.trim() : payload.name;
     this.about =
       typeof payload.about === "string" ? payload.about.trim() : payload.about;
     this.continent =
-      typeof payload.continent === "string" ? payload.continent.trim() : payload.continent;
+      typeof payload.continent === "string"
+        ? payload.continent.trim()
+        : payload.continent;
     this.map_link =
-      typeof payload.map_link === "string" ? payload.map_link.trim() : payload.map_link;
+      typeof payload.map_link === "string"
+        ? payload.map_link.trim()
+        : payload.map_link;
     this.weather = payload.weather;
     this.language = payload.language;
     this.currency =
-      typeof payload.currency === "string" ? payload.currency.trim() : payload.currency;
+      typeof payload.currency === "string"
+        ? payload.currency.trim()
+        : payload.currency;
     this.area = payload.area;
     this.population = payload.population;
     this.time_zone =
-      typeof payload.time_zone === "string" ? payload.time_zone.trim() : payload.time_zone;
+      typeof payload.time_zone === "string"
+        ? payload.time_zone.trim()
+        : payload.time_zone;
     this.time_to_travel = payload.time_to_travel;
     this.images = payload.images;
     this.travel_count = payload.travel_count;
@@ -424,7 +430,10 @@ class DestinationUpsert {
   map_link: string;
 
   @ValidateNested()
-  @IsNotEmptyObject({nullable: false}, { message: "The weather field is mandatory" })
+  @IsNotEmptyObject(
+    { nullable: false },
+    { message: "The weather field is mandatory" }
+  )
   weather: Weather;
 
   @IsString({
@@ -476,17 +485,25 @@ class DestinationUpsert {
     this.about =
       typeof payload.about === "string" ? payload.about.trim() : payload.about;
     this.continent =
-      typeof payload.continent === "string" ? payload.continent.trim() : payload.continent;
+      typeof payload.continent === "string"
+        ? payload.continent.trim()
+        : payload.continent;
     this.map_link =
-      typeof payload.map_link === "string" ? payload.map_link.trim() : payload.map_link;
+      typeof payload.map_link === "string"
+        ? payload.map_link.trim()
+        : payload.map_link;
     this.weather = new Weather(payload.weather);
     this.language = payload.language;
     this.currency =
-      typeof payload.currency === "string" ? payload.currency.trim() : payload.currency;
+      typeof payload.currency === "string"
+        ? payload.currency.trim()
+        : payload.currency;
     this.area = payload.area;
     this.population = payload.population;
     this.time_zone =
-      typeof payload.time_zone === "string" ? payload.time_zone.trim() : payload.time_zone;
+      typeof payload.time_zone === "string"
+        ? payload.time_zone.trim()
+        : payload.time_zone;
     this.time_to_travel = payload.time_to_travel;
     this.image =
       typeof payload.image === "string" ? payload.image.trim() : payload.image;

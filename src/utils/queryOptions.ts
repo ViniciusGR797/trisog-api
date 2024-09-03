@@ -61,10 +61,11 @@ export function createQueryOptions(query: ExperienceQueryParams): {
     }
 
     if (title) {
-      filters.title = {
-        contains: title,
-        mode: 'insensitive',
-      };
+      filters.OR = [
+        { title: { contains: title, mode: 'insensitive' } },
+        { city: { contains: title, mode: 'insensitive' } },
+        { over_view: { contains: title, mode: 'insensitive' } }
+      ];
     }
 
     if (price) {

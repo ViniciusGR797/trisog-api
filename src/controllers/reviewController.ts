@@ -25,10 +25,12 @@ export class ReviewController {
         }, {})
       : {};
 
-    const updatedReviews = reviews ? reviews.map((review) => ({
-      ...review,
-      user_review_count: emailCountMap[review.email],
-    })) : [];
+    const updatedReviews = reviews
+      ? reviews.map((review) => ({
+          ...review,
+          user_review_count: emailCountMap[review.email],
+        }))
+      : [];
 
     return res.status(200).json(updatedReviews);
   }
@@ -166,40 +168,34 @@ export class ReviewController {
               (Number((experience.ratings as JsonObject)?.services) *
                 experience.review_count +
                 payload.ratings.services) /
-                experience.review_count +
-              1,
+              (experience.review_count + 1),
             location:
               (Number((experience.ratings as JsonObject)?.location) *
                 experience.review_count +
                 payload.ratings.location) /
-                experience.review_count +
-              1,
+              (experience.review_count + 1),
             amenities:
               (Number((experience.ratings as JsonObject)?.amenities) *
                 experience.review_count +
                 payload.ratings.amenities) /
-                experience.review_count +
-              1,
+              (experience.review_count + 1),
             prices:
               (Number((experience.ratings as JsonObject)?.prices) *
                 experience.review_count +
                 payload.ratings.prices) /
-                experience.review_count +
-              1,
+              (experience.review_count + 1),
             food:
               (Number((experience.ratings as JsonObject)?.food) *
                 experience.review_count +
                 payload.ratings.food) /
-                experience.review_count +
-              1,
+              (experience.review_count + 1),
             room_comfort_and_quality:
               (Number(
                 (experience.ratings as JsonObject)?.room_comfort_and_quality
               ) *
                 experience.review_count +
                 payload.ratings.room_comfort_and_quality) /
-                experience.review_count +
-              1,
+              (experience.review_count + 1),
           });
 
     const newExperience = new ExperienceUpsertExtended({
@@ -363,6 +359,8 @@ export class ReviewController {
       return res.status(500).json({ msg: deletedReviewError });
     }
 
+    const reviewsRemoved = reviews.filter(item => item.id !== reviewId);
+
     const totalRatings: Ratings = {
       services: 0,
       location: 0,
@@ -372,7 +370,7 @@ export class ReviewController {
       room_comfort_and_quality: 0,
     };
 
-    reviews.forEach((review) => {
+    reviewsRemoved.forEach((review) => {
       totalRatings.services += Number((review.ratings as JsonObject)?.services);
       totalRatings.location += Number((review.ratings as JsonObject)?.location);
       totalRatings.amenities += Number(
@@ -385,7 +383,7 @@ export class ReviewController {
       );
     });
 
-    const numberOfReviews = reviews.length;
+    const numberOfReviews = reviewsRemoved.length;
 
     const newRating =
       experience.review_count <= 1
@@ -427,6 +425,15 @@ export class ReviewController {
       }),
       review_count: experience.review_count - 1,
     });
+
+    const { updatedExperience, error: updatedExperienceError } =
+      await ExperienceService.updateExperience(experienceId, newExperience);
+    if (updatedExperienceError) {
+      return res.status(500).json({ msg: updatedExperienceError });
+    }
+    if (!updatedExperience) {
+      return res.status(404).json({ msg: "No data found" });
+    }
 
     return res.status(200).json({ msg: "Successfully deleted" });
   }

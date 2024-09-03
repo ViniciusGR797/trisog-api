@@ -23,6 +23,20 @@ import { Ratings } from "../models/reviewModel";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { FavoriteService } from "../services/favoriteService";
 
+interface WeatherJson {
+  jan_feb?: WeatherPeriodJson;
+  mar_apr?: WeatherPeriodJson;
+  may_jun?: WeatherPeriodJson;
+  jul_aug?: WeatherPeriodJson;
+  sep_oct?: WeatherPeriodJson;
+  nov_dec?: WeatherPeriodJson;
+}
+
+interface WeatherPeriodJson {
+  min?: number;
+  max?: number;
+}
+
 export class ExperienceController {
   static async getExperiences(req: Request, res: Response): Promise<Response> {
     const { queryOptions, error: queryOptionsError } = createQueryOptions(
@@ -118,7 +132,10 @@ export class ExperienceController {
     return res.status(200).json(experiences);
   }
 
-  static async getExperiencesUserFavorites(req: Request, res: Response): Promise<Response> {
+  static async getExperiencesUserFavorites(
+    req: Request,
+    res: Response
+  ): Promise<Response> {
     const { queryOptions, error: queryOptionsError } = createQueryOptions(
       req.query
     );
@@ -143,10 +160,15 @@ export class ExperienceController {
       return res.status(200).json([]);
     }
 
-    const experienceIds = favorites.map(experience => experience.experience_id);
+    const experienceIds = favorites.map(
+      (experience) => experience.experience_id
+    );
 
     const { experiences: experiencesRaw, error: getExperiencesError } =
-      await ExperienceService.getExperiencesUserFavorites(queryOptions, experienceIds);
+      await ExperienceService.getExperiencesUserFavorites(
+        queryOptions,
+        experienceIds
+      );
     if (getExperiencesError) {
       return res.status(500).json({ msg: getExperiencesError });
     }
@@ -453,42 +475,54 @@ export class ExperienceController {
     const newDestination = new DestinationUpsertExtended({
       ...remainingDestination,
       weather: new Weather({
-        jan_feb:
-          typeof weather === "object" &&
-          weather !== null &&
-          !Array.isArray(weather)
-            ? Number(weather.jan_feb)
-            : 0,
-        mar_apr:
-          typeof weather === "object" &&
-          weather !== null &&
-          !Array.isArray(weather)
-            ? Number(weather.jan_feb)
-            : 0,
-        may_jun:
-          typeof weather === "object" &&
-          weather !== null &&
-          !Array.isArray(weather)
-            ? Number(weather.jan_feb)
-            : 0,
-        jul_aug:
-          typeof weather === "object" &&
-          weather !== null &&
-          !Array.isArray(weather)
-            ? Number(weather.jan_feb)
-            : 0,
-        sep_oct:
-          typeof weather === "object" &&
-          weather !== null &&
-          !Array.isArray(weather)
-            ? Number(weather.jan_feb)
-            : 0,
-        nov_dec:
-          typeof weather === "object" &&
-          weather !== null &&
-          !Array.isArray(weather)
-            ? Number(weather.jan_feb)
-            : 0,
+        jan_feb: {
+          min: Number(
+            (weather as WeatherJson)?.jan_feb?.min ?? 0
+          ),
+          max: Number(
+            (weather as WeatherJson)?.jan_feb?.max ?? 0
+          ),
+        },
+        mar_apr: {
+          min: Number(
+            (weather as WeatherJson)?.mar_apr?.min ?? 0
+          ),
+          max: Number(
+            (weather as WeatherJson)?.mar_apr?.max ?? 0
+          ),
+        },
+        may_jun: {
+          min: Number(
+            (weather as WeatherJson)?.may_jun?.min ?? 0
+          ),
+          max: Number(
+            (weather as WeatherJson)?.may_jun?.max ?? 0
+          ),
+        },
+        jul_aug: {
+          min: Number(
+            (weather as WeatherJson)?.jul_aug?.min ?? 0
+          ),
+          max: Number(
+            (weather as WeatherJson)?.jul_aug?.max ?? 0
+          ),
+        },
+        sep_oct: {
+          min: Number(
+            (weather as WeatherJson)?.sep_oct?.min ?? 0
+          ),
+          max: Number(
+            (weather as WeatherJson)?.sep_oct?.max ?? 0
+          ),
+        },
+        nov_dec: {
+          min: Number(
+            (weather as WeatherJson)?.nov_dec?.min ?? 0
+          ),
+          max: Number(
+            (weather as WeatherJson)?.nov_dec?.max ?? 0
+          ),
+        },
       }),
       image: destination.images[0],
     });
@@ -528,9 +562,29 @@ export class ExperienceController {
     const errors = await validate(payload);
     if (errors.length > 0) {
       const firstError = errors[0];
-      const errorMessage = firstError.constraints
-        ? Object.values(firstError.constraints)[0]
-        : "Invalid and/or incomplete parameters";
+      let errorMessage;
+
+      if (firstError.constraints) {
+        errorMessage = Object.values(firstError.constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].constraints
+      ) {
+        errorMessage = Object.values(firstError.children[0].constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].children &&
+        firstError.children[0].children.length > 0 &&
+        firstError.children[0].children[0].constraints
+      ) {
+        errorMessage = Object.values(
+          firstError.children[0].children[0].constraints
+        )[0];
+      } else {
+        errorMessage = "Invalid and/or incomplete parameters";
+      }
       return res.status(400).json({ msg: errorMessage });
     }
 
@@ -595,7 +649,10 @@ export class ExperienceController {
         amenities: Number((experience.ratings as JsonObject)?.amenities) || 0,
         prices: Number((experience.ratings as JsonObject)?.prices) || 0,
         food: Number((experience.ratings as JsonObject)?.food) || 0,
-        room_comfort_and_quality: Number((experience.ratings as JsonObject)?.room_comfort_and_quality) || 0,
+        room_comfort_and_quality:
+          Number(
+            (experience.ratings as JsonObject)?.room_comfort_and_quality
+          ) || 0,
       }),
       review_count: experience.review_count,
     });
@@ -679,42 +736,54 @@ export class ExperienceController {
       const newDestination = new DestinationUpsertExtended({
         ...remainingDestination,
         weather: new Weather({
-          jan_feb:
-            typeof weather === "object" &&
-            weather !== null &&
-            !Array.isArray(weather)
-              ? Number(weather.jan_feb)
-              : 0,
-          mar_apr:
-            typeof weather === "object" &&
-            weather !== null &&
-            !Array.isArray(weather)
-              ? Number(weather.jan_feb)
-              : 0,
-          may_jun:
-            typeof weather === "object" &&
-            weather !== null &&
-            !Array.isArray(weather)
-              ? Number(weather.jan_feb)
-              : 0,
-          jul_aug:
-            typeof weather === "object" &&
-            weather !== null &&
-            !Array.isArray(weather)
-              ? Number(weather.jan_feb)
-              : 0,
-          sep_oct:
-            typeof weather === "object" &&
-            weather !== null &&
-            !Array.isArray(weather)
-              ? Number(weather.jan_feb)
-              : 0,
-          nov_dec:
-            typeof weather === "object" &&
-            weather !== null &&
-            !Array.isArray(weather)
-              ? Number(weather.jan_feb)
-              : 0,
+          jan_feb: {
+            min: Number(
+              (weather as WeatherJson)?.jan_feb?.min ?? 0
+            ),
+            max: Number(
+              (weather as WeatherJson)?.jan_feb?.max ?? 0
+            ),
+          },
+          mar_apr: {
+            min: Number(
+              (weather as WeatherJson)?.mar_apr?.min ?? 0
+            ),
+            max: Number(
+              (weather as WeatherJson)?.mar_apr?.max ?? 0
+            ),
+          },
+          may_jun: {
+            min: Number(
+              (weather as WeatherJson)?.may_jun?.min ?? 0
+            ),
+            max: Number(
+              (weather as WeatherJson)?.may_jun?.max ?? 0
+            ),
+          },
+          jul_aug: {
+            min: Number(
+              (weather as WeatherJson)?.jul_aug?.min ?? 0
+            ),
+            max: Number(
+              (weather as WeatherJson)?.jul_aug?.max ?? 0
+            ),
+          },
+          sep_oct: {
+            min: Number(
+              (weather as WeatherJson)?.sep_oct?.min ?? 0
+            ),
+            max: Number(
+              (weather as WeatherJson)?.sep_oct?.max ?? 0
+            ),
+          },
+          nov_dec: {
+            min: Number(
+              (weather as WeatherJson)?.nov_dec?.min ?? 0
+            ),
+            max: Number(
+              (weather as WeatherJson)?.nov_dec?.max ?? 0
+            ),
+          },
         }),
         image: destination.images[0],
       });

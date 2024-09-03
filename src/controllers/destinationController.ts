@@ -64,9 +64,29 @@ export class DestinationController {
     const errors = await validate(payload);
     if (errors.length > 0) {
       const firstError = errors[0];
-      const errorMessage = firstError.constraints
-        ? Object.values(firstError.constraints)[0]
-        : "Invalid and/or incomplete parameters";
+      let errorMessage;
+
+      if (firstError.constraints) {
+        errorMessage = Object.values(firstError.constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].constraints
+      ) {
+        errorMessage = Object.values(firstError.children[0].constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].children &&
+        firstError.children[0].children.length > 0 &&
+        firstError.children[0].children[0].constraints
+      ) {
+        errorMessage = Object.values(
+          firstError.children[0].children[0].constraints
+        )[0];
+      } else {
+        errorMessage = "Invalid and/or incomplete parameters";
+      }
       return res.status(400).json({ msg: errorMessage });
     }
 
@@ -124,9 +144,29 @@ export class DestinationController {
     const errors = await validate(payload);
     if (errors.length > 0) {
       const firstError = errors[0];
-      const errorMessage = firstError.constraints
-        ? Object.values(firstError.constraints)[0]
-        : "Invalid and/or incomplete parameters";
+      let errorMessage;
+
+      if (firstError.constraints) {
+        errorMessage = Object.values(firstError.constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].constraints
+      ) {
+        errorMessage = Object.values(firstError.children[0].constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].children &&
+        firstError.children[0].children.length > 0 &&
+        firstError.children[0].children[0].constraints
+      ) {
+        errorMessage = Object.values(
+          firstError.children[0].children[0].constraints
+        )[0];
+      } else {
+        errorMessage = "Invalid and/or incomplete parameters";
+      }
       return res.status(400).json({ msg: errorMessage });
     }
 
