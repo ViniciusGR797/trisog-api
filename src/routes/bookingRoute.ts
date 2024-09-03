@@ -15,11 +15,13 @@ const router = Router();
  * @swagger
  * /bookings:
  *   get:
- *     summary: View all bookings
- *     description: Returns information about all bookings
+ *     summary: View all bookings my user
+ *     description: Returns information about all bookings my user
  *     tags:
  *       - Booking
  *     operationId: get_all_bookings
+ *     security:
+ *       - jwt: []
  *     responses:
  *       200:
  *         description: Success
@@ -27,6 +29,18 @@ const router = Router();
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/BookingList"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Unauthorized"
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Forbidden"
  *       500:
  *         description: InternalServerError
  *         content:
@@ -35,7 +49,7 @@ const router = Router();
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/', BookingController.getBookings);
+router.get('/', authMiddleware, BookingController.getBookings);
 
 /**
  * @swagger
@@ -53,6 +67,8 @@ router.get('/', BookingController.getBookings);
  *     tags:
  *       - Booking
  *     operationId: get_booking_by_id
+ *     security:
+ *       - jwt: []
  *     responses:
  *       200:
  *         description: Success
@@ -66,6 +82,18 @@ router.get('/', BookingController.getBookings);
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/BadRequest"
+ *       401:
+ *         description: Unauthorized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Unauthorized"
+ *       403:
+ *         description: Forbidden
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Forbidden"
  *       404:
  *         description: NotFound
  *         content:
@@ -80,7 +108,7 @@ router.get('/', BookingController.getBookings);
  *               $ref: "#/components/schemas/InternalServerError"
  */
 
-router.get('/:booking_id', BookingController.getBookingById);
+router.get('/:booking_id', authMiddleware, BookingController.getBookingById);
 
 /**
  * @swagger

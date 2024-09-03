@@ -6,6 +6,7 @@ import {
 import { isValidFirebaseUID, isValidObjectId } from "../utils/validate";
 import { validate } from "class-validator";
 import { DestinationService } from "../services/destinationService";
+import { ExperienceService } from "../services/experienceService";
 
 export class DestinationController {
   static async getDestinations(req: Request, res: Response): Promise<Response> {
@@ -36,6 +37,17 @@ export class DestinationController {
       return res.status(404).json({ msg: "No data found" });
     }
 
+    const { experiences, error: getExperienceError } =
+      await ExperienceService.getExperienceByDestination(destinationId);
+    if (getExperienceError) {
+      return res.status(500).json({ msg: getExperienceError });
+    }
+    if (experiences)
+      destination.images = [
+        destination.images[0],
+        ...experiences.map((experience) => experience.image),
+      ];
+
     return res.status(200).json(destination);
   }
 
@@ -45,16 +57,36 @@ export class DestinationController {
   ): Promise<Response> {
     const userId = req.user_id;
     if (!isValidFirebaseUID(userId)) {
-      return res.status(400).json({ msg: 'Invalid user ID' });
+      return res.status(400).json({ msg: "Invalid user ID" });
     }
 
     const payload = new DestinationUpsert(req.body);
     const errors = await validate(payload);
     if (errors.length > 0) {
       const firstError = errors[0];
-      const errorMessage = firstError.constraints
-        ? Object.values(firstError.constraints)[0]
-        : "Invalid and/or incomplete parameters";
+      let errorMessage;
+
+      if (firstError.constraints) {
+        errorMessage = Object.values(firstError.constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].constraints
+      ) {
+        errorMessage = Object.values(firstError.children[0].constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].children &&
+        firstError.children[0].children.length > 0 &&
+        firstError.children[0].children[0].constraints
+      ) {
+        errorMessage = Object.values(
+          firstError.children[0].children[0].constraints
+        )[0];
+      } else {
+        errorMessage = "Invalid and/or incomplete parameters";
+      }
       return res.status(400).json({ msg: errorMessage });
     }
 
@@ -91,7 +123,7 @@ export class DestinationController {
   ): Promise<Response> {
     const userId = req.user_id;
     if (!isValidFirebaseUID(userId)) {
-      return res.status(400).json({ msg: 'Invalid user ID' });
+      return res.status(400).json({ msg: "Invalid user ID" });
     }
 
     const destinationId = req.params.destination_id;
@@ -112,9 +144,29 @@ export class DestinationController {
     const errors = await validate(payload);
     if (errors.length > 0) {
       const firstError = errors[0];
-      const errorMessage = firstError.constraints
-        ? Object.values(firstError.constraints)[0]
-        : "Invalid and/or incomplete parameters";
+      let errorMessage;
+
+      if (firstError.constraints) {
+        errorMessage = Object.values(firstError.constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].constraints
+      ) {
+        errorMessage = Object.values(firstError.children[0].constraints)[0];
+      } else if (
+        firstError.children &&
+        firstError.children.length > 0 &&
+        firstError.children[0].children &&
+        firstError.children[0].children.length > 0 &&
+        firstError.children[0].children[0].constraints
+      ) {
+        errorMessage = Object.values(
+          firstError.children[0].children[0].constraints
+        )[0];
+      } else {
+        errorMessage = "Invalid and/or incomplete parameters";
+      }
       return res.status(400).json({ msg: errorMessage });
     }
 
@@ -141,7 +193,7 @@ export class DestinationController {
   ): Promise<Response> {
     const userId = req.user_id;
     if (!isValidFirebaseUID(userId)) {
-      return res.status(400).json({ msg: 'Invalid user ID' });
+      return res.status(400).json({ msg: "Invalid user ID" });
     }
 
     const destinationId = req.params.destination_id;

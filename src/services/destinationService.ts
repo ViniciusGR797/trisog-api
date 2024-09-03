@@ -72,12 +72,30 @@ export class DestinationService {
           time_to_travel: newData.time_to_travel,
           images: newData.images,
           weather: {
-            jan_feb: newData.weather.jan_feb,
-            mar_apr: newData.weather.mar_apr,
-            may_jun: newData.weather.may_jun,
-            jul_aug: newData.weather.jul_aug,
-            sep_oct: newData.weather.sep_oct,
-            nov_dec: newData.weather.nov_dec
+            jan_feb: {
+              min: newData.weather.jan_feb.min,
+              max: newData.weather.jan_feb.max,
+            },
+            mar_apr: {
+              min: newData.weather.mar_apr.min,
+              max: newData.weather.mar_apr.max,
+            },
+            may_jun: {
+              min: newData.weather.may_jun.min,
+              max: newData.weather.may_jun.max,
+            },
+            jul_aug: {
+              min: newData.weather.jul_aug.min,
+              max: newData.weather.jul_aug.max,
+            },
+            sep_oct: {
+              min: newData.weather.sep_oct.min,
+              max: newData.weather.sep_oct.max,
+            },
+            nov_dec: {
+              min: newData.weather.nov_dec.min,
+              max: newData.weather.nov_dec.max,
+            }
           },
           travel_count: newData.travel_count
         }
@@ -112,12 +130,30 @@ export class DestinationService {
             time_to_travel: updatedData.time_to_travel,
             images: updatedData.images,
             weather: {
-              jan_feb: updatedData.weather.jan_feb,
-              mar_apr: updatedData.weather.mar_apr,
-              may_jun: updatedData.weather.may_jun,
-              jul_aug: updatedData.weather.jul_aug,
-              sep_oct: updatedData.weather.sep_oct,
-              nov_dec: updatedData.weather.nov_dec
+              jan_feb: {
+                min: updatedData.weather.jan_feb.min,
+                max: updatedData.weather.jan_feb.max,
+              },
+              mar_apr: {
+                min: updatedData.weather.mar_apr.min,
+                max: updatedData.weather.mar_apr.max,
+              },
+              may_jun: {
+                min: updatedData.weather.may_jun.min,
+                max: updatedData.weather.may_jun.max,
+              },
+              jul_aug: {
+                min: updatedData.weather.jul_aug.min,
+                max: updatedData.weather.jul_aug.max,
+              },
+              sep_oct: {
+                min: updatedData.weather.sep_oct.min,
+                max: updatedData.weather.sep_oct.max,
+              },
+              nov_dec: {
+                min: updatedData.weather.nov_dec.min,
+                max: updatedData.weather.nov_dec.max,
+              }
             },
             travel_count: updatedData.travel_count
           }

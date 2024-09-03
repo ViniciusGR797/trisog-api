@@ -43,27 +43,6 @@ export class ExperienceService {
     }
   }
 
-  static async getExperienceById(
-    experienceId: string
-  ): Promise<{ experience: ExperienceRaw | null; error: string | null }> {
-    try {
-      const experience = await prismaClient.experience.findUnique({
-        where: {
-          id: experienceId,
-        },
-      });
-
-      if (experience) {
-        return { experience, error: null };
-      } else {
-        return { experience: null, error: null };
-      }
-    } catch (error) {
-      console.error("Error when searching for experience by ID: ", error);
-      return { experience: null, error: "Internal server error" };
-    }
-  }
-
   static async getExperiencesUserFavorites(
     queryOptions: QueryOptions,
     experiencesId: string[]
@@ -105,6 +84,49 @@ export class ExperienceService {
       return { experiences: null, error: "Internal server error" };
     }
   }
+
+  static async getExperienceById(
+    experienceId: string
+  ): Promise<{ experience: ExperienceRaw | null; error: string | null }> {
+    try {
+      const experience = await prismaClient.experience.findUnique({
+        where: {
+          id: experienceId,
+        },
+      });
+
+      if (experience) {
+        return { experience, error: null };
+      } else {
+        return { experience: null, error: null };
+      }
+    } catch (error) {
+      console.error("Error when searching for experience by ID: ", error);
+      return { experience: null, error: "Internal server error" };
+    }
+  }
+
+  static async getExperienceByDestination(
+    destinationId: string
+  ): Promise<{ experiences: ExperienceRaw[] | null; error: string | null }> {
+    try {
+      const experiences = await prismaClient.experience.findMany({
+        where: {
+          destination_id: destinationId,
+        },
+      });
+
+      if (experiences) {
+        return { experiences, error: null };
+      } else {
+        return { experiences: null, error: null };
+      }
+    } catch (error) {
+      console.error("Error when searching for experiences by destination: ", error);
+      return { experiences: null, error: "Internal server error" };
+    }
+  }
+
   static async createExperience(
     newData: ExperienceUpsertExtended
   ): Promise<{ createdExperienceId: string | null; error: string | null }> {

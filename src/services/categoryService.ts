@@ -1,9 +1,9 @@
-import { Category, CategoryUpsert, CategoryUpsertExtended } from "../models/categoryModel";
+import { Category, CategoryRaw, CategoryUpsert, CategoryUpsertExtended } from "../models/categoryModel";
 import prismaClient from "../utils/database";
 
 export class CategoryService {
   static async getCategories(): Promise<{
-    categories: Category[] | null;
+    categories: CategoryRaw[] | null;
     error: string | null;
   }> {
     try {
@@ -18,7 +18,7 @@ export class CategoryService {
 
   static async getCategoryById(
     categoryId: string
-  ): Promise<{ category: Category | null; error: string | null }> {
+  ): Promise<{ category: CategoryRaw | null; error: string | null }> {
     try {
       const category = await prismaClient.category.findUnique({
         where: {
@@ -59,7 +59,7 @@ export class CategoryService {
     static async updateCategory(
       categoryId: string,
       updatedData: CategoryUpsertExtended
-    ): Promise<{ updatedCategory: Category | null; error: string | null }> {
+    ): Promise<{ updatedCategory: CategoryRaw | null; error: string | null }> {
       try {
         const result = await prismaClient.category.update({
           where: {
@@ -81,7 +81,7 @@ export class CategoryService {
 
     static async deleteCategory(
       categoryId: string
-    ): Promise<{ deletedCategory: Category | null; error: string | null }> {
+    ): Promise<{ deletedCategory: CategoryRaw | null; error: string | null }> {
       try {
         const result = await prismaClient.category.delete({
           where: {

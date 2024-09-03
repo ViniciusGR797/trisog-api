@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { BookingUpsert, BookingUpsertExtended } from "../models/bookingModel";
+import { Booking, BookingUpsert, BookingUpsertExtended } from "../models/bookingModel";
 import { isValidFirebaseUID, isValidObjectId } from "../utils/validate";
 import { validate } from "class-validator";
 import { BookingService } from "../services/bookingService";
@@ -7,29 +7,82 @@ import { ExperienceService } from "../services/experienceService";
 
 export class BookingController {
   static async getBookings(req: Request, res: Response): Promise<Response> {
-    const { bookings, error: getBookingsError } =
-      await BookingService.getBookings();
+    const userId = req.user_id;
+    if (!isValidFirebaseUID(userId)) {
+      return res.status(400).json({ msg: "Invalid user ID" });
+    }
+
+    const { bookings: bookingRaw, error: getBookingsError } =
+      await BookingService.getBookings(userId);
     if (getBookingsError) {
       return res.status(500).json({ msg: getBookingsError });
+    }
+    if (!bookingRaw) {
+      return res.status(200).json([]);
+    }
+
+    const bookings: Booking[] = new Array(bookingRaw.length);
+
+    for (let i = 0; i < bookingRaw.length; i++) {
+      const { experience_id, ...remainingBookingRaw } = bookingRaw[i];
+
+      const { experience: experienceRaw, error: getExperienceError } =
+        await ExperienceService.getExperienceById(experience_id);
+      if (getExperienceError) {
+        return res.status(500).json({ msg: getExperienceError });
+      }
+      if (!experienceRaw) {
+        return res.status(404).json({ msg: "No data found" });
+      }
+
+      bookings[i] = new Booking({
+        ...remainingBookingRaw,
+        experience: experienceRaw,
+      });
     }
 
     return res.status(200).json(bookings);
   }
 
   static async getBookingById(req: Request, res: Response): Promise<Response> {
+    const userId = req.user_id;
+    if (!isValidFirebaseUID(userId)) {
+      return res.status(400).json({ msg: "Invalid user ID" });
+    }
+
     const bookingId = req.params.booking_id;
     if (!isValidObjectId(bookingId)) {
       return res.status(400).json({ msg: "Invalid booking ID" });
     }
 
-    const { booking, error: getBookingError } =
+    const { booking: bookingRaw, error: getBookingError } =
       await BookingService.getBookingById(bookingId);
     if (getBookingError) {
       return res.status(500).json({ msg: getBookingError });
     }
-    if (!booking) {
+    if (!bookingRaw) {
       return res.status(404).json({ msg: "No data found" });
     }
+
+    if (bookingRaw.user_id !== userId) {
+      return res.status(403).json({ msg: "You can only view bookings associated with your own account" });
+    }
+
+    const { experience_id, ...remainingBookingRaw } = bookingRaw;
+
+    const { experience: experienceRaw, error: getExperienceError } =
+      await ExperienceService.getExperienceById(experience_id);
+    if (getExperienceError) {
+      return res.status(500).json({ msg: getExperienceError });
+    }
+    if (!experienceRaw) {
+      return res.status(404).json({ msg: "No data found" });
+    }
+
+    const booking = new Booking({
+      ...remainingBookingRaw,
+      experience: experienceRaw,
+    });
 
     return res.status(200).json(booking);
   }

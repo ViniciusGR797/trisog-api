@@ -117,6 +117,120 @@ class Ratings {
  *         - comment
  *         - image
  *         - ratings
+ *         - user_review_count
+ *         - created_at
+ *         - experience_id
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: Unique identifier for the review
+ *           example: "60b8d295f1c0d2b0f1b2c3d8"
+ *         name:
+ *           type: string
+ *           description: Name of the person who wrote the review
+ *           example: "John Doe"
+ *         email:
+ *           type: string
+ *           description: Email address of the person who wrote the review
+ *           example: "johndoe@example.com"
+ *         comment:
+ *           type: string
+ *           description: The content of the review
+ *           example: "The tour was fantastic and exceeded my expectations!"
+ *         image:
+ *           type: string
+ *           description: URL to an image related to the review
+ *           example: "https://example.com/review-image.jpg"
+ *         ratings:
+ *           $ref: '#/components/schemas/Ratings'
+ *           description: Object containing individual ratings for various categories
+ *         user_review_count:
+ *           type: integer
+ *           description: Number of reviews submitted by the user
+ *           example: 5
+ *         created_at:
+ *           type: string
+ *           format: date-time
+ *           description: The date and time when the review was created
+ *           example: "2024-08-27T14:30:00Z"
+ *         experience_id:
+ *           type: string
+ *           description: Unique identifier for the experience being reviewed
+ *           example: "60b8d295f1c0d2b0f1b2c3d9"
+ */
+
+class Review {
+  @IsString({ message: "The id field must be a string" })
+  @IsNotEmpty({ message: "The id field is mandatory" })
+  id: string;
+
+  @IsString({ message: "The name field must be a string" })
+  @IsNotEmpty({ message: "The name field is mandatory" })
+  name: string;
+
+  @IsEmail({}, { message: "Invalid email" })
+  @IsNotEmpty({ message: "The email field is mandatory" })
+  email: string;
+
+  @IsString({ message: "The comment field must be a string" })
+  @IsNotEmpty({ message: "The comment field is mandatory" })
+  comment: string;
+
+  @IsString({ message: "The image field must be a string" })
+  @IsNotEmpty({ message: "The image field is mandatory" })
+  image: string;
+
+  @IsNotEmpty({ message: "The ratings field is mandatory" })
+  ratings: JsonValue;
+
+  @Min(0, { message: "The user_review_count must be greater than or equal to zero" })
+  @IsInt({ message: "The user_review_count field must be an integer" })
+  @IsNotEmpty({ message: "The user_review_count field is mandatory" })
+  user_review_count: number;
+
+  @IsDate({ message: "The created_at field must be a valid date" })
+  @IsNotEmpty({ message: "The created_at field is mandatory" })
+  created_at: Date;
+
+  @IsString({ message: "The experience_id field must be a string" })
+  @IsNotEmpty({ message: "The experience_id field is mandatory" })
+  experience_id: string;
+
+  constructor(payload: Review) {
+    this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
+    this.name =
+      typeof payload.name === "string" ? payload.name.trim() : payload.name;
+    this.email =
+      typeof payload.email === "string" ? payload.email.trim() : payload.email;
+    this.comment =
+      typeof payload.comment === "string"
+        ? payload.comment.trim()
+        : payload.comment;
+    this.image =
+      typeof payload.image === "string" ? payload.image.trim() : payload.image;
+    this.ratings = payload.ratings;
+    this.user_review_count = payload.user_review_count;
+    this.created_at = new Date(payload.created_at);
+    this.experience_id =
+      typeof payload.experience_id === "string"
+        ? payload.experience_id.trim()
+        : payload.experience_id;
+  }
+}
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     ReviewRaw:
+ *       type: object
+ *       required:
+ *         - id
+ *         - name
+ *         - email
+ *         - comment
+ *         - image
+ *         - ratings
  *         - created_at
  *         - experience_id
  *       properties:
@@ -154,7 +268,7 @@ class Ratings {
  *           example: "60b8d295f1c0d2b0f1b2c3d9"
  */
 
-class Review {
+class ReviewRaw {
   @IsString({ message: "The id field must be a string" })
   @IsNotEmpty({ message: "The id field is mandatory" })
   id: string;
@@ -186,7 +300,7 @@ class Review {
   @IsNotEmpty({ message: "The experience_id field is mandatory" })
   experience_id: string;
 
-  constructor(payload: Review) {
+  constructor(payload: ReviewRaw) {
     this.id = typeof payload.id === "string" ? payload.id.trim() : payload.id;
     this.name =
       typeof payload.name === "string" ? payload.name.trim() : payload.name;
@@ -293,4 +407,4 @@ class ReviewUpsert {
   }
 }
 
-export { Ratings, Review, ReviewUpsert };
+export { Ratings, Review, ReviewRaw, ReviewUpsert };

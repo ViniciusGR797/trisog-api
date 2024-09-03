@@ -1,9 +1,9 @@
-import { Review, ReviewUpsert } from "../models/reviewModel";
+import { Review, ReviewRaw, ReviewUpsert } from "../models/reviewModel";
 import prismaClient from "../utils/database";
 
 export class ReviewService {
   static async getReviews(): Promise<{
-    reviews: Review[] | null;
+    reviews: ReviewRaw[] | null;
     error: string | null;
   }> {
     try {
@@ -18,7 +18,7 @@ export class ReviewService {
 
   static async getReviewById(
     reviewId: string
-  ): Promise<{ review: Review | null; error: string | null }> {
+  ): Promise<{ review: ReviewRaw | null; error: string | null }> {
     try {
       const review = await prismaClient.review.findUnique({
         where: {
@@ -39,7 +39,7 @@ export class ReviewService {
 
   static async getReviewsByExperience(
     experienceId: string
-  ): Promise<{ reviews: Review[] | null; error: string | null }> {
+  ): Promise<{ reviews: ReviewRaw[] | null; error: string | null }> {
     try {
       const reviews = await prismaClient.review.findMany({
         where: {
@@ -90,7 +90,7 @@ export class ReviewService {
   static async updateReview(
     reviewId: string,
     updatedData: ReviewUpsert
-  ): Promise<{ updatedReview: Review | null; error: string | null }> {
+  ): Promise<{ updatedReview: ReviewRaw | null; error: string | null }> {
     try {
       const result = await prismaClient.review.update({
         where: {
@@ -122,7 +122,7 @@ export class ReviewService {
 
   static async deleteReview(
     reviewId: string
-  ): Promise<{ deletedReview: Review | null; error: string | null }> {
+  ): Promise<{ deletedReview: ReviewRaw | null; error: string | null }> {
     try {
       const result = await prismaClient.review.delete({
         where: {

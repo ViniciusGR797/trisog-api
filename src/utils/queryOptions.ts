@@ -1,3 +1,18 @@
+export const initialQueryOption: ExperienceQueryParams = {
+  page: '1',
+  limit: '9',
+  title: undefined,
+  price: undefined,
+  categoriesId: undefined,
+  destinationsId: undefined,
+  rating: undefined,
+  date: undefined,
+  guests: undefined,
+  isActivity: undefined,
+  sortBy: 'title',
+  order: 'asc',
+};
+
 interface ExperienceQueryParams {
   page?: string;
   limit?: string;
@@ -61,10 +76,11 @@ export function createQueryOptions(query: ExperienceQueryParams): {
     }
 
     if (title) {
-      filters.title = {
-        contains: title,
-        mode: 'insensitive',
-      };
+      filters.OR = [
+        { title: { contains: title, mode: 'insensitive' } },
+        { city: { contains: title, mode: 'insensitive' } },
+        { over_view: { contains: title, mode: 'insensitive' } }
+      ];
     }
 
     if (price) {
