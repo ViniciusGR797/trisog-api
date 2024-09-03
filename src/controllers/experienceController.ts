@@ -16,7 +16,7 @@ import {
   DestinationUpsertExtended,
   Weather,
 } from "../models/destinationModel";
-import { Category, CategoryUpsertExtended } from "../models/categoryModel";
+import { Category, CategoryRaw, CategoryUpsertExtended } from "../models/categoryModel";
 import { createQueryOptions } from "../utils/queryOptions";
 import { Plan } from "../models/planModel";
 import { Ratings } from "../models/reviewModel";
@@ -71,7 +71,7 @@ export class ExperienceController {
         destination_id,
         ...remainingExperienceRaw
       } = experienceRaw;
-      let categories: Category[] = [];
+      let categories: CategoryRaw[] = [];
       let plans: Plan[] = [];
       let destination: Destination = {} as Destination;
 
@@ -189,7 +189,7 @@ export class ExperienceController {
         destination_id,
         ...remainingExperienceRaw
       } = experienceRaw;
-      let categories: Category[] = [];
+      let categories: CategoryRaw[] = [];
       let plans: Plan[] = [];
       let destination: Destination = {} as Destination;
 
@@ -274,7 +274,7 @@ export class ExperienceController {
       destination_id,
       ...remainingExperienceRaw
     } = experienceRaw;
-    let categories: Category[] = [];
+    let categories: CategoryRaw[] = [];
     let plans: Plan[] = [];
     let destination: Destination = {} as Destination;
 
@@ -371,7 +371,7 @@ export class ExperienceController {
       return res.status(400).json({ msg: errorMessage });
     }
 
-    let categories: Category[] = [];
+    let categories: CategoryRaw[] = [];
     for (const categoryId of payload.categories_id) {
       if (!isValidObjectId(categoryId)) {
         return res
@@ -697,7 +697,7 @@ export class ExperienceController {
       return res.status(500).json({ msg: deletedExperienceError });
     }
 
-    let categories: Category[] = [];
+    let categories: CategoryRaw[] = [];
     for (const categoryId of experience.categories_id) {
       const { category, error: getCategoryError } =
         await CategoryService.getCategoryById(categoryId);

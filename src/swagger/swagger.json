@@ -88,6 +88,55 @@
             "description": "The total price of this reservation",
             "example": 4.5
           },
+          "experience": {
+            "$ref": "#/components/schemas/ExperienceRaw",
+            "description": "Scheduled experience information details"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "Unique identifier for the user who made the booking",
+            "example": "12345"
+          }
+        }
+      },
+      "BookingRaw": {
+        "type": "object",
+        "required": [
+          "id",
+          "date",
+          "time",
+          "ticket",
+          "total_price",
+          "experience_id",
+          "user_id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the booking",
+            "example": "60b8d295f1c0d2b0f1b2c3d8"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of the booking",
+            "example": "2024-08-31"
+          },
+          "time": {
+            "type": "string",
+            "format": "time",
+            "description": "Time of the booking",
+            "example": "14:00"
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/Ticket",
+            "description": "Ticket details for the booking, including the number of adults, kids, and children"
+          },
+          "total_price": {
+            "type": "number",
+            "description": "The total price of this reservation",
+            "example": 4.5
+          },
           "experience_id": {
             "type": "string",
             "description": "Unique identifier for the experience being favorited",
@@ -194,6 +243,43 @@
           "id",
           "name",
           "icon",
+          "travel_count",
+          "from_price"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the category",
+            "example": "60b8d295f1c0d2b0f1b2c3d8"
+          },
+          "name": {
+            "type": "string",
+            "description": "Descriptive name of the category",
+            "example": "Adventure"
+          },
+          "icon": {
+            "type": "string",
+            "description": "URL or path to the icon representing the category",
+            "example": "https://example.com/icons/adventure.png"
+          },
+          "travel_count": {
+            "type": "integer",
+            "description": "The number of travels, tours, or activities available at the category",
+            "example": 5
+          },
+          "from_price": {
+            "type": "number",
+            "description": "The minimum price available for this category.",
+            "example": 50
+          }
+        }
+      },
+      "CategoryRaw": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "icon",
           "travel_count"
         ],
         "properties": {
@@ -269,6 +355,25 @@
           "$ref": "#/components/schemas/Destination"
         }
       },
+      "WeatherPeriod": {
+        "type": "object",
+        "required": [
+          "min",
+          "max"
+        ],
+        "properties": {
+          "min": {
+            "type": "number",
+            "description": "Minimum temperature for the period in degrees Celsius",
+            "example": 10
+          },
+          "max": {
+            "type": "number",
+            "description": "Maximum temperature for the period in degrees Celsius",
+            "example": 16
+          }
+        }
+      },
       "Weather": {
         "type": "object",
         "required": [
@@ -281,94 +386,22 @@
         ],
         "properties": {
           "jan_feb": {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "number",
-                "description": "Minimum temperature for January-February in degrees Celsius",
-                "example": 10
-              },
-              "max": {
-                "type": "number",
-                "description": "Maximum temperature for January-February in degrees Celsius",
-                "example": 16
-              }
-            }
+            "$ref": "#/components/schemas/WeatherPeriod"
           },
           "mar_apr": {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "number",
-                "description": "Minimum temperature for March-April in degrees Celsius",
-                "example": 12
-              },
-              "max": {
-                "type": "number",
-                "description": "Maximum temperature for March-April in degrees Celsius",
-                "example": 18
-              }
-            }
+            "$ref": "#/components/schemas/WeatherPeriod"
           },
           "may_jun": {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "number",
-                "description": "Minimum temperature for May-June in degrees Celsius",
-                "example": 15
-              },
-              "max": {
-                "type": "number",
-                "description": "Maximum temperature for May-June in degrees Celsius",
-                "example": 22
-              }
-            }
+            "$ref": "#/components/schemas/WeatherPeriod"
           },
           "jul_aug": {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "number",
-                "description": "Minimum temperature for July-August in degrees Celsius",
-                "example": 18
-              },
-              "max": {
-                "type": "number",
-                "description": "Maximum temperature for July-August in degrees Celsius",
-                "example": 25
-              }
-            }
+            "$ref": "#/components/schemas/WeatherPeriod"
           },
           "sep_oct": {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "number",
-                "description": "Minimum temperature for September-October in degrees Celsius",
-                "example": 14
-              },
-              "max": {
-                "type": "number",
-                "description": "Maximum temperature for September-October in degrees Celsius",
-                "example": 20
-              }
-            }
+            "$ref": "#/components/schemas/WeatherPeriod"
           },
           "nov_dec": {
-            "type": "object",
-            "properties": {
-              "min": {
-                "type": "number",
-                "description": "Minimum temperature for November-December in degrees Celsius",
-                "example": 10
-              },
-              "max": {
-                "type": "number",
-                "description": "Maximum temperature for November-December in degrees Celsius",
-                "example": 16
-              }
-            }
+            "$ref": "#/components/schemas/WeatherPeriod"
           }
         }
       },
@@ -1895,12 +1928,17 @@
   "paths": {
     "/bookings": {
       "get": {
-        "summary": "View all bookings",
-        "description": "Returns information about all bookings",
+        "summary": "View all bookings my user",
+        "description": "Returns information about all bookings my user",
         "tags": [
           "Booking"
         ],
         "operationId": "get_all_bookings",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -1908,6 +1946,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BookingList"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }
@@ -2029,6 +2087,11 @@
           "Booking"
         ],
         "operationId": "get_booking_by_id",
+        "security": [
+          {
+            "jwt": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -2046,6 +2109,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Unauthorized"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Forbidden"
                 }
               }
             }

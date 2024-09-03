@@ -13,7 +13,7 @@ import {
 } from "class-validator";
 import { JsonArray, JsonValue } from "@prisma/client/runtime/library";
 import { Destination } from "./destinationModel";
-import { Category } from "./categoryModel";
+import { Category, CategoryRaw } from "./categoryModel";
 import { Plan } from "./planModel";
 import { Ratings } from "./reviewModel";
 
@@ -299,7 +299,7 @@ class Experience {
   @ValidateNested({ each: true })
   @IsArray({ message: "The categories field must be an array of strings" })
   @IsNotEmpty({ message: "The categories field is mandatory" })
-  categories: Category[];
+  categories: CategoryRaw[];
 
   @ValidateNested({ each: true })
   @IsArray({ message: "The plans field must be an array of strings" })

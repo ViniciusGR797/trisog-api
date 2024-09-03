@@ -1,3 +1,18 @@
+export const initialQueryOption: ExperienceQueryParams = {
+  page: '1',
+  limit: '9',
+  title: undefined,
+  price: undefined,
+  categoriesId: undefined,
+  destinationsId: undefined,
+  rating: undefined,
+  date: undefined,
+  guests: undefined,
+  isActivity: undefined,
+  sortBy: 'title',
+  order: 'asc',
+};
+
 interface ExperienceQueryParams {
   page?: string;
   limit?: string;
