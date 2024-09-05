@@ -175,7 +175,7 @@ class Review {
 
   @IsString({ message: "The comment field must be a string" })
   @IsNotEmpty({ message: "The comment field is mandatory" })
-  comment: string;
+  comment: string; 
 
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
