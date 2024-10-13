@@ -175,18 +175,22 @@ class Review {
 
   @IsString({ message: "The comment field must be a string" })
   @IsNotEmpty({ message: "The comment field is mandatory" })
-  comment: string;
+  comment: string; 
 
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
-  @Matches(/^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/, 
-    { message: "The image URL must start with a valid domain" })
+  @Matches(
+    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/)/,
+    { message: "The image URL must start with a valid domain" }
+  )
   image: string;
 
   @IsNotEmpty({ message: "The ratings field is mandatory" })
   ratings: JsonValue;
 
-  @Min(0, { message: "The user_review_count must be greater than or equal to zero" })
+  @Min(0, {
+    message: "The user_review_count must be greater than or equal to zero",
+  })
   @IsInt({ message: "The user_review_count field must be an integer" })
   @IsNotEmpty({ message: "The user_review_count field is mandatory" })
   user_review_count: number;
@@ -290,8 +294,10 @@ class ReviewRaw {
 
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
-  @Matches(/^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/, 
-    { message: "The image URL must start with a valid domain" })
+  @Matches(
+    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/)/,
+    { message: "The image URL must start with a valid domain" }
+  )
   image: string;
 
   @IsNotEmpty({ message: "The ratings field is mandatory" })
@@ -380,8 +386,10 @@ class ReviewUpsert {
 
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
-  @Matches(/^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com)/, 
-    { message: "The image URL must start with a valid domain" })
+  @Matches(
+    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/)/,
+    { message: "The image URL must start with a valid domain" }
+  )
   image: string;
 
   @ValidateNested()
