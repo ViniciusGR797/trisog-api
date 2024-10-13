@@ -180,8 +180,8 @@ class Review {
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
   @Matches(
-    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/)/,
-    { message: "The image URL must start with a valid domain" }
+    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/[\w\-]+\.(png|jpg|jpeg|svg))$/,
+    { message: "The image URL must start with a valid domain or be an internal image path" }
   )
   image: string;
 
@@ -295,8 +295,8 @@ class ReviewRaw {
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
   @Matches(
-    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/)/,
-    { message: "The image URL must start with a valid domain" }
+    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/[\w\-]+\.(png|jpg|jpeg|svg))$/,
+    { message: "The image URL must start with a valid domain or be an internal image path" }
   )
   image: string;
 
@@ -387,8 +387,8 @@ class ReviewUpsert {
   @IsString({ message: "The image field must be a string" })
   @IsNotEmpty({ message: "The image field is mandatory" })
   @Matches(
-    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/)/,
-    { message: "The image URL must start with a valid domain" }
+    /^(https:\/\/firebasestorage\.googleapis\.com|https:\/\/graph\.facebook\.com|https:\/\/avatars\.githubusercontent\.com|https:\/\/lh3\.googleusercontent\.com|\/images\/[\w\-]+\.(png|jpg|jpeg|svg))$/,
+    { message: "The image URL must start with a valid domain or be an internal image path" }
   )
   image: string;
 
