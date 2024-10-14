@@ -101,6 +101,7 @@ class CustomPrice {
  *         - over_view
  *         - include
  *         - exclude
+ *         - average_rating
  *         - ratings
  *         - review_count
  *         - default_price
@@ -178,6 +179,10 @@ class CustomPrice {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
+ *         average_rating:
+ *           type: number
+ *           description: Average rating score for the experience
+ *           example: 4
  *         ratings:
  *           $ref: '#/components/schemas/Ratings'
  *           description: Object containing individual ratings for various categories
@@ -287,6 +292,10 @@ class Experience {
   @IsNotEmpty({ message: "The exclude field is mandatory" })
   exclude: string[];
 
+  @IsNumber({}, { message: "The average_rating field must be a number" })
+  @IsNotEmpty({ message: "The average_rating field is mandatory" })
+  average_rating: number;
+
   @IsNotEmpty({ message: "The ratings field is mandatory" })
   ratings: JsonValue;
 
@@ -349,6 +358,7 @@ class Experience {
         : payload.over_view;
     this.include = payload.include;
     this.exclude = payload.exclude;    
+    this.average_rating = payload.average_rating;
     this.ratings = payload.ratings;
     this.review_count = payload.review_count;
     this.default_price = payload.default_price;
@@ -455,6 +465,7 @@ class PaginatedExperiences {
  *         - over_view
  *         - include
  *         - exclude
+ *         - average_rating
  *         - ratings
  *         - review_count
  *         - default_price
@@ -533,6 +544,10 @@ class PaginatedExperiences {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
+ *         average_rating:
+ *           type: number
+ *           description: Average rating score for the experience
+ *           example: 4
  *         ratings:
  *           $ref: '#/components/schemas/Ratings'
  *           description: Object containing individual ratings for various categories
@@ -656,6 +671,10 @@ class ExperienceRaw {
   @IsOptional()
   custom_prices: JsonValue;
 
+  @IsNumber({}, { message: "The average_rating field must be a number" })
+  @IsNotEmpty({ message: "The average_rating field is mandatory" })
+  average_rating: number;
+
   @IsNotEmpty({ message: "The ratings field is mandatory" })
   ratings: JsonValue;
 
@@ -714,6 +733,7 @@ class ExperienceRaw {
         : payload.over_view;
     this.include = payload.include;
     this.exclude = payload.exclude;
+    this.average_rating = payload.average_rating;
     this.ratings = payload.ratings;
     this.review_count = payload.review_count;
     this.default_price = payload.default_price;
@@ -1089,6 +1109,7 @@ class ExperienceUpsert {
  *         - over_view
  *         - include
  *         - exclude
+ *         - average_rating
  *         - ratings
  *         - review_count
  *         - default_price
@@ -1163,6 +1184,10 @@ class ExperienceUpsert {
  *             type: string
  *           description: List of items excluded from the experience
  *           example: ["Transportation"]
+ *         average_rating:
+ *           type: number
+ *           description: Average rating score for the experience
+ *           example: 4
  *         ratings:
  *           $ref: '#/components/schemas/Ratings'
  *           description: Object containing individual ratings for various categories
@@ -1199,6 +1224,10 @@ class ExperienceUpsert {
  */
 
 class ExperienceUpsertExtended extends ExperienceUpsert {
+  @IsNumber({}, { message: "The average_rating field must be a number" })
+  @IsNotEmpty({ message: "The average_rating field is mandatory" })
+  average_rating: number;
+  
   @ValidateNested()
   @IsNotEmptyObject(
     { nullable: false },
@@ -1213,6 +1242,7 @@ class ExperienceUpsertExtended extends ExperienceUpsert {
 
   constructor(payload: ExperienceUpsertExtended) {
     super(payload);    
+    this.average_rating = payload.average_rating;
     this.ratings = new Ratings(payload.ratings);
     this.review_count = payload.review_count;
   }

@@ -148,6 +148,7 @@ export class ExperienceService {
           over_view: newData.over_view,
           include: newData.include,
           exclude: newData.exclude,
+          average_rating: newData.average_rating,
           ratings: {
             services: newData.ratings.services,
             location: newData.ratings.location,
@@ -203,6 +204,7 @@ export class ExperienceService {
           over_view: updatedData.over_view,
           include: updatedData.include,
           exclude: updatedData.exclude,
+          average_rating: updatedData.average_rating,
           ratings: {
             services: updatedData.ratings.services,
             location: updatedData.ratings.location,

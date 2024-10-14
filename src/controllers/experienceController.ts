@@ -428,6 +428,7 @@ export class ExperienceController {
 
     const newPayload = new ExperienceUpsertExtended({
       ...payload,
+      average_rating: 0,
       ratings: new Ratings({
         services: 0,
         location: 0,
@@ -643,6 +644,7 @@ export class ExperienceController {
 
     const newPayload = new ExperienceUpsertExtended({
       ...payload,
+      average_rating: Number(experience.average_rating) || 0,
       ratings: new Ratings({
         services: Number((experience.ratings as JsonObject)?.services) || 0,
         location: Number((experience.ratings as JsonObject)?.location) || 0,

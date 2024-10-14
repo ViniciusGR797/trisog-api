@@ -58,7 +58,7 @@ import {
  *         room_comfort_and_quality:
  *           type: number
  *           description: Rating for room comfort and quality
- *           example: 5
+ *           example: 3
  */
 
 class Ratings {
