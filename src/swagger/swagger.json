@@ -764,6 +764,7 @@
           "over_view",
           "include",
           "exclude",
+          "average_rating",
           "ratings",
           "review_count",
           "default_price",
@@ -865,6 +866,11 @@
               "Transportation"
             ]
           },
+          "average_rating": {
+            "type": "number",
+            "description": "Average rating score for the experience",
+            "example": 4
+          },
           "ratings": {
             "$ref": "#/components/schemas/Ratings",
             "description": "Object containing individual ratings for various categories"
@@ -961,6 +967,7 @@
           "over_view",
           "include",
           "exclude",
+          "average_rating",
           "ratings",
           "review_count",
           "default_price",
@@ -1062,6 +1069,11 @@
             "example": [
               "Transportation"
             ]
+          },
+          "average_rating": {
+            "type": "number",
+            "description": "Average rating score for the experience",
+            "example": 4
           },
           "ratings": {
             "$ref": "#/components/schemas/Ratings",
@@ -1308,7 +1320,7 @@
         }
       },
       "ExperienceUpsertExtended": {
-        "type": "object - title - city - image - video - gallery - map_link - start_date - end_date - duration - is_activity - max_people - min_age - over_view - include - exclude - ratings - review_count - default_price - custom_prices - categories_id - plans_id - destination_id",
+        "type": "object - title - city - image - video - gallery - map_link - start_date - end_date - duration - is_activity - max_people - min_age - over_view - include - exclude - average_rating - ratings - review_count - default_price - custom_prices - categories_id - plans_id - destination_id",
         "properties": {
           "title": {
             "type": "string",
@@ -1397,6 +1409,11 @@
             "example": [
               "Transportation"
             ]
+          },
+          "average_rating": {
+            "type": "number",
+            "description": "Average rating score for the experience",
+            "example": 4
           },
           "ratings": {
             "$ref": "#/components/schemas/Ratings",
@@ -1711,7 +1728,7 @@
           "room_comfort_and_quality": {
             "type": "number",
             "description": "Rating for room comfort and quality",
-            "example": 5
+            "example": 3
           }
         }
       },
@@ -2051,6 +2068,45 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/NotFound"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "InternalServerError",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookings/stats/count": {
+      "get": {
+        "summary": "Get total number of bookings",
+        "description": "Returns the total count of bookings in the system",
+        "tags": [
+          "Booking"
+        ],
+        "operationId": "get_bookings_count",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "count": {
+                      "type": "integer",
+                      "description": "Total number of bookings",
+                      "example": 42
+                    }
+                  }
                 }
               }
             }

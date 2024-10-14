@@ -53,6 +53,37 @@ router.get('/', authMiddleware, BookingController.getBookings);
 
 /**
  * @swagger
+ * /bookings/stats/count:
+ *   get:
+ *     summary: Get total number of bookings
+ *     description: Returns the total count of bookings in the system
+ *     tags:
+ *       - Booking
+ *     operationId: get_bookings_count
+ *     responses:
+ *       200:
+ *         description: Success
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 count:
+ *                   type: integer
+ *                   description: Total number of bookings
+ *                   example: 42
+ *       500:
+ *         description: InternalServerError
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/InternalServerError"
+ */
+
+router.get('/stats/count', BookingController.getBookingsStatsCount);
+
+/**
+ * @swagger
  * /bookings/{booking_id}:
  *   parameters:
  *     - name: booking_id
