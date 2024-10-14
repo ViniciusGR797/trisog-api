@@ -27,7 +27,7 @@
 
 <div align="center">
   <br/>
-  <img src="docs/diagrams.jpg" alt="API diagrams">
+  <img src="docs/swagger.jpeg" alt="API swagger">
 </div>
 
 > The software developed is a web application created for the Compass Challenge, whose focus is the creation of a travel agency website.
