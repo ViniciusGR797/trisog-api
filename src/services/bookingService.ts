@@ -26,6 +26,20 @@ export class BookingService {
     }
   }
 
+  static async getBookingsStatsCount(): Promise<{
+    bookingsCount: number;
+    error: string | null;
+  }> {
+    try {
+      const bookingsCount = await prismaClient.booking.count();
+
+      return { bookingsCount, error: null };
+    } catch (error) {
+      console.error("Error retrieving booking: ", error);
+      return { bookingsCount: 0, error: "Internal Server Error" };
+    }
+  }
+
   static async getBookingById(
     bookingId: string
   ): Promise<{ booking: BookingRaw | null; error: string | null }> {

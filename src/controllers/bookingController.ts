@@ -44,6 +44,17 @@ export class BookingController {
     return res.status(200).json(bookings);
   }
 
+  static async getBookingsStatsCount(req: Request, res: Response): Promise<Response> {
+
+    const { bookingsCount, error: getBookingsCountError } =
+      await BookingService.getBookingsStatsCount();
+    if (getBookingsCountError) {
+      return res.status(500).json({ msg: getBookingsCountError });
+    }
+
+    return res.status(200).json({ count: bookingsCount });
+  }
+
   static async getBookingById(req: Request, res: Response): Promise<Response> {
     const userId = req.user_id;
     if (!isValidFirebaseUID(userId)) {
