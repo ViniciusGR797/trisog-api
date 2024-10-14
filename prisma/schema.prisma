@@ -56,6 +56,7 @@ model Experience {
   over_view                   String
   include                     String[]
   exclude                     String[]
+  average_rating              Float       
   ratings                     Json
   review_count                Int
   default_price               Float  

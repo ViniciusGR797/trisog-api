@@ -112,7 +112,7 @@ export function createQueryOptions(query: ExperienceQueryParams): {
       if (isNaN(ratingInt) || ratingInt < 0 || ratingInt > 5) {
         throw new Error("Invalid rating value");
       }
-      filters.rating = {
+      filters.average_rating = {
         gte: ratingInt,
       };
     }
@@ -147,7 +147,7 @@ export function createQueryOptions(query: ExperienceQueryParams): {
       };
     }
 
-    if (!['title', 'city', 'default_price', 'rating', 'review_count', 'duration', 'start_date', 'end_date'].includes(sortBy)) {
+    if (!['title', 'city', 'default_price', 'average_rating', 'review_count', 'duration', 'start_date', 'end_date'].includes(sortBy)) {
       throw new Error("Invalid sortBy value");
     }
 
